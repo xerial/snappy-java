@@ -1,4 +1,6 @@
-include VERSION
+TARGET:=target
+SRC:=src/main/java
+include $(SRC)/org/xerial/snappy/VERSION
 
 ifndef JAVA_HOME
 $(error Set JAVA_HOME environment variable)
@@ -9,9 +11,8 @@ JAVA  := "$$JAVA_HOME/bin/java"
 JAVAC := "$$JAVA_HOME/bin/javac" 
 JAVAH := "$$JAVA_HOME/bin/javah"
 
-WORK := target
-OSINFO_CLASS := org.sqlite.OSInfo
-OSINFO_PROG := lib/org/sqlite/OSInfo.class
+OSINFO_CLASS := org.xerial.snappy.OSInfo
+OSINFO_PROG := lib/org/xerial/snappy/OSInfo.class
 
 ## building OSInfo.java 
 #$(info compiling OSInfo.java)
@@ -29,7 +30,8 @@ else
 	sep := :
 endif
 
-snappy := snappy-$(version)
+snappy := snappy-$(VERSION)
+SNAPPY_SRC:=$(TARGET)/snappy-$(VERSION)
 
 jni_md := $(shell find -L "$(JAVA_HOME)" -name jni_md.h)
 ifneq ($(jni_md),)
@@ -39,71 +41,73 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_targets := Linux-i386 Linux-amd64 Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
-target := $(OS_NAME)-$(OS_ARCH)
+known_os_archs := Linux-i386 Linux-amd64 Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
+os_arch := $(OS_NAME)-$(OS_ARCH)
 
-ifeq (,$(findstring $(strip $(target)),$(known_targets)))
-  target := Default
+ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
+  os_arch := Default
 endif
 
-Default_CXX        := gcc
-Default_STRIP     := strip
-Default_CXXFLAGS    := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
-Default_LINKFLAGS := -shared
-Default_LIBNAME   := libsnappy.so
-Default_SNAPPY_FLAGS  := 
+Default_CXX          := g++
+Default_STRIP        := strip
+Default_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
+Default_LINKFLAGS    := -shared
+Default_LIBNAME      := libsnappy.so
+Default_SNAPPY_FLAGS := 
 
-Linux-i386_CXX  := cc
-Linux-i386_STRIP  := strip
-Linux-i386_CXXFLAGS    := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
+Linux-i386_CXX       := g++
+Linux-i386_STRIP     := strip
+Linux-i386_CXXFLAGS  := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
 Linux-i386_LINKFLAGS := -shared
 Linux-i386_LIBNAME   := libsnappy.so
-Linux-i386_SNAPPY_FLAGS  := 
+Linux-i386_SNAPPY_FLAGS:= 
 
-Linux-amd64_CXX  := gcc
-Linux-amd64_STRIP  := strip
-Linux-amd64_CXXFLAGS    := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
+Linux-amd64_CXX       := g++
+Linux-amd64_STRIP     := strip
+Linux-amd64_CXXFLAGS  := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
 Linux-amd64_LINKFLAGS := -shared
 Linux-amd64_LIBNAME   := libsnappy.so
 Linux-amd64_SNAPPY_FLAGS  := 
 
-Mac-i386_CXX        := gcc -arch $(OS_ARCH) 
+Mac-i386_CXX       := g++ -arch $(OS_ARCH) 
 Mac-i386_STRIP     := strip -x
-Mac-i386_CXXFLAGS    := -I$(JAVA_HOME)/include -Os -fPIC 
+Mac-i386_CXXFLAGS  := -I$(JAVA_HOME)/include -Os -fPIC 
 Mac-i386_LINKFLAGS := -dynamiclib 
 Mac-i386_LIBNAME   := libsnappy.jnilib
-Mac-i386_SNAPPY_FLAGS  := -DSNAPPY_ENABLE_LOCKING_STYLE=0
+Mac-i386_SNAPPY_FLAGS  :=
 
-Mac-x86_64_CXX        := gcc -arch $(OS_ARCH) 
+Mac-x86_64_CXX       := g++ -arch $(OS_ARCH) 
 Mac-x86_64_STRIP     := strip -x
-Mac-x86_64_CXXFLAGS    := -I$(JAVA_HOME)/include -Os -fPIC 
+Mac-x86_64_CXXFLAGS  := -I$(JAVA_HOME)/include -Os -fPIC 
 Mac-x86_64_LINKFLAGS := -dynamiclib 
 Mac-x86_64_LIBNAME   := libsnappy.jnilib
 Mac-x86_64_SNAPPY_FLAGS  := 
 
-Windows-x86_CXX           := mingw32-gcc
+Windows-x86_CXX          := mingw32-g++
 Windows-x86_STRIP        := strip
-Windows-x86_CXXFLAGS       := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -O
+Windows-x86_CXXFLAGS     :=  -Ilib/inc_win -O
 Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared
 Windows-x86_LIBNAME      := snappy.dll
 Windows-x86_SNAPPY_FLAGS := 
 
-Windows-amd64_CXX           := x86_64-w64-mingw32-gcc 
+Windows-amd64_CXX          := x86_64-w64-mingw32-g++
 Windows-amd64_STRIP        := x86_64-w64-mingw32-strip
-Windows-amd64_CXXFLAGS       := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -O
+Windows-amd64_CXXFLAGS     :=  -Ilib/inc_win -O
 Windows-amd64_LINKFLAGS    := -Wl,--kill-at -shared
 Windows-amd64_LIBNAME      := snappy.dll
 Windows-amd64_SNAPPY_FLAGS := 
 
 
-CXX        := $($(target)_CXX)
-STRIP     := $($(target)_STRIP)
-CXXFLAGS    := $($(target)_CXXFLAGS) 
-LINKFLAGS := $($(target)_LINKFLAGS) 
-LIBNAME   := $($(target)_LIBNAME)
-SNAPPY_FLAGS := $($(target)_SNAPPY_FLAGS)
+CXX        := $($(os_arch)_CXX)
+STRIP     := $($(os_arch)_STRIP)
+CXXFLAGS    := $($(os_arch)_CXXFLAGS) 
+LINKFLAGS := $($(os_arch)_LINKFLAGS) 
+LIBNAME   := $($(os_arch)_LIBNAME)
+SNAPPY_FLAGS := $($(os_arch)_SNAPPY_FLAGS)
 
-CXXFLAGS := $(CXXFLAGS) -I$(WORK)/build/$(snappy)-$(target) -I$(WORK)/build
+SNAPPY_OUT:=$(TARGET)/$(snappy)/$(os_arch)
+
+CXXFLAGS := $(CXXFLAGS) -I$(SNAPPY_OUT) -I$(SNAPPY_SRC)
 ifneq ($(jni_include),)
 CXXFLAGS := $(CXXFLAGS) -I"$(jni_include)"
 endif
