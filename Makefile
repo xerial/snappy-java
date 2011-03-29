@@ -1,6 +1,7 @@
 
 include Makefile.common
 
+all: snappy
 
 SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz 
 
@@ -36,3 +37,8 @@ $(SNAPPY_OUT)/%.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp
 $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
 	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -o $@ $* 
 	$(STRIP) $@
+
+clean-native: 
+	rm -rf $(SNAPPY_OBJ) $(SNAPPY_OUT)/$(LIBNAME)
+
+
