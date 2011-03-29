@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.xerial.snappy</groupId>
+  <artifactId>snappy-java</artifactId>
+  <version>1.0.1</version>
+  <name>Snappy for Java</name>
+  <description>Compression/decompression library</description>
+
+  <parent>
+    <groupId>org.xerial</groupId>
+    <artifactId>xerial-project</artifactId>
+    <version>1.1</version>
+  </parent>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>org/xerial/snappy/native/**</include>
+          <include>org/**</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}</directory>
+        <targetPath>META-INF/maven/${groupId}/${artifactId}</targetPath>
+        <includes>
+          <include>VERSION</include>
+          <include>LICENSE*</include>
+        </includes>
+      </resource>
+    </resources>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+		<version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+		<version>2.1</version>
+        <configuration>
+          <!--  do not run site-deploy goal, included in the default settings  -->
+          <goals>deploy</goals>
+		  <!--
+          <connectionUrl>scm:hg:https://sqlite.xerial.googlecode.com/hg/</connectionUrl>
+           -->
+        </configuration>
+      </plugin>
+
+    </plugins>
+
+	<extensions>
+	  <extension>
+		<groupId>org.apache.maven.wagon</groupId> 
+		<artifactId>wagon-ssh-external</artifactId> 
+		<version>1.0-beta-7</version> 
+	  </extension> 
+	</extensions>
+
+  </build>
+
+  <!--
+  <scm>
+    <connection>scm:hg:https://sqlite.xerial.googlecode.com/hg/</connection>
+    <developerConnection>scm:hg:default</developerConnection>
+    <url>scm:hg:https://sqlite.xerial.googlecode.com/hg/</url>
+  </scm>
+  -->
+
+  <dependencies>
+    <dependency>
+      <groupId>org.xerial.thirdparty</groupId>
+      <artifactId>jdbc-api</artifactId>
+      <version>1.4</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+</project>
