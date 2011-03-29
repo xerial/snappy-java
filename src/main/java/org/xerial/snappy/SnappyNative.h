@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)J
  */
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_compress
-  (JNIEnv *, jobject, jobject, jobject);
+  (JNIEnv *, jclass, jobject, jobject);
 
 /*
  * Class:     org_xerial_snappy_Snappy
@@ -21,7 +21,7 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_compress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_Snappy_uncompress
-  (JNIEnv *, jobject, jobject, jobject);
+  (JNIEnv *, jclass, jobject, jobject);
 
 /*
  * Class:     org_xerial_snappy_Snappy
@@ -29,7 +29,7 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_Snappy_uncompress
  * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_maxCompressedLength
-  (JNIEnv *, jobject, jlong);
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     org_xerial_snappy_Snappy
@@ -37,7 +37,7 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_maxCompressedLength
  * Signature: (Ljava/nio/ByteBuffer;)J
  */
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_getUncompressedLength
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus
 }

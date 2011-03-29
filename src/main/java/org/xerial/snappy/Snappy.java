@@ -13,19 +13,23 @@ import java.nio.ByteBuffer;
 
 public class Snappy
 {
+    static {
+        LoadSnappy.initialize();
+    }
+
     // ------------------------------------------------------------------------
     // Generic compression/decompression routines.
     // ------------------------------------------------------------------------
 
-    public native long compress(ByteBuffer uncompressed, ByteBuffer compressed);
+    public native static long compress(ByteBuffer uncompressed, ByteBuffer compressed);
 
-    public native boolean uncompress(ByteBuffer compressed, ByteBuffer uncompressed);
+    public native static boolean uncompress(ByteBuffer compressed, ByteBuffer uncompressed);
 
     // Returns the maximal size of the compressed representation of
     // input data that is "source_bytes" bytes in length;
-    public native long maxCompressedLength(long source_bytes);
+    public native static long maxCompressedLength(long source_bytes);
 
     // This operation takes O(1) time.
-    public native long getUncompressedLength(ByteBuffer compressed);
+    public native static long getUncompressedLength(ByteBuffer compressed);
 
 }
