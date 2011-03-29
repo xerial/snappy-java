@@ -15,3 +15,9 @@ $(SNAPPY_ARCHIVE):
 
 $(TARGET)/snappy-$(VERSION): $(SNAPPY_ARCHIVE)
 	tar xvfz $< -C $(TARGET)
+
+
+
+$(SRC)/org/xerial/snappy/Snappy.h: $(SRC)/org/xerial/snappy/Snappy.java
+	javah -classpath $(TARGET)/classes -o $@ org.xerial.snappy.Snappy
+

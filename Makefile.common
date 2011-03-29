@@ -1,0 +1,110 @@
+include VERSION
+
+ifndef JAVA_HOME
+$(error Set JAVA_HOME environment variable)
+endif
+
+
+JAVA  := "$$JAVA_HOME/bin/java"
+JAVAC := "$$JAVA_HOME/bin/javac" 
+JAVAH := "$$JAVA_HOME/bin/javah"
+
+WORK := target
+OSINFO_CLASS := org.sqlite.OSInfo
+OSINFO_PROG := lib/org/sqlite/OSInfo.class
+
+## building OSInfo.java 
+#$(info compiling OSInfo.java)
+#$(shell mkdir -p lib)
+#$(shell $(JAVAC) src/main/java/org/sqlite/OSInfo.java -d lib)
+
+OS_NAME := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --os)
+OS_ARCH := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --arch)
+LIB_FOLDER := $(shell $(JAVA) -cp lib $(OSINFO_CLASS))
+
+# Windows uses different path separators, because they hate me
+ifeq ($(OS_NAME),Windows)
+	sep := ;
+else
+	sep := :
+endif
+
+sqlite := sqlite-$(version)
+
+jni_md := $(shell find -L "$(JAVA_HOME)" -name jni_md.h)
+ifneq ($(jni_md),)
+jni_include := $(shell dirname "$(jni_md)")
+endif
+
+
+# os=Default is meant to be generic unix/linux
+
+known_targets := Linux-i386 Linux-amd64 Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
+target := $(OS_NAME)-$(OS_ARCH)
+
+ifeq (,$(findstring $(strip $(target)),$(known_targets)))
+  target := Default
+endif
+
+Default_CC        := gcc
+Default_STRIP     := strip
+Default_CFLAGS    := -I$(JAVA_HOME)/include -Isqlitejdbc/lib/inc_mac -Os -fPIC
+Default_LINKFLAGS := -shared
+Default_LIBNAME   := libsqlitejdbc.so
+Default_SQLITE_FLAGS  := 
+
+Linux-i386_CC  := gcc
+Linux-i386_STRIP  := strip
+Linux-i386_CFLAGS    := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
+Linux-i386_LINKFLAGS := -shared
+Linux-i386_LIBNAME   := libsqlitejdbc.so
+Linux-i386_SQLITE_FLAGS  := 
+
+Linux-amd64_CC  := gcc
+Linux-amd64_STRIP  := strip
+Linux-amd64_CFLAGS    := -I$(JAVA_HOME)/include -Ilib/inc_mac -Os -fPIC
+Linux-amd64_LINKFLAGS := -shared
+Linux-amd64_LIBNAME   := libsqlitejdbc.so
+Linux-amd64_SQLITE_FLAGS  := 
+
+Mac-i386_CC        := gcc -arch $(OS_ARCH) 
+Mac-i386_STRIP     := strip -x
+Mac-i386_CFLAGS    := -I$(JAVA_HOME)/include -Os -fPIC 
+Mac-i386_LINKFLAGS := -dynamiclib 
+Mac-i386_LIBNAME   := libsqlitejdbc.jnilib
+Mac-i386_SQLITE_FLAGS  := -DSQLITE_ENABLE_LOCKING_STYLE=0
+
+Mac-x86_64_CC        := gcc -arch $(OS_ARCH) 
+Mac-x86_64_STRIP     := strip -x
+Mac-x86_64_CFLAGS    := -I$(JAVA_HOME)/include -Os -fPIC 
+Mac-x86_64_LINKFLAGS := -dynamiclib 
+Mac-x86_64_LIBNAME   := libsqlitejdbc.jnilib
+Mac-x86_64_SQLITE_FLAGS  := 
+
+Windows-x86_CC           := mingw32-gcc
+Windows-x86_STRIP        := strip
+Windows-x86_CFLAGS       := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -O
+Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared
+Windows-x86_LIBNAME      := sqlitejdbc.dll
+Windows-x86_SQLITE_FLAGS := 
+
+Windows-amd64_CC           := x86_64-w64-mingw32-gcc 
+Windows-amd64_STRIP        := x86_64-w64-mingw32-strip
+Windows-amd64_CFLAGS       := -D_JNI_IMPLEMENTATION_ -Ilib/inc_win -O
+Windows-amd64_LINKFLAGS    := -Wl,--kill-at -shared
+Windows-amd64_LIBNAME      := sqlitejdbc.dll
+Windows-amd64_SQLITE_FLAGS := 
+
+
+CC        := $($(target)_CC)
+STRIP     := $($(target)_STRIP)
+CFLAGS    := $($(target)_CFLAGS) 
+LINKFLAGS := $($(target)_LINKFLAGS) 
+LIBNAME   := $($(target)_LIBNAME)
+SQLITE_FLAGS := $($(target)_SQLITE_FLAGS)
+
+CFLAGS := $(CFLAGS) -I$(WORK)/build/$(sqlite)-$(target) -I$(WORK)/build
+ifneq ($(jni_include),)
+CFLAGS := $(CFLAGS) -I"$(jni_include)"
+endif
+
