@@ -5,6 +5,7 @@ TARGET:=target
 
 
 include $(SRC)/org/xerial/snappy/VERSION
+include Makefile.common
 
 SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz 
 
@@ -21,4 +22,10 @@ $(TARGET)/snappy-$(VERSION): $(SNAPPY_ARCHIVE)
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/Snappy.java
 	javah -classpath $(TARGET)/classes -o $@ org.xerial.snappy.Snappy
 
+
+
+snappy:
+	(cd $(TARGET)/snappy-$(VERSION); \
+	./configure CXX=$(CXX) CXXFLAGS=$(CXXFLAGS); \
+	make)
 

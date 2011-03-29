@@ -1,6 +1,10 @@
 target
 .classpath
 .project
+Debug
+Release
 
 syntax: glob
 *~
+*.sdf
+*.ipch
