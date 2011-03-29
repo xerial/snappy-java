@@ -26,11 +26,11 @@ SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyN
 snappy: $(SNAPPY_OUT)/$(LIBNAME)
 
 
-$(SNAPPY_OUT)/%.o : $(SNAPPY_SRC)/%.cc
+$(SNAPPY_OUT)/%.o : $(SNAPPY_SRC)/%.cc $(SNAPPY_SRC)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(SNAPPY_OUT)/%.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h 
+$(SNAPPY_OUT)/%.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h  $(SNAPPY_SRC)
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
