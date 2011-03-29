@@ -7,27 +7,17 @@
   <name>Snappy for Java</name>
   <description>Compression/decompression library</description>
 
-  <parent>
-    <groupId>org.xerial</groupId>
-    <artifactId>xerial-project</artifactId>
-    <version>1.1</version>
-  </parent>
-
   <build>
     <resources>
-      <resource>
-        <directory>src/main/java</directory>
-      </resource>
       <resource>
         <directory>src/main/resources</directory>
         <includes>
           <include>org/xerial/snappy/native/**</include>
-          <include>org/**</include>
         </includes>
       </resource>
       <resource>
         <directory>${basedir}</directory>
-        <targetPath>META-INF/maven/${groupId}/${artifactId}</targetPath>
+        <targetPath>META-INF/maven/${project.groupId}/${project.artifactId}</targetPath>
         <includes>
           <include>VERSION</include>
           <include>LICENSE*</include>
@@ -79,11 +69,12 @@
   -->
 
   <dependencies>
-    <dependency>
-      <groupId>org.xerial.thirdparty</groupId>
-      <artifactId>jdbc-api</artifactId>
-      <version>1.4</version>
-      <scope>provided</scope>
-    </dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.8.2</version>
+  		<type>jar</type>
+  		<scope>test</scope>
+  	</dependency>
   </dependencies>
 </project>

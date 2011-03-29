@@ -14,7 +14,7 @@
  *  limitations under the License.
  *--------------------------------------------------------------------------*/
 //--------------------------------------
-// sqlite-jdbc Project
+// snappy-java Project
 //
 // OSInfo.java
 // Since: May 20, 2008
