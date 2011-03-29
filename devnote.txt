@@ -1,0 +1,5 @@
+
+mingwin compile
+
+ x86_64-w64-mingw32-cpp src/main/java/org/xerial/snappy/SnappyNative.cpp -Isrc/main/java/org/xerial/snappy -Itarget/snappy-1.0.1 -I../sqlite-jdbc/lib/inc_win -D_JNI_IMPLEMENTATION_ -O -o target/SnappyNative.o
+

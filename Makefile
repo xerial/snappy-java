@@ -18,6 +18,7 @@ $(TARGET)/snappy-$(VERSION): $(SNAPPY_ARCHIVE)
 
 
 
-$(SRC)/org/xerial/snappy/Snappy.h: $(SRC)/org/xerial/snappy/Snappy.java
+$(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/Snappy.java
 	javah -classpath $(TARGET)/classes -o $@ org.xerial.snappy.Snappy
+
 
