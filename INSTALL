@@ -1,0 +1,37 @@
+[Installation note of snappy-jave]
+
+-section: Requirements
+Necessary libraries for building snappy-java:
+
+[For all platforms]
+
+* Java 6 (JDK1.6) http://java.sun.com/
+ - set JAVA_HOME environment variable to the Java installation folder (e.g. C:/Program Files/Java/jdk1.6.0_24 in Windows)
+* Maven 3.x http://maven.apache.org/
+ - mvn command 
+
+[Windows (32/64bit)]
+* GNU make 
+* tar, curl, cp, rm commands (I use Cygwin for building snappy-java in Windows)
+
+
+[Windows (64-bit)]
+* Download MinGW-w64 http://sourceforge.net/projects/mingw-w64/ 
+* Set PATH to the following commands in the downloaded archive: 
+ - x86_64-w64-mingw32-g++
+ - x86_64-w64-mingw32-strip
+
+(Do not use the Cygwin version of MinGW-w64, because it fails to build assemblies for 64bit environment)
+ 
+[Windows (32-bit)]
+* Install MinGW http://www.mingw.org/
+* Set PATH to the following command in MinGW package
+ - mingw32-g++
+ - strip
+
+-section: Building snappy-java
+
+$ make 
+
+The JAR package will be created as target/snappy-java-(version).jar.
+
