@@ -42,7 +42,7 @@ clean-native:
 NATIVE_DIR:=src/main/resources/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
-snappy: $(NATIVE_DLL)
+snappy: $(TARGET)/snappy-$(VERSION) $(NATIVE_DLL)
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
