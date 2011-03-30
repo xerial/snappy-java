@@ -28,6 +28,7 @@ import static org.junit.Assert.*;
 
 import java.nio.ByteBuffer;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.xerial.util.log.Logger;
 
@@ -51,8 +52,8 @@ public class SnappyTest
             ByteBuffer dest = ByteBuffer.allocate(1024);
             int maxCompressedLen = Snappy.compress(src, dest);
         }
-        catch (IllegalArgumentException e) {
-            // detected non-direct buffer. OK
+        catch (SnappyError e) {
+            Assert.assertTrue(e.errorCode == SnappyErrorCode.NOT_A_DIRECT_BUFFER);
             return;
         }
 
@@ -67,7 +68,8 @@ public class SnappyTest
         for (int i = 0; i < 20; ++i) {
             s.append("Hello world!");
         }
-        byte[] orig = s.toString().getBytes();
+        String origStr = s.toString();
+        byte[] orig = origStr.getBytes();
         int BUFFER_SIZE = orig.length;
         ByteBuffer src = ByteBuffer.allocateDirect(orig.length * 2);
         src.put(orig);
@@ -89,5 +91,7 @@ public class SnappyTest
         extract.get(b);
         String decompressed = new String(b);
         _logger.info(decompressed);
+
+        assertEquals(origStr, decompressed);
     }
 }

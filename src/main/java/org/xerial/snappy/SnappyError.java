@@ -43,4 +43,10 @@ public class SnappyError extends Error
         super(e);
         this.errorCode = code;
     }
+
+    public SnappyError(SnappyErrorCode code, String message) {
+        super(message);
+        this.errorCode = code;
+    }
+
 }

@@ -47,13 +47,16 @@ public class Snappy
      * @param compressed
      *            output compressed data to buffer[pos()..]
      * @return byte size of the compressed data.
+     * 
+     * @throws SnappyError
+     *             when the input is not a direct buffer
      */
     public static int compress(ByteBuffer uncompressed, ByteBuffer compressed) {
 
         if (!uncompressed.isDirect())
-            throw new IllegalArgumentException("input is not a direct buffer");
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
         if (!compressed.isDirect())
-            throw new IllegalArgumentException("destination is not a direct buffer");
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
 
         // input: uncompressed[pos(), limit())
         // output: compressed
@@ -77,13 +80,17 @@ public class Snappy
      *            output the uncompressed data to buffer[pot())
      * @return uncompressed data size
      * 
+     * @throws SnappyException
+     *             when failed to uncompress the given input
+     * @throws SnappyError
+     *             when the input is not a direct buffer
      */
     public static int uncompress(ByteBuffer compressed, ByteBuffer uncompressed) throws SnappyException {
 
         if (!compressed.isDirect())
-            throw new IllegalArgumentException("input is not a direct buffer");
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
         if (!uncompressed.isDirect())
-            throw new IllegalArgumentException("destination is not a direct buffer");
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
 
         int cPos = compressed.position();
         int cLen = compressed.remaining();
@@ -102,11 +109,15 @@ public class Snappy
      * 
      * @param compressed
      *            data [pos() ... limit())
-     * @return
+     * @return uncompressed byte length of the given input
+     * @throws SnappyException
+     *             when failed to uncompress the given input
+     * @throws SnappyError
+     *             when the input is not a direct buffer
      */
     public static int uncompressedLength(ByteBuffer compressed) throws SnappyException {
         if (!compressed.isDirect())
-            throw new IllegalArgumentException("input is not a direct buffer");
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
 
         return SnappyNative.uncompressedLength(compressed, compressed.position(), compressed.remaining());
     }
