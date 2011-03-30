@@ -62,11 +62,8 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_getUncompressedLength
   (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen)
 {
-	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed);
-	if(compressedBuffer == 0)
-		return (jint) -1;
-	compressedBuffer += cpos;
-
+	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed) + cpos;
+	size_t result;
 	snappy::GetUncompressedLength(compressedBuffer, (size_t) clen, &result);
 	return (jint) result;
 }

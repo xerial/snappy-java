@@ -55,11 +55,19 @@ public class SnappyTest
         int maxCompressedLen = Snappy.getMaxCompressedLength(src.remaining());
         _logger.info("max compressed length:" + maxCompressedLen);
 
-        int uncompressedLen = Snappy.getUncompressedLength(src);
+        ByteBuffer compressed = ByteBuffer.allocateDirect(1024);
+        int compressedSize = Snappy.compress(src, compressed);
+        _logger.info("compressed size: " + compressedSize);
+
+        int uncompressedLen = Snappy.getUncompressedLength(compressed);
         _logger.info("uncompressed length: " + uncompressedLen);
+        ByteBuffer extract = ByteBuffer.allocateDirect(1024);
+        Snappy.decompress(compressed, extract);
+        extract.limit(uncompressedLen);
 
-        ByteBuffer dest = ByteBuffer.allocateDirect(1024);
-        Snappy.compress(src, dest);
-
+        byte[] b = new byte[uncompressedLen];
+        extract.get(b);
+        String decompressed = new String(b);
+        _logger.info(decompressed);
     }
 }

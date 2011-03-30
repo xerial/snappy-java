@@ -38,10 +38,10 @@ public class Snappy
         int uLen = uncompressed.remaining();
         int compressedSize = SnappyNative.rawCompress(uncompressed, uPos, uLen, compressed, compressed.position());
 
-        //            pos      limit
-        // [ ....XXXXXX.........]
-        uncompressed.limit(uncompressed.capacity());
-        uncompressed.position(uPos + uLen);
+        //        //            pos      limit
+        //        // [ ....XXXXXX.........]
+        //        uncompressed.limit(uncompressed.capacity());
+        //        uncompressed.position(uPos + uLen);
 
         //         pos  limit
         // [ ......BBBBBBB.........]
@@ -69,8 +69,8 @@ public class Snappy
 
         boolean ret = SnappyNative.rawDecompress(compressed, cPos, cLen, decompressed, decompressed.position());
 
-        compressed.limit(compressed.capacity());
-        compressed.position(cPos + cLen);
+        //        compressed.limit(compressed.capacity());
+        //        compressed.position(cPos + cLen);
 
         return ret;
     }
