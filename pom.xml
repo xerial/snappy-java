@@ -46,6 +46,35 @@
         </configuration>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+          
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.1.2</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
 
 	<extensions>
@@ -64,6 +93,62 @@
     <developerConnection>scm:hg:default</developerConnection>
     <url>scm:hg:https://snappy-java.googlecode.com/hg/</url>
   </scm>
+
+  <distributionManagement>
+    <!-- for development releases -->
+    <site>
+      <id>xerial.scp</id>
+      <url>scpexe://www.xerial.org/home/web/maven.xerial.org/repository/site</url>
+    </site>
+    <repository>
+      <id>xerial.scp</id>
+      <name>Xerial Maven Repository</name>
+      <url>scpexe://www.xerial.org/home/web/maven.xerial.org/repository/artifact</url>
+    </repository>
+    <snapshotRepository>
+      <id>xerial.scp</id>
+      <name>Xerial Maven Snapshot Repository</name>
+      <url>scpexe://www.xerial.org/home/web/maven.xerial.org/repository/snapshot</url>
+      <uniqueVersion>false</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <!-- for directly sending artifacts to sourceforge.net repository -->
+    <profile>
+      <id>sourceforge</id>
+      <distributionManagement>
+        <repository>
+          <id>xerial.sourceforge</id>
+          <name>Xerial maven repository at sourceforge.jp</name>
+          <url>scpexe://shell.sourceforge.jp/home/groups/x/xe/xerial/htdocs/maven/release</url>
+        </repository>
+      </distributionManagement>
+    </profile>
+
+    <!-- for local updates -->
+    <profile>
+      <id>xerial.local</id>
+      <distributionManagement>
+        <repository>
+          <id>xerial.local</id>
+          <name>Xerial Maven Repository</name>
+          <url>file:///home/web/maven.xerial.org/repository/artifact</url>
+        </repository>
+        <snapshotRepository>
+          <id>xerial.local</id>
+          <name>Xerial Maven Snapshot Repository</name>
+          <url>file:///home/web/maven.xerial.org/repository/snapshot</url>
+          <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+        <site>
+          <id>xerial.local</id>
+          <url>file:///home/web/maven.xerial.org/repository/site</url>
+        </site>
+      </distributionManagement>
+    </profile>
+  </profiles>
+
 
 
   <dependencies>

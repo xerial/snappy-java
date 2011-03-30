@@ -40,7 +40,7 @@ public class Snappy
     }
 
     /**
-     * Compress the content of the given input, then output the compressed data.
+     * Compress the content of the given input buffer
      * 
      * @param uncompressed
      *            input is at buffer[pos() ... limit())
@@ -72,7 +72,8 @@ public class Snappy
     }
 
     /**
-     * Uncompress the compressed buffer to the specified output buffer
+     * Uncompress the content of the input buffer. The result is dumped to the
+     * specified output buffer
      * 
      * @param compressed
      *            input is at buffer[pos() ... limit())
@@ -108,7 +109,7 @@ public class Snappy
      * Get the uncompressed size of the given compressed input
      * 
      * @param compressed
-     *            data [pos() ... limit())
+     *            input data [pos() ... limit())
      * @return uncompressed byte length of the given input
      * @throws SnappyException
      *             when failed to uncompress the given input
