@@ -42,9 +42,7 @@
         <configuration>
           <!--  do not run site-deploy goal, included in the default settings  -->
           <goals>deploy</goals>
-		  <!--
-          <connectionUrl>scm:hg:https://sqlite.xerial.googlecode.com/hg/</connectionUrl>
-           -->
+          <connectionUrl>scm:hg:https://snappy-java.googlecode.com/hg/</connectionUrl>
         </configuration>
       </plugin>
 
@@ -60,13 +58,13 @@
 
   </build>
 
-  <!--
+
   <scm>
-    <connection>scm:hg:https://sqlite.xerial.googlecode.com/hg/</connection>
+    <connection>scm:hg:https://snappy-java.googlecode.com/hg/</connection>
     <developerConnection>scm:hg:default</developerConnection>
-    <url>scm:hg:https://sqlite.xerial.googlecode.com/hg/</url>
+    <url>scm:hg:https://snappy-java.googlecode.com/hg/</url>
   </scm>
-  -->
+
 
   <dependencies>
   	<dependency>
