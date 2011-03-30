@@ -48,20 +48,26 @@ public class SnappyTest
     @Test
     public void load() throws Exception {
 
-        ByteBuffer src = ByteBuffer.allocateDirect(1024);
-        src.put("hello world".getBytes());
-
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < 20; ++i) {
+            s.append("Hello world!");
+        }
+        byte[] orig = s.toString().getBytes();
+        int BUFFER_SIZE = orig.length;
+        ByteBuffer src = ByteBuffer.allocateDirect(orig.length * 2);
+        src.put(orig);
         src.flip();
+        _logger.info("input size: " + src.remaining());
         int maxCompressedLen = Snappy.getMaxCompressedLength(src.remaining());
         _logger.info("max compressed length:" + maxCompressedLen);
 
-        ByteBuffer compressed = ByteBuffer.allocateDirect(1024);
+        ByteBuffer compressed = ByteBuffer.allocateDirect(maxCompressedLen);
         int compressedSize = Snappy.compress(src, compressed);
-        _logger.info("compressed size: " + compressedSize);
+        _logger.info("compressed length: " + compressedSize);
 
         int uncompressedLen = Snappy.getUncompressedLength(compressed);
         _logger.info("uncompressed length: " + uncompressedLen);
-        ByteBuffer extract = ByteBuffer.allocateDirect(1024);
+        ByteBuffer extract = ByteBuffer.allocateDirect(uncompressedLen);
         Snappy.decompress(compressed, extract);
         extract.limit(uncompressedLen);
 
