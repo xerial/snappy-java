@@ -32,5 +32,7 @@ public class SnappyTest
         ByteBuffer dest = ByteBuffer.allocate(1024);
         Snappy.compress(src, dest);
 
+        long uncompressedLen = Snappy.getUncompressedLength(dest);
+        _logger.info("uncompressed length:" + uncompressedLen);
     }
 }

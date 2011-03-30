@@ -51,7 +51,7 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_maxCompressedLength
  * Signature: (Ljava/nio/ByteBuffer;)J
  */
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_getUncompressedLength
-  (JNIEnv *, jobject, jobject)
+  (JNIEnv *, jclass, jobject)
 {
 
 	return (jlong) 0;
