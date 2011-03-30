@@ -69,7 +69,6 @@ public class SnappyTest
         _logger.info("uncompressed length: " + uncompressedLen);
         ByteBuffer extract = ByteBuffer.allocateDirect(uncompressedLen);
         Snappy.uncompress(compressed, extract);
-        extract.limit(uncompressedLen);
 
         byte[] b = new byte[uncompressedLen];
         extract.get(b);
