@@ -9,6 +9,8 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import static org.junit.Assert.*;
+
 import java.nio.ByteBuffer;
 
 import org.junit.Test;
@@ -25,16 +27,39 @@ public class SnappyTest
     }
 
     @Test
+    public void directBufferCheck() throws Exception {
+
+        try {
+            ByteBuffer src = ByteBuffer.allocate(1024);
+            src.put("hello world".getBytes());
+            src.flip();
+            ByteBuffer dest = ByteBuffer.allocate(1024);
+            int maxCompressedLen = Snappy.compress(src, dest);
+        }
+        catch (IllegalArgumentException e) {
+            // detected non-direct buffer. OK
+            return;
+        }
+
+        fail("shouldn't reach here");
+
+    }
+
+    @Test
     public void load() throws Exception {
 
-        ByteBuffer src = ByteBuffer.allocate(1024);
+        ByteBuffer src = ByteBuffer.allocateDirect(1024);
         src.put("hello world".getBytes());
-        ByteBuffer dest = ByteBuffer.allocate(1024);
 
         src.flip();
         int maxCompressedLen = Snappy.getMaxCompressedLength(src.remaining());
         _logger.info("max compressed length:" + maxCompressedLen);
-        //long uncompressedLen = Snappy.getUncompressedLength(dest);
-        //
+
+        int uncompressedLen = Snappy.getUncompressedLength(src);
+        _logger.info("uncompressed length: " + uncompressedLen);
+
+        ByteBuffer dest = ByteBuffer.allocateDirect(1024);
+        Snappy.compress(src, dest);
+
     }
 }
