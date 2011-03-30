@@ -1,6 +1,8 @@
 
 include Makefile.common
 
+MVN:=mvn
+
 all: snappy
 
 SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz 
@@ -43,12 +45,18 @@ NATIVE_DIR:=src/main/resources/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_TARGET_DIR:=$(TARGET)/classes/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
-snappy: $(TARGET)/snappy-$(VERSION) $(NATIVE_DLL)
+snappy-jar-version:=snappy-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
 
-$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
+native: $(NATIVE_DLL) 
+snappy: $(TARGET)/$(snappy-jar-version).jar
+
+$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) $(TARGET)/snappy-$(VERSION)
 	@mkdir -p $(@D)
 	cp $< $@
 	@mkdir -p $(NATIVE_TARGET_DIR)
 	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
 
+
+$(TARGET)/$(snappy-jar-version).jar: $(NATIVE_DLL)
+	$(MVN) package
 
