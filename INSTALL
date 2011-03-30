@@ -1,17 +1,17 @@
 [Installation note of snappy-java]
 
-= Necessary libraries for building snappy-java =
+= Required libraries for building snappy-java =
 
 [For all platforms]
 
 * Java 6 (JDK1.6) http://java.sun.com/
  - set JAVA_HOME environment variable to the Java installation folder (e.g. JAVA_HOME=C:/Program Files/Java/jdk1.6.0_24 in Windows)
 * Maven 3.x http://maven.apache.org/
- - mvn command 
+ - Check mvn command can be run from your command line.
 
 [Windows (32/64bit)]
 * GNU make 
-* tar, curl, cp, rm commands (I use Cygwin for building snappy-java in Windows)
+* And also tar, curl, cp, rm, grep commands are needed. (I use Cygwin for building snappy-java in Windows)
 
 
 [Windows (64-bit)]
@@ -28,12 +28,15 @@ NOTICE: Do not use the Cygwin version of MinGW-w64. It fails to build assemblies
  - mingw32-g++
  - strip
 
+To build x86 (32bit) dll using 64-bit Windows, use "make win32" target.
+
+
 = Building snappy-java =
 
 To build jar file of snappy-java, type:
 $ make 
 
-A native library for your machine environment and a jar package target/snappy-java-(version).jar will be produced in the target foldder.
+A native library for your machine environment and a jar package target/snappy-java-(version).jar are produced in the target folder.
 
 
 

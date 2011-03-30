@@ -58,8 +58,10 @@ $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) $(TARGET)/snappy-$(VERSION)
 
 
 $(TARGET)/$(snappy-jar-version).jar: $(NATIVE_DLL)
-	$(MVN) package
+	$(MVN) package -Dmaven.test.skip=true
 
+test:
+	$(MVN) test
 
 win32: 
 	$(MAKE) native CXX=mingw32-g++ OS_NAME=Windows OS_ARCH=x86  
