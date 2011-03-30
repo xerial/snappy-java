@@ -34,7 +34,7 @@ public class LoadSnappy
 
     public static boolean initialize() {
         if (!extracted)
-            loadSQLiteNativeLibrary();
+            loadSnappyNativeLibrary();
         return extracted;
     }
 
@@ -78,7 +78,7 @@ public class LoadSnappy
     private static boolean extractAndLoadLibraryFile(String libFolderForCurrentOS, String libraryFileName,
             String targetFolder) {
         String nativeLibraryFilePath = libFolderForCurrentOS + "/" + libraryFileName;
-        final String prefix = "sqlite-" + getVersion() + "-";
+        final String prefix = "snappy-" + getVersion() + "-";
 
         String extractedLibFileName = prefix + libraryFileName;
         File extractedLibFile = new File(targetFolder, extractedLibFileName);
@@ -149,27 +149,29 @@ public class LoadSnappy
             return false;
     }
 
-    private static void loadSQLiteNativeLibrary() {
+    private static void loadSnappyNativeLibrary() {
         if (extracted)
             return;
 
         // Try loading library from org.sqlite.lib.path library path */
-        String sqliteNativeLibraryPath = System.getProperty("org.sqlite.lib.path");
-        String sqliteNativeLibraryName = System.getProperty("org.sqlite.lib.name");
-        if (sqliteNativeLibraryName == null)
-            sqliteNativeLibraryName = System.mapLibraryName("sqlitejdbc");
+        String snappyNativeLibraryPath = System.getProperty("org.xerial.snappy.lib.path");
+        String snappyNativeLibraryName = System.getProperty("org.xerial.snappy.lib.name");
 
-        if (sqliteNativeLibraryPath != null) {
-            if (loadNativeLibrary(sqliteNativeLibraryPath, sqliteNativeLibraryName)) {
+        // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
+        if (snappyNativeLibraryName == null)
+            snappyNativeLibraryName = System.mapLibraryName("snappy");
+
+        if (snappyNativeLibraryPath != null) {
+            if (loadNativeLibrary(snappyNativeLibraryPath, snappyNativeLibraryName)) {
                 extracted = true;
                 return;
             }
         }
 
         // Load the os-dependent library from a jar file
-        sqliteNativeLibraryPath = "/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
+        snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
-        if (LoadSnappy.class.getResource(sqliteNativeLibraryPath + "/" + sqliteNativeLibraryName) == null) {
+        if (LoadSnappy.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) == null) {
             // use nested VM version
             return;
         }
@@ -177,7 +179,7 @@ public class LoadSnappy
         // temporary library folder
         String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
         // Try extracting the library from jar 
-        if (extractAndLoadLibraryFile(sqliteNativeLibraryPath, sqliteNativeLibraryName, tempFolder)) {
+        if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
             extracted = true;
             return;
         }
@@ -204,9 +206,9 @@ public class LoadSnappy
 
     public static String getVersion() {
 
-        URL versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial/snappy-java/pom.properties");
+        URL versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial.snappy/snappy-java/pom.properties");
         if (versionFile == null)
-            versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial/snappy-java/VERSION");
+            versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial.snappy/snappy-java/VERSION");
 
         String version = "unknown";
         try {
