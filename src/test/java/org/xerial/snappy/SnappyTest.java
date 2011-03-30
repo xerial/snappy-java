@@ -71,7 +71,7 @@ public class SnappyTest
         String origStr = s.toString();
         byte[] orig = origStr.getBytes();
         int BUFFER_SIZE = orig.length;
-        ByteBuffer src = ByteBuffer.allocateDirect(orig.length * 2);
+        ByteBuffer src = ByteBuffer.allocateDirect(orig.length);
         src.put(orig);
         src.flip();
         _logger.info("input size: " + src.remaining());
@@ -82,10 +82,20 @@ public class SnappyTest
         int compressedSize = Snappy.compress(src, compressed);
         _logger.info("compressed length: " + compressedSize);
 
+        assertEquals(0, src.position());
+        assertEquals(orig.length, src.remaining());
+        assertEquals(orig.length, src.limit());
+
+        assertEquals(0, compressed.position());
+        assertEquals(compressedSize, compressed.limit());
+        assertEquals(compressedSize, compressed.remaining());
+
         int uncompressedLen = Snappy.uncompressedLength(compressed);
         _logger.info("uncompressed length: " + uncompressedLen);
         ByteBuffer extract = ByteBuffer.allocateDirect(uncompressedLen);
-        Snappy.uncompress(compressed, extract);
+        int uncompressedLen2 = Snappy.uncompress(compressed, extract);
+        assertEquals(uncompressedLen, uncompressedLen2);
+        assertEquals(uncompressedLen, extract.remaining());
 
         byte[] b = new byte[uncompressedLen];
         extract.get(b);
@@ -94,4 +104,42 @@ public class SnappyTest
 
         assertEquals(origStr, decompressed);
     }
+
+    @Test
+    public void intermediateBuffer() throws Exception {
+
+        String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
+        byte[] orig = m.getBytes();
+        final int offset = 100;
+        ByteBuffer input = ByteBuffer.allocateDirect(orig.length + offset);
+        input.position(offset);
+        input.put(orig);
+        input.flip();
+        input.position(offset);
+
+        // compress
+        int maxCompressedLength = Snappy.maxCompressedLength(input.remaining());
+        final int offset2 = 40;
+        ByteBuffer compressed = ByteBuffer.allocateDirect(maxCompressedLength + offset2);
+        compressed.position(offset2);
+        Snappy.compress(input, compressed);
+
+        // uncompress
+        final int offset3 = 80;
+        int uncompressedLength = Snappy.uncompressedLength(compressed);
+        ByteBuffer uncompressed = ByteBuffer.allocateDirect(uncompressedLength + offset3);
+        uncompressed.position(offset3);
+        Snappy.uncompress(compressed, uncompressed);
+        assertEquals(offset3, uncompressed.position());
+        assertEquals(offset3 + uncompressedLength, uncompressed.limit());
+        assertEquals(uncompressedLength, uncompressed.remaining());
+
+        // extract string
+        byte[] recovered = new byte[uncompressedLength];
+        uncompressed.get(recovered);
+        String m2 = new String(recovered);
+
+        assertEquals(m, m2);
+    }
+
 }
