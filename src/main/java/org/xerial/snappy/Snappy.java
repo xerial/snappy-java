@@ -11,6 +11,12 @@ package org.xerial.snappy;
 
 import java.nio.ByteBuffer;
 
+/**
+ * Snappy API
+ * 
+ * @author leo
+ * 
+ */
 public class Snappy
 {
 
@@ -19,11 +25,13 @@ public class Snappy
     }
 
     /**
+     * Compress the content of the given input, then output the compressed data.
+     * 
      * @param uncompressed
      *            input is at buffer[pos() ... limit())
      * @param compressed
      *            output compressed data to buffer[pos()..]
-     * @return byte size of the compressed data
+     * @return byte size of the compressed data.
      */
     public static int compress(ByteBuffer uncompressed, ByteBuffer compressed) {
 
@@ -50,9 +58,10 @@ public class Snappy
      *            input is at buffer[pos() ... limit())
      * @param uncompressed
      *            output decompressed data to buffer[pot())
-     * @return
+     * @return decompressed data size
+     * 
      */
-    public static boolean uncompress(ByteBuffer compressed, ByteBuffer decompressed) {
+    public static int uncompress(ByteBuffer compressed, ByteBuffer decompressed) throws SnappyException {
 
         if (!compressed.isDirect())
             throw new IllegalArgumentException("input is not a direct buffer");
@@ -62,12 +71,13 @@ public class Snappy
         int cPos = compressed.position();
         int cLen = compressed.remaining();
 
-        boolean ret = SnappyNative.rawDecompress(compressed, cPos, cLen, decompressed, decompressed.position());
+        //         pos  limit
+        // [ ......UUUUUU.........]
+        int decompressedSize = SnappyNative
+                .rawUncompress(compressed, cPos, cLen, decompressed, decompressed.position());
+        decompressed.limit(decompressed.position() + decompressedSize);
 
-        //        compressed.limit(compressed.capacity());
-        //        compressed.position(cPos + cLen);
-
-        return ret;
+        return decompressedSize;
     }
 
     /**
@@ -77,7 +87,7 @@ public class Snappy
      *            data [pos() ... limit())
      * @return
      */
-    public static int getUncompressedLength(ByteBuffer compressed) {
+    public static int uncompressedLength(ByteBuffer compressed) throws SnappyException {
         if (!compressed.isDirect())
             throw new IllegalArgumentException("input is not a direct buffer");
 
@@ -91,7 +101,7 @@ public class Snappy
      *            byte size of the data to compress
      * @return maxmum byte size of the compressed data
      */
-    public static int getMaxCompressedLength(int byteSize) {
+    public static int maxCompressedLength(int byteSize) {
         return SnappyNative.maxCompressedLength(byteSize);
     }
 

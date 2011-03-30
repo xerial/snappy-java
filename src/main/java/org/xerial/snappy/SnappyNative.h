@@ -25,10 +25,10 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
- * Method:    rawDecompress
- * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)Z
+ * Method:    rawUncompress
+ * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
-JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_rawDecompress
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress
   (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
 
 /*

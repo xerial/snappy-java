@@ -140,8 +140,7 @@ public class LoadSnappy
                 return true;
             }
             catch (UnsatisfiedLinkError e) {
-                System.err.println(e);
-                return false;
+                throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e);
             }
 
         }

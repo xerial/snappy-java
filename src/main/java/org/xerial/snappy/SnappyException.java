@@ -36,7 +36,27 @@ public class SnappyException extends Exception
 
     public final SnappyErrorCode errorCode;
 
+    public SnappyException(int code) {
+        SnappyErrorCode[] values = SnappyErrorCode.values();
+        if (code < 0 || code >= values.length) {
+            this.errorCode = SnappyErrorCode.UNKNOWN;
+        }
+        else {
+            this.errorCode = values[code];
+        }
+    }
+
     public SnappyException(SnappyErrorCode errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public SnappyException(SnappyErrorCode errorCode, Exception e) {
+        super(e);
+        this.errorCode = errorCode;
+    }
+
+    public SnappyException(SnappyErrorCode errorCode, String message) {
+        super(message);
         this.errorCode = errorCode;
     }
 

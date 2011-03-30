@@ -16,8 +16,8 @@
 //--------------------------------------
 // XerialJ
 //
-// SnappyErrorCode.java
-// Since: 2011/03/30 14:56:50
+// SnappyError.java
+// Since: 2011/03/30 15:22:43
 //
 // $URL$
 // $Author$
@@ -25,18 +25,22 @@
 package org.xerial.snappy;
 
 /**
- * Error codes of snappy-java
+ * Used when serious errors (unchecked exception) in snappy-java are observed.
  * 
  * @author leo
  * 
  */
-public enum SnappyErrorCode {
+public class SnappyError extends Error
+{
+    /**
+     * 
+     */
+    private static final long    serialVersionUID = 1L;
 
-    UNKNOWN(0), FAILED_TO_LOAD_NATIVE_LIBRARY(1), PARSING_ERROR(2);
+    public final SnappyErrorCode errorCode;
 
-    public final int id;
-
-    private SnappyErrorCode(int id) {
-        this.id = id;
+    public SnappyError(SnappyErrorCode code, Error e) {
+        super(e);
+        this.errorCode = code;
     }
 }
