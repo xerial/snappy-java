@@ -22,7 +22,7 @@ public class Snappy
      * @param uncompressed
      *            input is at buffer[pos() ... limit())
      * @param compressed
-     *            output compressed data to buffer[pos()]
+     *            output compressed data to buffer[pos()..]
      * @return byte size of the compressed data
      */
     public static int compress(ByteBuffer uncompressed, ByteBuffer compressed) {
@@ -38,11 +38,6 @@ public class Snappy
         int uLen = uncompressed.remaining();
         int compressedSize = SnappyNative.rawCompress(uncompressed, uPos, uLen, compressed, compressed.position());
 
-        //        //            pos      limit
-        //        // [ ....XXXXXX.........]
-        //        uncompressed.limit(uncompressed.capacity());
-        //        uncompressed.position(uPos + uLen);
-
         //         pos  limit
         // [ ......BBBBBBB.........]
         compressed.limit(compressed.position() + compressedSize);
@@ -53,11 +48,11 @@ public class Snappy
     /**
      * @param compressed
      *            input is at buffer[pos() ... limit())
-     * @param decompressed
+     * @param uncompressed
      *            output decompressed data to buffer[pot())
      * @return
      */
-    public static boolean decompress(ByteBuffer compressed, ByteBuffer decompressed) {
+    public static boolean uncompress(ByteBuffer compressed, ByteBuffer decompressed) {
 
         if (!compressed.isDirect())
             throw new IllegalArgumentException("input is not a direct buffer");
@@ -75,6 +70,13 @@ public class Snappy
         return ret;
     }
 
+    /**
+     * Get the uncompressed size of the compressed input
+     * 
+     * @param compressed
+     *            data [pos() ... limit())
+     * @return
+     */
     public static int getUncompressedLength(ByteBuffer compressed) {
         if (!compressed.isDirect())
             throw new IllegalArgumentException("input is not a direct buffer");
@@ -82,6 +84,13 @@ public class Snappy
         return SnappyNative.getUncompressedLength(compressed, compressed.position(), compressed.remaining());
     }
 
+    /**
+     * Get the maximum size of the compressed data of a given byte size
+     * 
+     * @param byteSize
+     *            byte size of the data to compress
+     * @return maxmum byte size of the compressed data
+     */
     public static int getMaxCompressedLength(int byteSize) {
         return SnappyNative.maxCompressedLength(byteSize);
     }

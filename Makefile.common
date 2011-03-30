@@ -109,7 +109,7 @@ SNAPPY_FLAGS := $($(os_arch)_SNAPPY_FLAGS)
 
 SNAPPY_OUT:=$(TARGET)/$(snappy)-$(os_arch)
 
-CXXFLAGS := $(CXXFLAGS)  -I$(SNAPPY_OUT) -I$(SNAPPY_SRC)
+CXXFLAGS := $(CXXFLAGS) -Ilib/include  -I$(SNAPPY_OUT) -I$(SNAPPY_SRC)
 ifneq ($(jni_include),)
 CXXFLAGS := $(CXXFLAGS) -I"$(jni_include)"
 endif
