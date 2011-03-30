@@ -1,14 +1,23 @@
 #include <snappy.h>
 #include "SnappyNative.h"
 
+JNIEXPORT jstring JNICALL Java_org_xerial_snappy_Snappy_nativeLibraryVersion
+  (JNIEnv * env, jclass self)
+{
+	return env->NewStringUTF("1.0.1");
+}
+
 /*
  * Class:     org_xerial_snappy_Snappy
  * Method:    compress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)J
  */
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_compress
-  (JNIEnv *, jobject, jobject, jobject)
+  (JNIEnv* env, jclass self, jobject uncompressed, jobject compressed)
 {
+	void* uncompressedBuffer = env->GetDirectBufferAddress(uncompressed);
+
+
 	return (jlong) 0;
 }
 
@@ -18,7 +27,7 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_compress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_Snappy_uncompress
-  (JNIEnv *, jobject, jobject, jobject)
+  (JNIEnv *, jclass, jobject, jobject)
 {
 
 	return (jboolean) true;
@@ -30,7 +39,7 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_Snappy_uncompress
  * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_maxCompressedLength
-  (JNIEnv *, jobject, jlong)
+  (JNIEnv *, jclass, jlong)
 {
 
 	return (jlong) 0;

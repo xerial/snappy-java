@@ -17,6 +17,8 @@ public class Snappy
         LoadSnappy.initialize();
     }
 
+    public native static String nativeLibraryVersion();
+
     // ------------------------------------------------------------------------
     // Generic compression/decompression routines.
     // ------------------------------------------------------------------------

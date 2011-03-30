@@ -1,8 +1,8 @@
 /*
- * @(#)jni.h	1.56 03/12/19
+ * @(#)jni.h	1.63 10/03/23
  *
- * Copyright 2004 Sun Microsystems, Inc. All rights reserved.
- * SUN PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2006, Oracle and/or its affiliates. All rights reserved.
+ * ORACLE PROPRIETARY/CONFIDENTIAL.  Use is subject to license terms.
  */
 
 /*
@@ -116,6 +116,15 @@ typedef struct _jfieldID *jfieldID;
 
 struct _jmethodID;
 typedef struct _jmethodID *jmethodID;
+
+/* Return values from jobjectRefType */
+typedef enum _jobjectType {
+     JNIInvalidRefType    = 0,
+     JNILocalRefType      = 1,
+     JNIGlobalRefType     = 2,
+     JNIWeakGlobalRefType = 3 
+} jobjectRefType;
+
 
 #endif /* JNI_TYPES_ALREADY_DEFINED_IN_JNI_MD_H */
 
@@ -733,6 +742,11 @@ struct JNINativeInterface_ {
        (JNIEnv* env, jobject buf);
     jlong (JNICALL *GetDirectBufferCapacity)
        (JNIEnv* env, jobject buf);
+
+    /* New JNI 1.6 Features */
+
+    jobjectRefType (JNICALL *GetObjectRefType)
+        (JNIEnv* env, jobject obj);
 };
 
 /*
@@ -1821,6 +1835,9 @@ struct JNIEnv_ {
     jlong GetDirectBufferCapacity(jobject buf) {
         return functions->GetDirectBufferCapacity(this, buf);
     }
+    jobjectRefType GetObjectRefType(jobject obj) {
+        return functions->GetObjectRefType(this, obj);
+    }
 
 #endif /* __cplusplus */
 };
@@ -1845,35 +1862,7 @@ typedef struct JavaVMAttachArgs {
     jobject group;
 } JavaVMAttachArgs;
 
-/* These structures will be VM-specific. */
-
-typedef struct JDK1_1InitArgs {
-    jint version;
-
-    char **properties;
-    jint checkSource;
-    jint nativeStackSize;
-    jint javaStackSize;
-    jint minHeapSize;
-    jint maxHeapSize;
-    jint verifyMode;
-    char *classpath;
-
-    jint (JNICALL *vfprintf)(FILE *fp, const char *format, va_list args);
-    void (JNICALL *exit)(jint code);
-    void (JNICALL *abort)(void);
-
-    jint enableClassGC;
-    jint enableVerboseGC;
-    jint disableAsyncGC;
-    jint verbose;
-    jboolean debugging;
-    jint debugPort;
-} JDK1_1InitArgs;
-
-typedef struct JDK1_1AttachArgs {
-    void * __padding; /* C compilers don't allow empty structures. */
-} JDK1_1AttachArgs;
+/* These will be VM-specific. */
 
 #define JDK1_2
 #define JDK1_4
@@ -1943,9 +1932,13 @@ JNI_OnUnload(JavaVM *vm, void *reserved);
 #define JNI_VERSION_1_1 0x00010001
 #define JNI_VERSION_1_2 0x00010002
 #define JNI_VERSION_1_4 0x00010004
+#define JNI_VERSION_1_6 0x00010006
 
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
 
 #endif /* !_JAVASOFT_JNI_H_ */
+
+
+

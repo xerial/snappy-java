@@ -90,12 +90,12 @@ Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
 Windows-x86_LIBNAME      := snappy.dll
 Windows-x86_SNAPPY_FLAGS := 
 
-#Windows-amd64_CXX          := x86_64-w64-mingw32-g++
-#Windows-amd64_STRIP        := x86_64-w64-mingw32-strip
-Windows-amd64_CXX          := i686-w64-mingw32-g++
-Windows-amd64_STRIP        := i686-w64-mingw32-strip
-Windows-amd64_CXXFLAGS     := -Ilib/inc_win -O2
-Windows-amd64_LINKFLAGS    := -Wl,--kill-at -shared -static-libgcc
+Windows-amd64_CXX          := x86_64-w64-mingw32-g++
+Windows-amd64_STRIP        := x86_64-w64-mingw32-strip
+#Windows-amd64_CXX          := i686-w64-mingw32-g++
+#Windows-amd64_STRIP        := i686-w64-mingw32-strip
+Windows-amd64_CXXFLAGS     := -Ilib/inc_win -Os
+Windows-amd64_LINKFLAGS    := -Wl,--kill-at -shared -static 
 Windows-amd64_LIBNAME      := snappy.dll
 Windows-amd64_SNAPPY_FLAGS := 
 

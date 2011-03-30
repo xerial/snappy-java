@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     org_xerial_snappy_Snappy
+ * Method:    nativeLibraryVersion
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_org_xerial_snappy_Snappy_nativeLibraryVersion
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     org_xerial_snappy_Snappy
  * Method:    compress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)J
  */

@@ -12,9 +12,18 @@ package org.xerial.snappy;
 import java.nio.ByteBuffer;
 
 import org.junit.Test;
+import org.xerial.util.log.Logger;
 
 public class SnappyTest
 {
+    private static Logger _logger = Logger.getLogger(SnappyTest.class);
+
+    @Test
+    public void getVersion() throws Exception {
+        String version = Snappy.nativeLibraryVersion();
+        _logger.info("version: " + version);
+    }
+
     @Test
     public void load() throws Exception {
 

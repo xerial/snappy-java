@@ -4,13 +4,16 @@ include Makefile.common
 all: snappy
 
 SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz 
+SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
+SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
+
 
 $(SNAPPY_ARCHIVE):
 	@mkdir -p $(@D)
 	curl -o$@ http://snappy.googlecode.com/files/snappy-$(VERSION).tar.gz
 
 
-$(SNAPPY_SRC): $(SNAPPY_ARCHIVE)
+$(TARGET)/snappy-$(VERSION): $(SNAPPY_ARCHIVE)
 	tar xvfz $< -C $(TARGET)
 
 
@@ -18,21 +21,17 @@ $(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/Snappy.java
 	javah -classpath $(TARGET)/classes -o $@ org.xerial.snappy.Snappy
 
 
-SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
-SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
 
-
-
-$(SNAPPY_OUT)/%.o : $(SNAPPY_SRC)/%.cc $(SNAPPY_SRC)
+$(SNAPPY_OUT)/%.o : $(TARGET)/snappy-$(VERSION)/%.cc 
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(SNAPPY_OUT)/%.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h  $(SNAPPY_SRC)
+$(SNAPPY_OUT)/%.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h  
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
-	$(CXX) $(CXXFLAGS) $(LINKFLAGS) -o $@ $* 
+	$(CXX) $(CXXFLAGS) $(LINKFLAGS) $+ -o $@ 
 	$(STRIP) $@
 
 clean-native: 
