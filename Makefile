@@ -45,7 +45,7 @@ NATIVE_DIR:=src/main/resources/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_TARGET_DIR:=$(TARGET)/classes/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
-snappy-jar-version:=snappy-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
+snappy-jar-version:=snappy-java-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
 
 native: $(NATIVE_DLL) 
 snappy: $(TARGET)/$(snappy-jar-version).jar
@@ -59,7 +59,6 @@ $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) $(TARGET)/snappy-$(VERSION)
 
 $(TARGET)/$(snappy-jar-version).jar: $(NATIVE_DLL)
 	$(MVN) package
-
 
 
 win32: 

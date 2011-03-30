@@ -4,5 +4,8 @@ Snappy-java is a Java port of snappy http://code.google.com/p/snappy/, a fast co
 [usage]
 
 * Add snappy-java-1.0.1.jar to your classpath
+* Use the compress/decompress methods defined in org.xerial.snappy.Snappy class.
+
+
 
 
