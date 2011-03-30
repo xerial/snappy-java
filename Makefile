@@ -38,7 +38,7 @@ $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
 	$(STRIP) $@
 
 clean-native: 
-	rm -rf $(SNAPPY_OBJ) $(SNAPPY_OUT)/$(LIBNAME)
+	rm -rf $(SNAPPY_OUT)
 
 
 NATIVE_DIR:=src/main/resources/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
@@ -47,20 +47,20 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 snappy-jar-version:=snappy-java-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
 
-native: $(NATIVE_DLL) 
+native: $(TARGET)/snappy-$(VERSION) $(NATIVE_DLL) 
 snappy: $(TARGET)/$(snappy-jar-version).jar
 
-$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) $(TARGET)/snappy-$(VERSION)
+$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) 
 	@mkdir -p $(@D)
 	cp $< $@
 	@mkdir -p $(NATIVE_TARGET_DIR)
 	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
 
 
-$(TARGET)/$(snappy-jar-version).jar: $(NATIVE_DLL)
+$(TARGET)/$(snappy-jar-version).jar: native $(NATIVE_DLL)
 	$(MVN) package -Dmaven.test.skip=true
 
-test:
+test: snappy
 	$(MVN) test
 
 win32: 
