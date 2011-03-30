@@ -1,7 +1,8 @@
+#include <string>
 #include <snappy.h>
 #include "SnappyNative.h"
 
-JNIEXPORT jstring JNICALL Java_org_xerial_snappy_Snappy_nativeLibraryVersion
+JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
   (JNIEnv * env, jclass self)
 {
 	return env->NewStringUTF("1.0.1");
@@ -12,13 +13,15 @@ JNIEXPORT jstring JNICALL Java_org_xerial_snappy_Snappy_nativeLibraryVersion
  * Method:    compress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)J
  */
-JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_compress
-  (JNIEnv* env, jclass self, jobject uncompressed, jobject compressed)
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress
+  (JNIEnv* env, jclass self, jobject uncompressed, jint upos, jint ulen, jobject compressed, jint cpos)
 {
-	void* uncompressedBuffer = env->GetDirectBufferAddress(uncompressed);
+	char* uncompressedBuffer = (char*) env->GetDirectBufferAddress(uncompressed);
+	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed);
+	size_t compressedLength;
 
-
-	return (jlong) 0;
+	snappy::RawCompress(uncompressedBuffer, (size_t) ulen, compressedBuffer, &compressedLength);
+	return (jint) compressedLength;
 }
 
 /*
@@ -26,11 +29,17 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_compress
  * Method:    uncompress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_Snappy_uncompress
-  (JNIEnv *, jclass, jobject, jobject)
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_rawDecompress
+  (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen, jobject decompressed, jint dpos)
 {
+	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed) + cpos;
+	char* decompressedBuffer = (char*) env->GetDirectBufferAddress(decompressed) + dpos;
 
-	return (jboolean) true;
+	size_t decompressedLength;
+	snappy::GetUncompressedLength(compressedBuffer, (size_t) clen, &decompressedLength);
+	bool ret = snappy::RawUncompress(compressedBuffer, (size_t) clen, decompressedBuffer);
+
+	return (jboolean) ret;
 }
 
 /*
@@ -38,11 +47,11 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_Snappy_uncompress
  * Method:    maxCompressedLength
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_maxCompressedLength
-  (JNIEnv *, jclass, jlong)
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
+  (JNIEnv *, jclass, jint size)
 {
-
-	return (jlong) 0;
+	size_t l = snappy::MaxCompressedLength((size_t) size);
+	return (jint) l;
 }
 
 /*
@@ -50,11 +59,16 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_maxCompressedLength
  * Method:    getUncompressedLength
  * Signature: (Ljava/nio/ByteBuffer;)J
  */
-JNIEXPORT jlong JNICALL Java_org_xerial_snappy_Snappy_getUncompressedLength
-  (JNIEnv *, jclass, jobject)
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_getUncompressedLength
+  (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen)
 {
+	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed);
+	size_t result;
+	std::string s = "hello world";
+	//snappy::GetUncompressedLength(compressedBuffer, (size_t) clen, &result);
+	snappy::GetUncompressedLength(s.c_str(), s.length(), &result);
 
-	return (jlong) 0;
+	return (jint) result;
 }
 
 

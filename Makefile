@@ -17,9 +17,10 @@ $(TARGET)/snappy-$(VERSION): $(SNAPPY_ARCHIVE)
 	tar xvfz $< -C $(TARGET)
 
 
-$(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/Snappy.java
-	javah -classpath $(TARGET)/classes -o $@ org.xerial.snappy.Snappy
+jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
+$(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/SnappyNative.java
+	$(JAVAH) -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
 
 
 $(SNAPPY_OUT)/%.o : $(TARGET)/snappy-$(VERSION)/%.cc 
@@ -46,5 +47,6 @@ snappy: $(NATIVE_DLL)
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
 	cp $< $@
+	cp $< $(TARGET)/classes/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)/$(LIBNAME)
 
 

@@ -13,25 +13,64 @@ import java.nio.ByteBuffer;
 
 public class Snappy
 {
-    static {
-        LoadSnappy.initialize();
+
+    public static String getNativeLibraryVersion() {
+        return SnappyNative.nativeLibraryVersion();
     }
 
-    public native static String nativeLibraryVersion();
+    /**
+     * @param uncompressed
+     *            input is at buffer[pos() ... limit())
+     * @param compressed
+     *            output compressed data to buffer[pos()]
+     * @return byte size of the compressed data
+     */
+    public static int compress(ByteBuffer uncompressed, ByteBuffer compressed) {
 
-    // ------------------------------------------------------------------------
-    // Generic compression/decompression routines.
-    // ------------------------------------------------------------------------
+        // input: uncompressed[pos(), limit())
+        // output: compressed
+        int uPos = uncompressed.position();
+        int uLen = uncompressed.remaining();
+        int compressedSize = SnappyNative.rawCompress(uncompressed, uPos, uLen, compressed, compressed.position());
 
-    public native static long compress(ByteBuffer uncompressed, ByteBuffer compressed);
+        //            pos      limit
+        // [ ....XXXXXX.........]
+        uncompressed.limit(uncompressed.capacity());
+        uncompressed.position(uPos + uLen);
 
-    public native static boolean uncompress(ByteBuffer compressed, ByteBuffer uncompressed);
+        //         pos  limit
+        // [ ......BBBBBBB.........]
+        compressed.limit(compressed.position() + compressedSize);
 
-    // Returns the maximal size of the compressed representation of
-    // input data that is "source_bytes" bytes in length;
-    public native static long maxCompressedLength(long source_bytes);
+        return compressedSize;
+    }
 
-    // This operation takes O(1) time.
-    public native static long getUncompressedLength(ByteBuffer compressed);
+    /**
+     * @param compressed
+     *            input is at buffer[pos() ... limit())
+     * @param decompressed
+     *            output decompressed data to buffer[pot())
+     * @return
+     */
+    public static boolean decompress(ByteBuffer compressed, ByteBuffer decompressed) {
+
+        int cPos = compressed.position();
+        int cLen = compressed.remaining();
+
+        boolean ret = SnappyNative.rawDecompress(compressed, cPos, cLen, decompressed, decompressed.position());
+
+        compressed.limit(compressed.capacity());
+        compressed.position(cPos + cLen);
+
+        return ret;
+    }
+
+    public static int getUncompressedLength(ByteBuffer compressed) {
+        return SnappyNative.getUncompressedLength(compressed, compressed.position(), compressed.remaining());
+    }
+
+    public static int getMaxCompressedLength(int byteSize) {
+        return SnappyNative.maxCompressedLength(byteSize);
+    }
 
 }
