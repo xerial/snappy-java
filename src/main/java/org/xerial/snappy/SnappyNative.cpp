@@ -102,4 +102,12 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength
 	return (jint) result;
 }
 
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer
+  (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen)
+{
+	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed) + cpos;
+	bool ret = snappy::IsValidCompressedBuffer(compressedBuffer, (size_t) clen);
+	return ret;
+}
+
 

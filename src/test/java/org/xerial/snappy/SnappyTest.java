@@ -82,6 +82,8 @@ public class SnappyTest
         int compressedSize = Snappy.compress(src, compressed);
         _logger.info("compressed length: " + compressedSize);
 
+        assertTrue(Snappy.isValidCompressedBuffer(compressed));
+
         assertEquals(0, src.position());
         assertEquals(orig.length, src.remaining());
         assertEquals(orig.length, src.limit());
@@ -123,6 +125,7 @@ public class SnappyTest
         ByteBuffer compressed = ByteBuffer.allocateDirect(maxCompressedLength + offset2);
         compressed.position(offset2);
         Snappy.compress(input, compressed);
+        assertTrue(Snappy.isValidCompressedBuffer(compressed));
 
         // uncompress
         final int offset3 = 80;

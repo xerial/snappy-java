@@ -40,12 +40,14 @@ public class Snappy
     }
 
     /**
-     * Compress the content of the given input buffer
+     * Compress the content in the given input buffer. After the compression,
+     * you can retrieve the compressed data from the output buffer [pos() ...
+     * limit()) (compressed data size = limit() - pos() = remaining())
      * 
      * @param uncompressed
-     *            input is at buffer[pos() ... limit())
+     *            buffer[pos() ... limit()) containing the input data
      * @param compressed
-     *            output compressed data to buffer[pos()..]
+     *            output of the compressed data. Uses range [pos()..].
      * @return byte size of the compressed data.
      * 
      * @throws SnappyError
@@ -72,13 +74,13 @@ public class Snappy
     }
 
     /**
-     * Uncompress the content of the input buffer. The result is dumped to the
+     * Uncompress the content in the input buffer. The result is dumped to the
      * specified output buffer
      * 
      * @param compressed
-     *            input is at buffer[pos() ... limit())
+     *            buffer[pos() ... limit()) containing the input data
      * @param uncompressed
-     *            output the uncompressed data to buffer[pot())
+     *            output of the the uncompressed data. It uses buffer[pot()..]
      * @return uncompressed data size
      * 
      * @throws SnappyException
@@ -106,7 +108,7 @@ public class Snappy
     }
 
     /**
-     * Get the uncompressed size of the given compressed input
+     * Get the uncompressed byte size of the given compressed input.
      * 
      * @param compressed
      *            input data [pos() ... limit())
@@ -124,7 +126,8 @@ public class Snappy
     }
 
     /**
-     * Get the maximum size of the compressed data of a given byte size
+     * Get the maximum byte size needed for compressing a data of the given byte
+     * size.
      * 
      * @param byteSize
      *            byte size of the data to compress
@@ -132,6 +135,16 @@ public class Snappy
      */
     public static int maxCompressedLength(int byteSize) {
         return SnappyNative.maxCompressedLength(byteSize);
+    }
+
+    /**
+     * Returns true iff the contents of compressed buffer [pos() ... limit())
+     * can be uncompressed successfully. Does not return the uncompressed data.
+     * Takes time proportional to compressed_length, but is usually at least a
+     * factor of four faster than actual decompression.
+     */
+    public static boolean isValidCompressedBuffer(ByteBuffer compressed) {
+        return SnappyNative.isValidCompressedBuffer(compressed, compressed.position(), compressed.remaining());
     }
 
 }

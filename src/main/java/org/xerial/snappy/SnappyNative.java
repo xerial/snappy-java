@@ -56,6 +56,8 @@ public class SnappyNative
     // This operation takes O(1) time.
     public native static int uncompressedLength(ByteBuffer compressed, int offset, int len) throws SnappyException;
 
+    public native static boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len);
+
     public static void throw_error(int errorCode) throws SnappyException {
         throw new SnappyException(errorCode);
     }

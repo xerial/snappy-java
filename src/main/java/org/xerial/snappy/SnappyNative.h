@@ -47,6 +47,14 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength
   (JNIEnv *, jclass, jobject, jint, jint);
 
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    isValidCompressedBuffer
+ * Signature: (Ljava/nio/ByteBuffer;II)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer
+  (JNIEnv *, jclass, jobject, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif
