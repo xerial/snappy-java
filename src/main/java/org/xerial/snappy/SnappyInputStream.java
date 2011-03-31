@@ -76,6 +76,7 @@ public class SnappyInputStream extends InputStream
             return false;
 
         uncompressedCursor = 0;
+        uncompressedLimit = 0;
 
         int chunkSizeDataLen = in.read(chunkSizeBuf, 0, 4);
         if (chunkSizeDataLen < 4) {
