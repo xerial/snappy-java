@@ -43,13 +43,15 @@ import java.util.Arrays;
  */
 public class SnappyOutputStream extends OutputStream
 {
-    public static final int      HEADER_SIZE        = 16 + 4; // version (16 bytes) & block size (int: 4 bytes)
+    public final static String   STREAM_FORMAT_VERSION = "snappy-1.0.1";
+    public static final int      HEADER_SIZE           = 16;             // version (16 bytes) 
+    public static final int      PREAMBLE_SIZE         = HEADER_SIZE + 4; // version (16 bytes) & block size (int: 4 bytes)
 
-    private static final int     DEFAULT_BLOCK_SIZE = 1 << 15; // use 2^15 = 32KB as block size
+    static final int             DEFAULT_BLOCK_SIZE    = 1 << 15;        // use 2^15 = 32KB as block size
 
     protected final OutputStream out;
     private final int            blockSize;
-    private int                  cursor             = 0;
+    private int                  cursor                = 0;
     protected byte[]             uncompressed;
     protected byte[]             compressed;
 
@@ -68,7 +70,7 @@ public class SnappyOutputStream extends OutputStream
     protected void writeHeader() throws IOException {
         byte[] header = new byte[16]; // header size
         Arrays.fill(header, (byte) 0);
-        byte[] version = "snappy-1.0.1".getBytes("UTF-8");
+        byte[] version = STREAM_FORMAT_VERSION.getBytes("UTF-8");
         assert (version.length <= 16);
         System.arraycopy(version, 0, header, 0, version.length);
         out.write(header);
