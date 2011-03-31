@@ -35,7 +35,7 @@ import java.nio.ByteBuffer;
 public class SnappyNative
 {
     static {
-        LoadSnappy.initialize();
+        LoadSnappy.load();
     }
 
     public native static String nativeLibraryVersion();
@@ -44,7 +44,7 @@ public class SnappyNative
     // Generic compression/decompression routines.
     // ------------------------------------------------------------------------
     public native static int rawCompress(ByteBuffer input, int inputOffset, int inputLength, ByteBuffer compressed,
-            int outputOffset);
+            int outputOffset) throws SnappyException;
 
     public native static int rawCompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
             throws SnappyException;
@@ -64,9 +64,10 @@ public class SnappyNative
 
     public native static int uncompressedLength(byte[] input, int offset, int len) throws SnappyException;
 
-    public native static boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len);
+    public native static boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len)
+            throws SnappyException;
 
-    public native static boolean isValidCompressedBuffer(byte[] input, int offset, int len);
+    public native static boolean isValidCompressedBuffer(byte[] input, int offset, int len) throws SnappyException;
 
     public static void throw_error(int errorCode) throws SnappyException {
         throw new SnappyException(errorCode);

@@ -45,12 +45,12 @@ import java.util.Properties;
  */
 public class LoadSnappy
 {
-    private static boolean extracted = false;
+    private static boolean isLoaded = false;
 
-    public static boolean initialize() {
-        if (!extracted)
+    public static boolean load() {
+        if (!isLoaded)
             loadSnappyNativeLibrary();
-        return extracted;
+        return isLoaded;
     }
 
     /**
@@ -164,7 +164,7 @@ public class LoadSnappy
     }
 
     private static void loadSnappyNativeLibrary() {
-        if (extracted)
+        if (isLoaded)
             return;
 
         // Try loading library from org.sqlite.lib.path library path */
@@ -177,7 +177,7 @@ public class LoadSnappy
 
         if (snappyNativeLibraryPath != null) {
             if (loadNativeLibrary(snappyNativeLibraryPath, snappyNativeLibraryName)) {
-                extracted = true;
+                isLoaded = true;
                 return;
             }
         }
@@ -194,11 +194,11 @@ public class LoadSnappy
         String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
         // Try extracting the library from jar 
         if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
-            extracted = true;
+            isLoaded = true;
             return;
         }
 
-        extracted = false;
+        isLoaded = false;
         return;
     }
 

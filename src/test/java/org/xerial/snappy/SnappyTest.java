@@ -39,7 +39,7 @@ public class SnappyTest
     @Test
     public void getVersion() throws Exception {
         String version = Snappy.getNativeLibraryVersion();
-        _logger.info("version: " + version);
+        _logger.debug("version: " + version);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class SnappyTest
     }
 
     @Test
-    public void load() throws Exception {
+    public void directBuffer() throws Exception {
 
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < 20; ++i) {
@@ -74,13 +74,13 @@ public class SnappyTest
         ByteBuffer src = ByteBuffer.allocateDirect(orig.length);
         src.put(orig);
         src.flip();
-        _logger.info("input size: " + src.remaining());
+        _logger.debug("input size: " + src.remaining());
         int maxCompressedLen = Snappy.maxCompressedLength(src.remaining());
-        _logger.info("max compressed length:" + maxCompressedLen);
+        _logger.debug("max compressed length:" + maxCompressedLen);
 
         ByteBuffer compressed = ByteBuffer.allocateDirect(maxCompressedLen);
         int compressedSize = Snappy.compress(src, compressed);
-        _logger.info("compressed length: " + compressedSize);
+        _logger.debug("compressed length: " + compressedSize);
 
         assertTrue(Snappy.isValidCompressedBuffer(compressed));
 
@@ -93,7 +93,7 @@ public class SnappyTest
         assertEquals(compressedSize, compressed.remaining());
 
         int uncompressedLen = Snappy.uncompressedLength(compressed);
-        _logger.info("uncompressed length: " + uncompressedLen);
+        _logger.debug("uncompressed length: " + uncompressedLen);
         ByteBuffer extract = ByteBuffer.allocateDirect(uncompressedLen);
         int uncompressedLen2 = Snappy.uncompress(compressed, extract);
         assertEquals(uncompressedLen, uncompressedLen2);
@@ -102,13 +102,13 @@ public class SnappyTest
         byte[] b = new byte[uncompressedLen];
         extract.get(b);
         String decompressed = new String(b);
-        _logger.info(decompressed);
+        _logger.debug(decompressed);
 
         assertEquals(origStr, decompressed);
     }
 
     @Test
-    public void intermediateBuffer() throws Exception {
+    public void bufferOffset() throws Exception {
 
         String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
         byte[] orig = m.getBytes();
@@ -146,18 +146,48 @@ public class SnappyTest
     }
 
     @Test
-    public void rawCompress() throws Exception {
+    public void byteArrayCompress() throws Exception {
 
         String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
         byte[] input = m.getBytes();
         byte[] output = new byte[Snappy.maxCompressedLength(input.length)];
-        int compressedSize = SnappyNative.rawCompress(input, 0, input.length, output, 0);
+        int compressedSize = Snappy.compress(input, 0, input.length, output, 0);
         byte[] uncompressed = new byte[input.length];
 
-        assertTrue(SnappyNative.isValidCompressedBuffer(output, 0, compressedSize));
-        int uncompressedSize = SnappyNative.rawUncompress(output, 0, compressedSize, uncompressed, 0);
+        assertTrue(Snappy.isValidCompressedBuffer(output, 0, compressedSize));
+        int uncompressedSize = Snappy.uncompress(output, 0, compressedSize, uncompressed, 0);
         String m2 = new String(uncompressed);
         assertEquals(m, m2);
+
+    }
+
+    @Test
+    public void rangeCheck() throws Exception {
+        String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
+        byte[] input = m.getBytes();
+        byte[] output = new byte[Snappy.maxCompressedLength(input.length)];
+        int compressedSize = Snappy.compress(input, 0, input.length, output, 0);
+
+        assertTrue(Snappy.isValidCompressedBuffer(output, 0, compressedSize));
+        // Intentionally set an invalid range
+        assertFalse(Snappy.isValidCompressedBuffer(output, 0, compressedSize + 1));
+        assertFalse(Snappy.isValidCompressedBuffer(output, 1, compressedSize));
+
+        // Test the ByteBuffer API
+        ByteBuffer bin = ByteBuffer.allocateDirect(input.length);
+        bin.put(input);
+        bin.flip();
+        ByteBuffer bout = ByteBuffer.allocateDirect(Snappy.maxCompressedLength(bin.remaining()));
+        int compressedSize2 = Snappy.compress(bin, bout);
+        assertEquals(compressedSize, compressedSize2);
+
+        assertTrue(Snappy.isValidCompressedBuffer(bout));
+        // Intentionally set an invalid range
+        bout.limit(bout.limit() + 1);
+        assertFalse(Snappy.isValidCompressedBuffer(bout));
+        bout.limit(bout.limit() - 1);
+        bout.position(1);
+        assertFalse(Snappy.isValidCompressedBuffer(bout));
 
     }
 

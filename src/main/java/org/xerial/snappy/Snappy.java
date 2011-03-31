@@ -27,7 +27,7 @@ package org.xerial.snappy;
 import java.nio.ByteBuffer;
 
 /**
- * Snappy API
+ * Snappy API for data compression/decompression
  * 
  * @author leo
  * 
@@ -35,6 +35,11 @@ import java.nio.ByteBuffer;
 public class Snappy
 {
 
+    /**
+     * Get the native library version of the snappy
+     * 
+     * @return native library version
+     */
     public static String getNativeLibraryVersion() {
         return SnappyNative.nativeLibraryVersion();
     }
@@ -53,7 +58,7 @@ public class Snappy
      * @throws SnappyError
      *             when the input is not a direct buffer
      */
-    public static int compress(ByteBuffer uncompressed, ByteBuffer compressed) {
+    public static int compress(ByteBuffer uncompressed, ByteBuffer compressed) throws SnappyException {
 
         if (!uncompressed.isDirect())
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
@@ -74,8 +79,36 @@ public class Snappy
     }
 
     /**
+     * Compress the input buffer content in [inputOffset,
+     * ...inputOffset+inputLength) then output to the specified output buffer.
+     * 
+     * @param input
+     * @param inputOffset
+     * @param inputLength
+     * @param output
+     * @param outputOffset
+     * @return byte size of the compressed data
+     * @throws SnappyException
+     *             when failed to access the input/output buffer
+     */
+    public static int compress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
+            throws SnappyException {
+        if (input == null || output == null)
+            throw new NullPointerException("input or output is null");
+
+        int compressedSize = SnappyNative.rawCompress(input, inputOffset, inputLength, output, outputOffset);
+        return compressedSize;
+    }
+
+    /**
      * Uncompress the content in the input buffer. The result is dumped to the
-     * specified output buffer
+     * specified output buffer.
+     * 
+     * Note that if you pass the wrong data or the range [pos(), limit()) that
+     * cannot be uncompressed, your JVM might crash due to the access violation
+     * exception issued in the native code written in C++. To avoid this type of
+     * crash, use {@link #isValidCompressedBuffer(ByteBuffer)} first.
+     * 
      * 
      * @param compressed
      *            buffer[pos() ... limit()) containing the input data
@@ -108,6 +141,32 @@ public class Snappy
     }
 
     /**
+     * Uncompress the content in the input buffer. The uncompressed data is
+     * written to the output buffer.
+     * 
+     * Note that if you pass the wrong data or the range [inputOffset,
+     * inputOffset + inputLength) that cannot be uncompressed, your JVM might
+     * crash due to the access violation exception issued in the native code
+     * written in C++. To avoid this type of crash, use
+     * {@link #isValidCompressedBuffer(byte[], int, int)} first.
+     * 
+     * @param input
+     * @param inputOffset
+     * @param inputLength
+     * @param output
+     * @param outputOffset
+     * @return
+     * @throws SnappyException
+     */
+    public static int uncompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
+            throws SnappyException {
+        if (input == null || output == null)
+            throw new NullPointerException("input or output is null");
+
+        return SnappyNative.rawUncompress(input, inputOffset, inputLength, output, outputOffset);
+    }
+
+    /**
      * Get the uncompressed byte size of the given compressed input.
      * 
      * @param compressed
@@ -126,6 +185,21 @@ public class Snappy
     }
 
     /**
+     * Get the uncompressed byte size of the given compressed input
+     * 
+     * @param input
+     * @param offset
+     * @param length
+     * @return umcompressed byte size of the the given input data
+     * @throws SnappyException
+     */
+    public static int uncompressedLength(byte[] input, int offset, int length) throws SnappyException {
+        if (input == null)
+            throw new NullPointerException("input is null");
+        return SnappyNative.uncompressedLength(input, offset, length);
+    }
+
+    /**
      * Get the maximum byte size needed for compressing a data of the given byte
      * size.
      * 
@@ -140,11 +214,23 @@ public class Snappy
     /**
      * Returns true iff the contents of compressed buffer [pos() ... limit())
      * can be uncompressed successfully. Does not return the uncompressed data.
-     * Takes time proportional to compressed_length, but is usually at least a
+     * Takes time proportional to the input length, but is usually at least a
      * factor of four faster than actual decompression.
      */
-    public static boolean isValidCompressedBuffer(ByteBuffer compressed) {
+    public static boolean isValidCompressedBuffer(ByteBuffer compressed) throws SnappyException {
         return SnappyNative.isValidCompressedBuffer(compressed, compressed.position(), compressed.remaining());
+    }
+
+    /**
+     * Returns true iff the contents of compressed buffer [offset,
+     * offset+length) can be uncompressed successfully. Does not return the
+     * uncompressed data. Takes time proportional to the input length, but is
+     * usually at least a factor of four faster than actual decompression.
+     */
+    public static boolean isValidCompressedBuffer(byte[] input, int offset, int length) throws SnappyException {
+        if (input == null)
+            throw new NullPointerException("input is null");
+        return SnappyNative.isValidCompressedBuffer(input, offset, length);
     }
 
 }
