@@ -145,4 +145,20 @@ public class SnappyTest
         assertEquals(m, m2);
     }
 
+    @Test
+    public void rawCompress() throws Exception {
+
+        String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
+        byte[] input = m.getBytes();
+        byte[] output = new byte[Snappy.maxCompressedLength(input.length)];
+        int compressedSize = SnappyNative.rawCompress(input, 0, input.length, output, 0);
+        byte[] uncompressed = new byte[input.length];
+
+        assertTrue(SnappyNative.isValidCompressedBuffer(output, 0, compressedSize));
+        int uncompressedSize = SnappyNative.rawUncompress(output, 0, compressedSize, uncompressed, 0);
+        String m2 = new String(uncompressed);
+        assertEquals(m, m2);
+
+    }
+
 }

@@ -32,7 +32,7 @@ package org.xerial.snappy;
  */
 public enum SnappyErrorCode {
 
-    UNKNOWN(0), FAILED_TO_LOAD_NATIVE_LIBRARY(1), PARSING_ERROR(2), NOT_A_DIRECT_BUFFER(3);
+    UNKNOWN(0), FAILED_TO_LOAD_NATIVE_LIBRARY(1), PARSING_ERROR(2), NOT_A_DIRECT_BUFFER(3), OUT_OF_MEMORY(4);
 
     public final int id;
 

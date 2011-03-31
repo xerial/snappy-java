@@ -20,16 +20,32 @@ JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersi
  * Method:    rawCompress
  * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
   (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawCompress
+ * Signature: ([BII[BI)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress___3BII_3BI
+  (JNIEnv *, jclass, jbyteArray, jint, jint, jbyteArray, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
  * Method:    rawUncompress
  * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
   (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawUncompress
+ * Signature: ([BII[BI)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress___3BII_3BI
+  (JNIEnv *, jclass, jbyteArray, jint, jint, jbyteArray, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -44,16 +60,32 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
  * Method:    uncompressedLength
  * Signature: (Ljava/nio/ByteBuffer;II)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__Ljava_nio_ByteBuffer_2II
   (JNIEnv *, jclass, jobject, jint, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    uncompressedLength
+ * Signature: ([BII)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength___3BII
+  (JNIEnv *, jclass, jbyteArray, jint, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
  * Method:    isValidCompressedBuffer
  * Signature: (Ljava/nio/ByteBuffer;II)Z
  */
-JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_nio_ByteBuffer_2II
   (JNIEnv *, jclass, jobject, jint, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    isValidCompressedBuffer
+ * Signature: ([BII)Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer___3BII
+  (JNIEnv *, jclass, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }

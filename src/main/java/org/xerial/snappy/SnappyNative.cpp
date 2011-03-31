@@ -39,7 +39,7 @@ JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersi
  * Method:    compress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)J
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
   (JNIEnv* env, jclass self, jobject uncompressed, jint upos, jint ulen, jobject compressed, jint cpos)
 {
 	char* uncompressedBuffer = (char*) env->GetDirectBufferAddress(uncompressed) + upos;
@@ -51,11 +51,38 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress
 }
 
 /*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawCompress
+ * Signature: ([BII[BI)I
+ */
+
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress___3BII_3BI
+  (JNIEnv * env, jclass self, jbyteArray input, jint inputOffset, jint inputLen, jbyteArray output, jint outputOffset)
+{
+	char* in = (char*) env->GetPrimitiveArrayCritical(input, 0);
+	char* out = (char*) env->GetPrimitiveArrayCritical(output, 0);
+	if(in == 0 || out == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return 0;
+	}
+
+	size_t compressedLength;
+	snappy::RawCompress(in + inputOffset, (size_t) inputLen, out + outputOffset, &compressedLength);
+
+	env->ReleasePrimitiveArrayCritical(input, in, 0);
+	env->ReleasePrimitiveArrayCritical(output, out, 0);
+
+	return (jint) compressedLength;
+}
+
+
+/*
  * Class:     org_xerial_snappy_Snappy
  * Method:    uncompress
  * Signature: (Ljava/nio/ByteBuffer;Ljava/nio/ByteBuffer;)Z
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
   (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen, jobject decompressed, jint dpos)
 {
 	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed) + cpos;
@@ -72,11 +99,39 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress
 	return (jint) decompressedLength;
 }
 
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress___3BII_3BI
+  (JNIEnv * env, jclass self, jbyteArray input, jint inputOffset, jint inputLength, jbyteArray output, jint outputOffset)
+{
+	char* in = (char*) env->GetPrimitiveArrayCritical(input, 0);
+	char* out = (char*) env->GetPrimitiveArrayCritical(output, 0);
+	if(in == 0 || out == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return 0;
+	}
+
+	size_t uncompressedLength;
+	snappy::GetUncompressedLength(in + inputOffset, (size_t) inputLength, &uncompressedLength);
+	bool ret = snappy::RawUncompress(in + inputOffset, (size_t) inputLength, out + outputOffset);
+
+	env->ReleasePrimitiveArrayCritical(input, in, 0);
+	env->ReleasePrimitiveArrayCritical(output, out, 0);
+
+	if(!ret) {
+		throw_exception(env, self, 2);
+		return 0;
+	}
+
+	return (jint) uncompressedLength;
+}
+
+
 /*
  * Class:     org_xerial_snappy_Snappy
  * Method:    maxCompressedLength
  * Signature: (J)J
  */
+
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
   (JNIEnv *, jclass, jint size)
 {
@@ -89,7 +144,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
  * Method:    getUncompressedLength
  * Signature: (Ljava/nio/ByteBuffer;)J
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__Ljava_nio_ByteBuffer_2II
   (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen)
 {
 	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed) + cpos;
@@ -102,7 +157,24 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength
 	return (jint) result;
 }
 
-JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength___3BII
+  (JNIEnv * env, jclass self, jbyteArray input, jint offset, jint length)
+{
+	char* in = (char*) env->GetPrimitiveArrayCritical(input, 0);
+	if(in == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return 0;
+	}
+
+	size_t result;
+	bool ret = snappy::GetUncompressedLength(in + offset, (size_t) length, &result);
+	env->ReleasePrimitiveArrayCritical(input, in, 0);
+
+	return (jint) result;
+}
+
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_nio_ByteBuffer_2II
   (JNIEnv * env, jclass self, jobject compressed, jint cpos, jint clen)
 {
 	char* compressedBuffer = (char*) env->GetDirectBufferAddress(compressed) + cpos;
@@ -110,4 +182,18 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressed
 	return ret;
 }
 
+
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer___3BII
+  (JNIEnv * env, jclass self, jbyteArray input, jint offset, jint length)
+{
+	char* in = (char*) env->GetPrimitiveArrayCritical(input, 0);
+	if(in == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return 0;
+	}
+	bool ret = snappy::IsValidCompressedBuffer(in + offset, (size_t) length);
+	env->ReleasePrimitiveArrayCritical(input, in, 0);
+	return ret;
+}
 
