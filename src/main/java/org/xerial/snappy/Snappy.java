@@ -45,6 +45,41 @@ public class Snappy
     }
 
     /**
+     * High-level API for compressing the input byte array. This method performs
+     * array copy to generate the result. If you want to save this cost, use
+     * {@link #compress(byte[], int, int, byte[], int)} or
+     * {@link #compress(ByteBuffer, ByteBuffer)}.
+     * 
+     * @param input
+     *            the input data
+     * @return the compressed byte array
+     * @throws SnappyException
+     */
+    public static byte[] compress(byte[] input) throws SnappyException {
+        byte[] buf = new byte[Snappy.maxCompressedLength(input.length)];
+        int compressedByteSize = Snappy.compress(input, 0, input.length, buf, 0);
+        byte[] result = new byte[compressedByteSize];
+        System.arraycopy(buf, 0, result, 0, compressedByteSize);
+        return result;
+    }
+
+    /**
+     * High-level API for uncompressing the input byte array.
+     * 
+     * @param input
+     * @return
+     * @throws SnappyException
+     */
+    public static byte[] uncompress(byte[] input) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
+        byte[] result = new byte[uncompressedLength];
+        int byteSize = Snappy.uncompress(input, 0, input.length, result, 0);
+        if (byteSize != uncompressedLength)
+            throw new SnappyException(SnappyErrorCode.INVALID_DECOMPRESSION);
+        return result;
+    }
+
+    /**
      * Compress the content in the given input buffer. After the compression,
      * you can retrieve the compressed data from the output buffer [pos() ...
      * limit()) (compressed data size = limit() - pos() = remaining())
@@ -167,13 +202,15 @@ public class Snappy
     }
 
     /**
-     * Get the uncompressed byte size of the given compressed input.
+     * Get the uncompressed byte size of the given compressed input. This
+     * operation taks O(1) time.
      * 
      * @param compressed
      *            input data [pos() ... limit())
      * @return uncompressed byte length of the given input
      * @throws SnappyException
-     *             when failed to uncompress the given input
+     *             when failed to uncompress the given input. The error code is
+     *             {@link SnappyErrorCode#PARSING_ERROR}
      * @throws SnappyError
      *             when the input is not a direct buffer
      */
@@ -185,13 +222,16 @@ public class Snappy
     }
 
     /**
-     * Get the uncompressed byte size of the given compressed input
+     * Get the uncompressed byte size of the given compressed input. This
+     * operation takes O(1) time.
      * 
      * @param input
      * @param offset
      * @param length
      * @return umcompressed byte size of the the given input data
      * @throws SnappyException
+     *             when failed to uncompress the given input. The error code is
+     *             {@link SnappyErrorCode#PARSING_ERROR}
      */
     public static int uncompressedLength(byte[] input, int offset, int length) throws SnappyException {
         if (input == null)

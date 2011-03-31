@@ -191,4 +191,16 @@ public class SnappyTest
 
     }
 
+    @Test
+    public void highLevelAPI() throws Exception {
+
+        String m = "Hello! 01234 ACGDSFSDFJ World. FDSDF02394234 fdsfda03924";
+        byte[] input = m.getBytes();
+        byte[] output = Snappy.compress(input);
+
+        byte[] uncompressed = Snappy.uncompress(output);
+        String m2 = new String(uncompressed);
+        assertEquals(m, m2);
+    }
+
 }
