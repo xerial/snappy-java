@@ -67,7 +67,7 @@ public class Snappy
      * High-level API for uncompressing the input byte array.
      * 
      * @param input
-     * @return
+     * @return the uncompressed byte array
      * @throws SnappyException
      */
     public static byte[] uncompress(byte[] input) throws SnappyException {
@@ -190,7 +190,7 @@ public class Snappy
      * @param inputLength
      * @param output
      * @param outputOffset
-     * @return
+     * @return the byte size of the uncompressed data
      * @throws SnappyException
      */
     public static int uncompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
