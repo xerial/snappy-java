@@ -34,6 +34,9 @@ import java.io.OutputStream;
  * The input data is blocked into 32KB size, and each block is compressed and
  * then passed to the given {@link OutputStream}.
  * 
+ * The output data format is a sequence of (compressed size, compressed data
+ * ...) pair.
+ * 
  * @author leo
  * 
  */
@@ -50,7 +53,7 @@ public class SnappyOutputStream extends OutputStream
     public SnappyOutputStream(OutputStream out) {
         this.out = out;
         uncompressed = new byte[BLOCK_SIZE];
-        compressed = new byte[Snappy.maxCompressedLength(BLOCK_SIZE)];
+        compressed = new byte[Snappy.maxCompressedLength(BLOCK_SIZE) + 4];
     }
 
     @Override
@@ -82,6 +85,21 @@ public class SnappyOutputStream extends OutputStream
         out.flush();
     }
 
+    public static void writeInt(OutputStream out, int value) throws IOException {
+        out.write((value >> 24) & 0xFF);
+        out.write((value >> 16) & 0xFF);
+        out.write((value >> 8) & 0xFF);
+        out.write((value >> 0) & 0xFF);
+    }
+
+    public static int readInt(byte[] buffer, int pos) {
+        int b1 = (buffer[pos] & 0xFF) << 24;
+        int b2 = (buffer[pos + 1] & 0xFF) << 16;
+        int b3 = (buffer[pos + 2] & 0xFF) << 8;
+        int b4 = buffer[pos + 3] & 0xFF;
+        return b1 | b2 | b3 | b4;
+    }
+
     protected void dump() throws IOException {
         if (cursor <= 0)
             return; // no need to dump
@@ -89,6 +107,7 @@ public class SnappyOutputStream extends OutputStream
         // Compress and dump the buffer content
         try {
             int compressedSize = Snappy.compress(uncompressed, 0, cursor, compressed, 0);
+            writeInt(out, compressedSize);
             out.write(compressed, 0, compressedSize);
             cursor = 0;
         }
