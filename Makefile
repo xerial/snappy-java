@@ -75,3 +75,6 @@ test: $(NATIVE_DLL)
 
 win32: 
 	$(MAKE) native CXX=mingw32-g++ OS_NAME=Windows OS_ARCH=x86  
+
+mac32: 
+	$(MAKE) native CXX=g++ OS_NAME=Mac OS_ARCH=i386
