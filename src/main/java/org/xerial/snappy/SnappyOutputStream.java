@@ -26,6 +26,7 @@ package org.xerial.snappy;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * This class implements a stream filter for writing compressed data using
@@ -42,18 +43,36 @@ import java.io.OutputStream;
  */
 public class SnappyOutputStream extends OutputStream
 {
-    protected final OutputStream out;
+    public static final int      HEADER_SIZE        = 16 + 4; // version (16 bytes) & block size (int: 4 bytes)
 
-    private int                  cursor     = 0;
+    private static final int     DEFAULT_BLOCK_SIZE = 1 << 15; // use 2^15 = 32KB as block size
+
+    protected final OutputStream out;
+    private final int            blockSize;
+    private int                  cursor             = 0;
     protected byte[]             uncompressed;
     protected byte[]             compressed;
 
-    protected final int          BLOCK_SIZE = 1 << 15; // use 2^15 = 32KB as block size
+    public SnappyOutputStream(OutputStream out) throws IOException {
+        this(out, DEFAULT_BLOCK_SIZE);
+    }
 
-    public SnappyOutputStream(OutputStream out) {
+    public SnappyOutputStream(OutputStream out, int blockSize) throws IOException {
         this.out = out;
-        uncompressed = new byte[BLOCK_SIZE];
-        compressed = new byte[Snappy.maxCompressedLength(BLOCK_SIZE) + 4];
+        this.blockSize = blockSize;
+        uncompressed = new byte[blockSize];
+        compressed = new byte[Snappy.maxCompressedLength(blockSize)];
+        writeHeader();
+    }
+
+    protected void writeHeader() throws IOException {
+        byte[] header = new byte[16]; // header size
+        Arrays.fill(header, (byte) 0);
+        byte[] version = "snappy-1.0.1".getBytes("UTF-8");
+        assert (version.length <= 16);
+        System.arraycopy(version, 0, header, 0, version.length);
+        out.write(header);
+        writeInt(out, blockSize);
     }
 
     @Override
