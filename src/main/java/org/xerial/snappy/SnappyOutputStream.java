@@ -42,7 +42,7 @@ import java.io.OutputStream;
  */
 public class SnappyOutputStream extends OutputStream
 {
-    static final int             DEFAULT_BLOCK_SIZE = 1 << 15; // use 2^15 = 32KB as block size
+    static final int             DEFAULT_BLOCK_SIZE = 4 * 1024 * 1024; // Use 4 MB for the default block size
 
     protected final OutputStream out;
     private final int            blockSize;
