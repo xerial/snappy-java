@@ -34,8 +34,8 @@ import java.io.OutputStream;
  * The input data is blocked into 32KB size, and each block is compressed and
  * then passed to the given {@link OutputStream}.
  * 
- * The output data format is a sequence of (compressed size, compressed data
- * ...) pair.
+ * The output data format is a sequence of (compressed chunk size, compressed
+ * data chunk binary...) pair.
  * 
  * @author leo
  * 
