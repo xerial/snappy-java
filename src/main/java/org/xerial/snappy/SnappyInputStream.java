@@ -84,7 +84,7 @@ public class SnappyInputStream extends InputStream
 
     protected void readFully(byte[] fragment, int fragmentLength) throws IOException {
         // read the entire input data to the buffer 
-        compressed = new byte[Math.max(SnappyOutputStream.DEFAULT_BLOCK_SIZE, fragmentLength)];
+        compressed = new byte[Math.max(8 * 1024, fragmentLength)]; // 8K
         System.arraycopy(fragment, 0, compressed, 0, fragmentLength);
         int cursor = fragmentLength;
         for (int readBytes = 0; (readBytes = in.read(compressed, cursor, compressed.length - cursor)) != -1;) {
