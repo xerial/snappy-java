@@ -73,4 +73,16 @@ public class SnappyInputStreamTest
         assertArrayEquals(orig, uncompressed);
 
     }
+
+    @Test
+    public void readBlockCompressedData() throws Exception {
+        byte[] orig = readResourceFile("alice29.txt");
+        byte[] compressed = Snappy.compress(orig);
+
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
+        byte[] uncompressed = readFully(in);
+
+        assertEquals(orig.length, uncompressed.length);
+        assertArrayEquals(orig, uncompressed);
+    }
 }

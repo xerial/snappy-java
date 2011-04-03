@@ -61,7 +61,7 @@ public class SnappyOutputStreamTest
         ByteArrayOutputStream decompressed = new ByteArrayOutputStream();
         byte[] compressed = buf.toByteArray();
         // decompress
-        for (int cursor = 0; cursor < compressed.length;) {
+        for (int cursor = SnappyCodec.headerSize(); cursor < compressed.length;) {
             int chunkSize = SnappyOutputStream.readInt(compressed, cursor);
             cursor += 4;
             byte[] tmpOut = new byte[Snappy.uncompressedLength(compressed, cursor, chunkSize)];

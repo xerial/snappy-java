@@ -24,6 +24,7 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,9 +40,8 @@ public class SnappyInputStream extends InputStream
     private boolean             finishedReading    = false;
     private int                 blockSize          = SnappyOutputStream.DEFAULT_BLOCK_SIZE;
 
-    private byte[]              compressed         = new byte[blockSize];
-
-    private byte[]              uncompressed       = new byte[blockSize];
+    private byte[]              compressed;
+    private byte[]              uncompressed;
     private int                 uncompressedCursor = 0;
     private int                 uncompressedLimit  = 0;
 
@@ -49,6 +49,64 @@ public class SnappyInputStream extends InputStream
 
     public SnappyInputStream(InputStream input) throws IOException {
         this.in = input;
+        readHeader();
+
+        if (compressed == null)
+            compressed = new byte[blockSize];
+        if (uncompressed == null)
+            uncompressed = new byte[blockSize];
+    }
+
+    protected void readHeader() throws IOException {
+        byte[] header = new byte[SnappyCodec.headerSize()];
+        int readBytes = in.read(header, 0, header.length);
+        if (readBytes < header.length) {
+            // do the default uncompression
+            readFully(header, readBytes);
+            return;
+        }
+        SnappyCodec codec = SnappyCodec.readHeader(new ByteArrayInputStream(header));
+        if (codec.isValidMagicHeader()) {
+            // compressed by SnappyOutputStream
+            if (codec.version < SnappyCodec.MINIMUM_COMPATIBLE_VERSION) {
+                throw new IOException(String.format(
+                        "compressed with imcompatible codec version %d. At least version %d is required",
+                        codec.version, SnappyCodec.MINIMUM_COMPATIBLE_VERSION));
+            }
+        }
+        else {
+            // (probably) compressed by Snappy.compress(byte[])
+            readFully(header, readBytes);
+            return;
+        }
+    }
+
+    protected void readFully(byte[] fragment, int fragmentLength) throws IOException {
+        // read the entire input data to the buffer 
+        compressed = new byte[Math.max(blockSize, fragmentLength)];
+        System.arraycopy(fragment, 0, compressed, 0, fragmentLength);
+        int cursor = fragmentLength;
+        for (int readBytes = 0; (readBytes = in.read(compressed, cursor, compressed.length - cursor)) != -1;) {
+            cursor += readBytes;
+            if (cursor >= compressed.length) {
+                byte[] newBuf = new byte[(compressed.length * 2)];
+                System.arraycopy(compressed, 0, newBuf, 0, compressed.length);
+                compressed = newBuf;
+            }
+        }
+
+        // Uncompress
+        try {
+            int uncompressedLength = Snappy.uncompressedLength(compressed, 0, cursor);
+            uncompressed = new byte[uncompressedLength];
+            Snappy.uncompress(compressed, 0, cursor, uncompressed, 0);
+            this.uncompressedCursor = 0;
+            this.uncompressedLimit = uncompressedLength;
+        }
+        catch (SnappyException e) {
+            throw new IOException(e);
+        }
+
     }
 
     @Override

@@ -59,6 +59,11 @@ public class SnappyOutputStream extends OutputStream
         this.blockSize = blockSize;
         uncompressed = new byte[blockSize];
         compressed = new byte[Snappy.maxCompressedLength(blockSize)];
+        writeHeader();
+    }
+
+    protected void writeHeader() throws IOException {
+        SnappyCodec.currentHeader().writeHeader(out);
     }
 
     @Override
