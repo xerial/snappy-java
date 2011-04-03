@@ -56,6 +56,16 @@ public class SnappyInputStreamTest
         return out.toByteArray();
     }
 
+    public static byte[] biteWiseReadFully(InputStream input) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[4096];
+        for (int readData = 0; (readData = input.read()) != -1;) {
+            out.write(readData);
+        }
+        out.flush();
+        return out.toByteArray();
+    }
+
     @Test
     public void read() throws Exception {
         ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
@@ -85,4 +95,17 @@ public class SnappyInputStreamTest
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
     }
+
+    @Test
+    public void biteWiseRead() throws Exception {
+        byte[] orig = readResourceFile("alice29.txt");
+        byte[] compressed = Snappy.compress(orig);
+
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
+        byte[] uncompressed = biteWiseReadFully(in);
+
+        assertEquals(orig.length, uncompressed.length);
+        assertArrayEquals(orig, uncompressed);
+    }
+
 }

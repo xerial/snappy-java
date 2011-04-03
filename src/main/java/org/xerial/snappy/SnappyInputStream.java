@@ -83,7 +83,7 @@ public class SnappyInputStream extends InputStream
 
     protected void readFully(byte[] fragment, int fragmentLength) throws IOException {
         // read the entire input data to the buffer 
-        compressed = new byte[Math.max(blockSize, fragmentLength)];
+        compressed = new byte[Math.max(SnappyOutputStream.DEFAULT_BLOCK_SIZE, fragmentLength)];
         System.arraycopy(fragment, 0, compressed, 0, fragmentLength);
         int cursor = fragmentLength;
         for (int readBytes = 0; (readBytes = in.read(compressed, cursor, compressed.length - cursor)) != -1;) {
@@ -94,6 +94,8 @@ public class SnappyInputStream extends InputStream
                 compressed = newBuf;
             }
         }
+
+        finishedReading = true;
 
         // Uncompress
         try {
@@ -170,8 +172,15 @@ public class SnappyInputStream extends InputStream
 
     @Override
     public int read() throws IOException {
-        byte[] buf = new byte[1];
-        return read(buf, 0, 1);
+        if (uncompressedCursor < uncompressedLimit) {
+            return uncompressed[uncompressedCursor++];
+        }
+        else {
+            if (hasNextChunk())
+                return read();
+            else
+                return -1;
+        }
     }
 
 }
