@@ -98,7 +98,7 @@ public class SnappyInputStreamTest
 
     @Test
     public void biteWiseRead() throws Exception {
-        byte[] orig = readResourceFile("alice29.txt");
+        byte[] orig = readResourceFile("testdata/calgary/paper6");
         byte[] compressed = Snappy.compress(orig);
 
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));

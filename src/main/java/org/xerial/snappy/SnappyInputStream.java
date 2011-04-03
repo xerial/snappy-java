@@ -60,11 +60,12 @@ public class SnappyInputStream extends InputStream
     protected void readHeader() throws IOException {
         byte[] header = new byte[SnappyCodec.headerSize()];
         int readBytes = in.read(header, 0, header.length);
-        if (readBytes < header.length) {
+        if (header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
             readFully(header, readBytes);
             return;
         }
+
         SnappyCodec codec = SnappyCodec.readHeader(new ByteArrayInputStream(header));
         if (codec.isValidMagicHeader()) {
             // compressed by SnappyOutputStream
@@ -113,22 +114,22 @@ public class SnappyInputStream extends InputStream
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        int wroteBytes = 0;
-        for (; wroteBytes < len;) {
+        int writtenBytes = 0;
+        for (; writtenBytes < len;) {
             if (uncompressedCursor >= uncompressedLimit) {
                 if (hasNextChunk())
                     continue;
                 else {
-                    return wroteBytes == 0 ? -1 : wroteBytes;
+                    return writtenBytes == 0 ? -1 : writtenBytes;
                 }
             }
             int bytesToWrite = Math.min(uncompressedLimit - uncompressedCursor, len);
-            System.arraycopy(uncompressed, uncompressedCursor, b, off + wroteBytes, bytesToWrite);
-            wroteBytes += bytesToWrite;
+            System.arraycopy(uncompressed, uncompressedCursor, b, off + writtenBytes, bytesToWrite);
+            writtenBytes += bytesToWrite;
             uncompressedCursor += bytesToWrite;
         }
 
-        return wroteBytes;
+        return writtenBytes;
     }
 
     protected boolean hasNextChunk() throws IOException {
