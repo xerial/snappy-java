@@ -107,7 +107,7 @@ public class SnappyInputStream extends InputStream
             this.uncompressedLimit = uncompressedLength;
         }
         catch (SnappyException e) {
-            throw new IOException(e);
+            throw new IOException(e.getMessage());
         }
 
     }

@@ -122,7 +122,7 @@ public class SnappyOutputStream extends OutputStream
             cursor = 0;
         }
         catch (SnappyException e) {
-            throw new IOException(e);
+            throw new IOException(e.getMessage());
         }
     }
 
