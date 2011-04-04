@@ -41,7 +41,8 @@ public class SnappyInputStreamTest
     private static Logger _logger = Logger.getLogger(SnappyInputStreamTest.class);
 
     public static byte[] readResourceFile(String fileName) throws IOException {
-        BufferedInputStream input = FileResource.openByteStream(SnappyOutputStreamTest.class, fileName);
+        BufferedInputStream input = new BufferedInputStream(FileResource.find(SnappyOutputStreamTest.class, fileName)
+                .openStream());
         assertNotNull(input);
         return readFully(input);
     }

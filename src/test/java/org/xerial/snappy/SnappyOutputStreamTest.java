@@ -42,7 +42,8 @@ public class SnappyOutputStreamTest
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         SnappyOutputStream sout = new SnappyOutputStream(buf);
 
-        BufferedInputStream input = FileResource.openByteStream(SnappyOutputStreamTest.class, "alice29.txt");
+        BufferedInputStream input = new BufferedInputStream(FileResource.find(SnappyOutputStreamTest.class,
+                "alice29.txt").openStream());
         assertNotNull(input);
 
         ByteArrayOutputStream orig = new ByteArrayOutputStream();
