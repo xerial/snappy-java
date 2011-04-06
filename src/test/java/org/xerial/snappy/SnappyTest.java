@@ -238,4 +238,28 @@ public class SnappyTest
         assertArrayEquals(data, result);
     }
 
+    @Test
+    public void shortArray() throws Exception {
+        short[] data = new short[] { 432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1 };
+        byte[] compressed = Snappy.compress(data);
+        short[] result = Snappy.uncompressShort(compressed);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void intArray() throws Exception {
+        int[] data = new int[] { 432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1, Integer.MAX_VALUE, 3424, 43 };
+        byte[] compressed = Snappy.compress(data);
+        int[] result = Snappy.uncompressInt(compressed);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void charArray() throws Exception {
+        char[] data = new char[] { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!' };
+        byte[] compressed = Snappy.compress(data);
+        char[] result = Snappy.uncompressChar(compressed);
+        assertArrayEquals(data, result);
+    }
+
 }
