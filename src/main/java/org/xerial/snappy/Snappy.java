@@ -60,34 +60,43 @@ public class Snappy
      * @throws SnappyException
      */
     public static byte[] compress(byte[] input) throws SnappyException {
-        return compressBytes(input, input.length);
+        return rawCompress(input, input.length);
     }
 
     public static byte[] compress(short[] input) {
-        return compressBytes(input, input.length * 2); // short use 2 bytes
+        return rawCompress(input, input.length * 2); // short use 2 bytes
     }
 
     public static byte[] compress(char[] input) {
-        return compressBytes(input, input.length * 2); // short use 2 bytes
+        return rawCompress(input, input.length * 2); // short use 2 bytes
     }
 
     public static byte[] compress(int[] input) {
-        return compressBytes(input, input.length * 4); // int use 4 bytes
+        return rawCompress(input, input.length * 4); // int use 4 bytes
     }
 
     public static byte[] compress(float[] input) {
-        return compressBytes(input, input.length * 4); // float use 4 bytes
+        return rawCompress(input, input.length * 4); // float use 4 bytes
     }
 
     public static byte[] compress(long[] input) {
-        return compressBytes(input, input.length * 8); // long use 8 bytes
+        return rawCompress(input, input.length * 8); // long use 8 bytes
     }
 
     public static byte[] compress(double[] input) {
-        return compressBytes(input, input.length * 8); // double use 8 bytes
+        return rawCompress(input, input.length * 8); // double use 8 bytes
     }
 
-    private static byte[] compressBytes(Object data, int byteSize) {
+    /**
+     * Compress the input data and produce an output array
+     * 
+     * @param data
+     *            input array. This MUST be an array type
+     * @param byteSize
+     *            the input byte size
+     * @return compressed data
+     */
+    public static byte[] rawCompress(Object data, int byteSize) {
         byte[] buf = new byte[Snappy.maxCompressedLength(byteSize)];
         int compressedByteSize = SnappyNative.rawCompress(data, 0, byteSize, buf, 0);
         byte[] result = new byte[compressedByteSize];
@@ -214,10 +223,27 @@ public class Snappy
      */
     public static int compress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
             throws SnappyException {
-        return compressBytes(input, inputOffset, inputLength, output, outputOffset);
+        return rawCompress(input, inputOffset, inputLength, output, outputOffset);
     }
 
-    private static int compressBytes(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
+    /**
+     * Compress the input buffer [offset,... ,offset+length) contents, then
+     * write the compressed data to the output buffer[offset, ...)
+     * 
+     * @param input
+     *            input array. This MUST be primitive array type
+     * @param inputOffset
+     *            byte offset at the output array
+     * @param inputLength
+     *            byte length of the input data
+     * @param output
+     *            output array. This MUST be primitive array type
+     * @param outputOffset
+     *            byte offset at the output array
+     * @return byte size of the compressed data
+     * @throws SnappyException
+     */
+    public static int rawCompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
             throws SnappyException {
         if (input == null || output == null)
             throw new NullPointerException("input or output is null");
@@ -286,9 +312,13 @@ public class Snappy
      */
     public static int uncompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
             throws SnappyException {
+        return rawUncompress(input, inputOffset, inputLength, output, outputOffset);
+    }
+
+    public static int rawUncompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
+            throws SnappyException {
         if (input == null || output == null)
             throw new NullPointerException("input or output is null");
-
         return SnappyNative.rawUncompress(input, inputOffset, inputLength, output, outputOffset);
     }
 

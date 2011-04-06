@@ -204,6 +204,18 @@ public class SnappyTest
     }
 
     @Test
+    public void lowLevelAPI() throws Exception {
+
+        String m = "Hello! 01234 ACGDSFSDFJ World. FDSDF02394234 fdsfda03924";
+        byte[] input = m.getBytes();
+        byte[] output = Snappy.rawCompress(input, input.length);
+
+        byte[] uncompressed = Snappy.uncompress(output);
+        String m2 = new String(uncompressed);
+        assertEquals(m, m2);
+    }
+
+    @Test
     public void simpleUsage() throws Exception {
 
         String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper for using Snappy from Google (written in C++), a fast compresser/decompresser.";
