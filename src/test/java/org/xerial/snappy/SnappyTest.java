@@ -230,7 +230,7 @@ public class SnappyTest
     public void floatArray() throws Exception {
         float[] data = new float[] { 1.0f, -0.3f, 1.3f, 234.4f, 34 };
         byte[] compressed = Snappy.compress(data);
-        float[] result = Snappy.uncompressFloat(compressed);
+        float[] result = Snappy.uncompressFloatArray(compressed);
         assertArrayEquals(data, result, 0.0f);
     }
 
@@ -238,7 +238,7 @@ public class SnappyTest
     public void doubleArray() throws Exception {
         double[] data = new double[] { 1.0, -0.3, 1.3, 234.4, 34 };
         byte[] compressed = Snappy.compress(data);
-        double[] result = Snappy.uncompressDouble(compressed);
+        double[] result = Snappy.uncompressDoubleArray(compressed);
         assertArrayEquals(data, result, 0.0f);
     }
 
@@ -246,7 +246,7 @@ public class SnappyTest
     public void longArray() throws Exception {
         long[] data = new long[] { 2, 3, 15, 4234, 43251531412342342L, 23423422342L };
         byte[] compressed = Snappy.compress(data);
-        long[] result = Snappy.uncompressLong(compressed);
+        long[] result = Snappy.uncompressLongArray(compressed);
         assertArrayEquals(data, result);
     }
 
@@ -254,7 +254,7 @@ public class SnappyTest
     public void shortArray() throws Exception {
         short[] data = new short[] { 432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1 };
         byte[] compressed = Snappy.compress(data);
-        short[] result = Snappy.uncompressShort(compressed);
+        short[] result = Snappy.uncompressShortArray(compressed);
         assertArrayEquals(data, result);
     }
 
@@ -262,7 +262,7 @@ public class SnappyTest
     public void intArray() throws Exception {
         int[] data = new int[] { 432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1, Integer.MAX_VALUE, 3424, 43 };
         byte[] compressed = Snappy.compress(data);
-        int[] result = Snappy.uncompressInt(compressed);
+        int[] result = Snappy.uncompressIntArray(compressed);
         assertArrayEquals(data, result);
     }
 
@@ -270,8 +270,16 @@ public class SnappyTest
     public void charArray() throws Exception {
         char[] data = new char[] { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!' };
         byte[] compressed = Snappy.compress(data);
-        char[] result = Snappy.uncompressChar(compressed);
+        char[] result = Snappy.uncompressCharArray(compressed);
         assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void string() throws Exception {
+        String s = "Hello Snappy! Snappy! Snappy!";
+        byte[] compressed = Snappy.compress(s);
+        String uncompressedString = Snappy.uncompressString(compressed);
+        assertEquals(s, uncompressedString);
     }
 
 }

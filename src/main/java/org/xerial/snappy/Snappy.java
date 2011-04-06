@@ -24,6 +24,7 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
@@ -87,6 +88,20 @@ public class Snappy
         return rawCompress(input, input.length * 8); // double use 8 bytes
     }
 
+    public static byte[] compress(String s, String encoding) throws UnsupportedEncodingException, SnappyException {
+        byte[] data = s.getBytes(encoding);
+        return compress(data);
+    }
+
+    public static byte[] compress(String s) throws SnappyException {
+        try {
+            return compress(s, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 encoder is not found");
+        }
+    }
+
     /**
      * Compress the input data and produce an output array
      * 
@@ -120,7 +135,7 @@ public class Snappy
         return result;
     }
 
-    public static short[] uncompressShort(byte[] input) throws SnappyException {
+    public static short[] uncompressShortArray(byte[] input) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         short[] result = new short[uncompressedLength / 2];
         int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
@@ -129,7 +144,7 @@ public class Snappy
         return result;
     }
 
-    public static char[] uncompressChar(byte[] input) throws SnappyException {
+    public static char[] uncompressCharArray(byte[] input) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         char[] result = new char[uncompressedLength / 2];
         int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
@@ -138,7 +153,7 @@ public class Snappy
         return result;
     }
 
-    public static int[] uncompressInt(byte[] input) throws SnappyException {
+    public static int[] uncompressIntArray(byte[] input) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         int[] result = new int[uncompressedLength / 4];
         int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
@@ -147,7 +162,7 @@ public class Snappy
         return result;
     }
 
-    public static float[] uncompressFloat(byte[] input) throws SnappyException {
+    public static float[] uncompressFloatArray(byte[] input) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         float[] result = new float[uncompressedLength / 4];
         int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
@@ -156,7 +171,7 @@ public class Snappy
         return result;
     }
 
-    public static long[] uncompressLong(byte[] input) throws SnappyException {
+    public static long[] uncompressLongArray(byte[] input) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         long[] result = new long[uncompressedLength / 8];
         int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
@@ -165,13 +180,28 @@ public class Snappy
         return result;
     }
 
-    public static double[] uncompressDouble(byte[] input) throws SnappyException {
+    public static double[] uncompressDoubleArray(byte[] input) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         double[] result = new double[uncompressedLength / 8];
         int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
         if (byteSize != uncompressedLength)
             throw new SnappyException(SnappyErrorCode.INVALID_DECOMPRESSION);
         return result;
+    }
+
+    public static String uncompressString(byte[] input, String encoding) throws SnappyException,
+            UnsupportedEncodingException {
+        byte[] uncompressed = uncompress(input);
+        return new String(uncompressed, encoding);
+    }
+
+    public static String uncompressString(byte[] input) throws SnappyException {
+        try {
+            return uncompressString(input, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 decoder is not found");
+        }
     }
 
     /**
