@@ -215,8 +215,11 @@ public class SnappyTest
     }
 
     @Test
-    public void loadByDifferentClassLoader() throws Exception {
-
+    public void floatArray() throws Exception {
+        float[] data = new float[] { 1.0f, -0.3f, 1.3f, 234.4f, 34 };
+        byte[] compressed = Snappy.compress(data);
+        float[] result = Snappy.uncompressFloat(compressed);
+        assertArrayEquals(data, result, 0.0f);
     }
 
 }

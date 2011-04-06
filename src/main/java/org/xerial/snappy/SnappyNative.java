@@ -46,10 +46,16 @@ public class SnappyNative
     public native static int rawCompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
             throws SnappyException;
 
+    public native static int rawCompressFloat(float[] input, int inputOffset, int inputLength, byte[] output,
+            int outputOffset);
+
     public native static int rawUncompress(ByteBuffer compressed, int inputOffset, int inputLength,
             ByteBuffer uncompressed, int outputOffset) throws SnappyException;
 
     public native static int rawUncompress(byte[] input, int inputOffset, int inputLength, byte[] output,
+            int outputOffset) throws SnappyException;
+
+    public native static int rawUncompressFloat(byte[] input, int inputOffset, int inputLength, float[] output,
             int outputOffset) throws SnappyException;
 
     // Returns the maximal size of the compressed representation of

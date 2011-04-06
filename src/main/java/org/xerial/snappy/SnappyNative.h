@@ -33,6 +33,14 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress___3BII_3B
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawCompressFloat
+ * Signature: ([FII[BI)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompressFloat
+  (JNIEnv *, jclass, jfloatArray, jint, jint, jbyteArray, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
  * Method:    rawUncompress
  * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
@@ -46,6 +54,14 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress___3BII_3BI
   (JNIEnv *, jclass, jbyteArray, jint, jint, jbyteArray, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawUncompressFloat
+ * Signature: ([BII[FI)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompressFloat
+  (JNIEnv *, jclass, jbyteArray, jint, jint, jfloatArray, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative

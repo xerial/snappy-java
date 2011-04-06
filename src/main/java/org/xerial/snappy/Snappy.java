@@ -67,6 +67,15 @@ public class Snappy
         return result;
     }
 
+    public static byte[] compress(float[] data) {
+        int floatArraySize = data.length * 4;// float use 4 bytes
+        byte[] buf = new byte[Snappy.maxCompressedLength(floatArraySize)];
+        int compressedByteSize = SnappyNative.rawCompressFloat(data, 0, floatArraySize, buf, 0);
+        byte[] result = new byte[compressedByteSize];
+        System.arraycopy(buf, 0, result, 0, compressedByteSize);
+        return result;
+    }
+
     /**
      * High-level API for uncompressing the input byte array.
      * 
@@ -78,6 +87,15 @@ public class Snappy
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         byte[] result = new byte[uncompressedLength];
         int byteSize = Snappy.uncompress(input, 0, input.length, result, 0);
+        if (byteSize != uncompressedLength)
+            throw new SnappyException(SnappyErrorCode.INVALID_DECOMPRESSION);
+        return result;
+    }
+
+    public static float[] uncompressFloat(byte[] input) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
+        float[] result = new float[uncompressedLength / 4];
+        int byteSize = SnappyNative.rawUncompressFloat(input, 0, input.length, result, 0);
         if (byteSize != uncompressedLength)
             throw new SnappyException(SnappyErrorCode.INVALID_DECOMPRESSION);
         return result;
