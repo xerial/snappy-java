@@ -24,9 +24,6 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 
 /**
@@ -39,43 +36,7 @@ public class Snappy
 {
 
     static {
-        URL resource = Snappy.class.getResource("/org/xerial/snappy/SnappyNative.class");
-        // jar:file:/C:/.../snappy-java-1.0.1-rc4-SNAPSHOT.jar!/org/xerial/snappy/SnappyNative.class
-        if (resource == null) {
-            LoadSnappy.load();
-        }
-        else {
-            String path = resource.toString();
-            if (path.startsWith("jar:")) {
-                int pos = path.indexOf(".jar!");
-                if (pos >= 0) {
-                    path = path.substring(4, pos + 4);
-                }
-            }
-            else {
-                path = path.replace("SnappyNative", "LoadSnappy");
-            }
-            try {
-                URL loaderPath = new URL(path);
-                ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
-                if (URLClassLoader.class.isInstance(systemClassLoader)) {
-
-                    URLClassLoader cl = URLClassLoader.class.cast(systemClassLoader);
-                    Method addURLmethod = URLClassLoader.class.getDeclaredMethod("addURL",
-                            new Class< ? >[] { URL.class });
-                    addURLmethod.setAccessible(true);
-
-                    addURLmethod.invoke(cl, loaderPath);
-                    Class< ? > snappyLoader = cl.loadClass("org.xerial.snappy.LoadSnappy");
-                    Method loader = snappyLoader.getMethod("load");
-                    loader.invoke(null);
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
+        LoadSnappy.load();
     }
 
     /**
