@@ -243,7 +243,7 @@ public class Snappy
      * @return byte size of the compressed data
      * @throws SnappyException
      */
-    public static int rawCompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
+    public static int rawCompress(Object input, int inputOffset, int inputLength, byte[] output, int outputOffset)
             throws SnappyException {
         if (input == null || output == null)
             throw new NullPointerException("input or output is null");
@@ -315,7 +315,30 @@ public class Snappy
         return rawUncompress(input, inputOffset, inputLength, output, outputOffset);
     }
 
-    public static int rawUncompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
+    /**
+     * Uncompress the content in the input buffer. The uncompressed data is
+     * written to the output buffer.
+     * 
+     * Note that if you pass the wrong data or the range [inputOffset,
+     * inputOffset + inputLength) that cannot be uncompressed, your JVM might
+     * crash due to the access violation exception issued in the native code
+     * written in C++. To avoid this type of crash, use
+     * {@link #isValidCompressedBuffer(byte[], int, int)} first.
+     * 
+     * @param input
+     *            input byte array
+     * @param inputOffset
+     *            byte offset
+     * @param inputLength
+     *            byte length of the input data
+     * @param output
+     *            output buffer, MUST be a primitive type array
+     * @param outputOffset
+     *            byte offset
+     * @return the byte size of the uncompressed data
+     * @throws SnappyException
+     */
+    public static int rawUncompress(byte[] input, int inputOffset, int inputLength, Object output, int outputOffset)
             throws SnappyException {
         if (input == null || output == null)
             throw new NullPointerException("input or output is null");
