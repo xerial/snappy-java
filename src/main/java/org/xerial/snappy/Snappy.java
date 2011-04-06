@@ -436,7 +436,7 @@ public class Snappy
     public static long[] uncompressLongArray(byte[] input, int offset, int length) throws SnappyException {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         long[] result = new long[uncompressedLength / 8];
-        int byteSize = SnappyNative.rawUncompress(input, length, length, result, 0);
+        int byteSize = SnappyNative.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
