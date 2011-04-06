@@ -41,15 +41,6 @@ public class Snappy
     }
 
     /**
-     * Get the native library version of the snappy
-     * 
-     * @return native library version
-     */
-    public static String getNativeLibraryVersion() {
-        return SnappyNative.nativeLibraryVersion();
-    }
-
-    /**
      * High-level API for compressing the input byte array. This method performs
      * array copy to generate the result. If you want to save this cost, use
      * {@link #compress(byte[], int, int, byte[], int)} or
@@ -64,129 +55,22 @@ public class Snappy
         return rawCompress(input, input.length);
     }
 
-    public static byte[] compress(short[] input) {
-        return rawCompress(input, input.length * 2); // short use 2 bytes
-    }
-
-    public static byte[] compress(char[] input) {
-        return rawCompress(input, input.length * 2); // short use 2 bytes
-    }
-
-    public static byte[] compress(int[] input) {
-        return rawCompress(input, input.length * 4); // int use 4 bytes
-    }
-
-    public static byte[] compress(float[] input) {
-        return rawCompress(input, input.length * 4); // float use 4 bytes
-    }
-
-    public static byte[] compress(long[] input) {
-        return rawCompress(input, input.length * 8); // long use 8 bytes
-    }
-
-    public static byte[] compress(double[] input) {
-        return rawCompress(input, input.length * 8); // double use 8 bytes
-    }
-
-    public static byte[] compress(String s, String encoding) throws UnsupportedEncodingException, SnappyException {
-        byte[] data = s.getBytes(encoding);
-        return compress(data);
-    }
-
-    public static byte[] compress(String s) throws SnappyException {
-        try {
-            return compress(s, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("UTF-8 encoder is not found");
-        }
-    }
-
     /**
-     * Compress the input data and produce an output array
-     * 
-     * @param data
-     *            input array. This MUST be an array type
-     * @param byteSize
-     *            the input byte size
-     * @return compressed data
-     */
-    public static byte[] rawCompress(Object data, int byteSize) {
-        byte[] buf = new byte[Snappy.maxCompressedLength(byteSize)];
-        int compressedByteSize = SnappyNative.rawCompress(data, 0, byteSize, buf, 0);
-        byte[] result = new byte[compressedByteSize];
-        System.arraycopy(buf, 0, result, 0, compressedByteSize);
-        return result;
-    }
-
-    /**
-     * High-level API for uncompressing the input byte array.
+     * Compress the input buffer content in [inputOffset,
+     * ...inputOffset+inputLength) then output to the specified output buffer.
      * 
      * @param input
-     * @return the uncompressed byte array
+     * @param inputOffset
+     * @param inputLength
+     * @param output
+     * @param outputOffset
+     * @return byte size of the compressed data
      * @throws SnappyException
+     *             when failed to access the input/output buffer
      */
-    public static byte[] uncompress(byte[] input) throws SnappyException {
-        byte[] result = new byte[Snappy.uncompressedLength(input)];
-        int byteSize = Snappy.uncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static short[] uncompressShortArray(byte[] input) throws SnappyException {
-        int uncompressedLength = Snappy.uncompressedLength(input);
-        short[] result = new short[uncompressedLength / 2];
-        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static char[] uncompressCharArray(byte[] input) throws SnappyException {
-        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
-        char[] result = new char[uncompressedLength / 2];
-        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static int[] uncompressIntArray(byte[] input) throws SnappyException {
-        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
-        int[] result = new int[uncompressedLength / 4];
-        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static float[] uncompressFloatArray(byte[] input) throws SnappyException {
-        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
-        float[] result = new float[uncompressedLength / 4];
-        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static long[] uncompressLongArray(byte[] input) throws SnappyException {
-        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
-        long[] result = new long[uncompressedLength / 8];
-        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static double[] uncompressDoubleArray(byte[] input) throws SnappyException {
-        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
-        double[] result = new double[uncompressedLength / 8];
-        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
-        return result;
-    }
-
-    public static String uncompressString(byte[] input, String encoding) throws SnappyException,
-            UnsupportedEncodingException {
-        byte[] uncompressed = uncompress(input);
-        return new String(uncompressed, encoding);
-    }
-
-    public static String uncompressString(byte[] input) throws SnappyException {
-        try {
-            return uncompressString(input, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("UTF-8 decoder is not found");
-        }
+    public static int compress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
+            throws SnappyException {
+        return rawCompress(input, inputOffset, inputLength, output, outputOffset);
     }
 
     /**
@@ -223,22 +107,102 @@ public class Snappy
         return compressedSize;
     }
 
+    public static byte[] compress(char[] input) {
+        return rawCompress(input, input.length * 2); // short use 2 bytes
+    }
+
+    public static byte[] compress(double[] input) {
+        return rawCompress(input, input.length * 8); // double use 8 bytes
+    }
+
+    public static byte[] compress(float[] input) {
+        return rawCompress(input, input.length * 4); // float use 4 bytes
+    }
+
+    public static byte[] compress(int[] input) {
+        return rawCompress(input, input.length * 4); // int use 4 bytes
+    }
+
+    public static byte[] compress(long[] input) {
+        return rawCompress(input, input.length * 8); // long use 8 bytes
+    }
+
+    public static byte[] compress(short[] input) {
+        return rawCompress(input, input.length * 2); // short use 2 bytes
+    }
+
+    public static byte[] compress(String s) throws SnappyException {
+        try {
+            return compress(s, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 encoder is not found");
+        }
+    }
+
+    public static byte[] compress(String s, String encoding) throws UnsupportedEncodingException, SnappyException {
+        byte[] data = s.getBytes(encoding);
+        return compress(data);
+    }
+
     /**
-     * Compress the input buffer content in [inputOffset,
-     * ...inputOffset+inputLength) then output to the specified output buffer.
+     * Get the native library version of the snappy
      * 
-     * @param input
-     * @param inputOffset
-     * @param inputLength
-     * @param output
-     * @param outputOffset
-     * @return byte size of the compressed data
-     * @throws SnappyException
-     *             when failed to access the input/output buffer
+     * @return native library version
      */
-    public static int compress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
-            throws SnappyException {
-        return rawCompress(input, inputOffset, inputLength, output, outputOffset);
+    public static String getNativeLibraryVersion() {
+        return SnappyNative.nativeLibraryVersion();
+    }
+
+    /**
+     * Returns true iff the contents of compressed buffer [offset,
+     * offset+length) can be uncompressed successfully. Does not return the
+     * uncompressed data. Takes time proportional to the input length, but is
+     * usually at least a factor of four faster than actual decompression.
+     */
+    public static boolean isValidCompressedBuffer(byte[] input, int offset, int length) throws SnappyException {
+        if (input == null)
+            throw new NullPointerException("input is null");
+        return SnappyNative.isValidCompressedBuffer(input, offset, length);
+    }
+
+    /**
+     * Returns true iff the contents of compressed buffer [pos() ... limit())
+     * can be uncompressed successfully. Does not return the uncompressed data.
+     * Takes time proportional to the input length, but is usually at least a
+     * factor of four faster than actual decompression.
+     */
+    public static boolean isValidCompressedBuffer(ByteBuffer compressed) throws SnappyException {
+        return SnappyNative.isValidCompressedBuffer(compressed, compressed.position(), compressed.remaining());
+    }
+
+    /**
+     * Get the maximum byte size needed for compressing a data of the given byte
+     * size.
+     * 
+     * @param byteSize
+     *            byte size of the data to compress
+     * @return maximum byte size of the compressed data
+     */
+    public static int maxCompressedLength(int byteSize) {
+        return SnappyNative.maxCompressedLength(byteSize);
+    }
+
+    /**
+     * Compress the input data and produce an output array
+     * 
+     * @param data
+     *            input array. The input MUST be an array type
+     * @param byteSize
+     *            the input byte size
+     * @return compressed data
+     */
+    public static byte[] rawCompress(Object data, int byteSize) {
+        byte[] buf = new byte[Snappy.maxCompressedLength(byteSize)];
+        int compressedByteSize = SnappyNative.rawCompress(data, 0, byteSize, buf, 0);
+        byte[] result = new byte[compressedByteSize];
+        System.arraycopy(buf, 0, result, 0, compressedByteSize);
+        return result;
     }
 
     /**
@@ -265,6 +229,72 @@ public class Snappy
 
         int compressedSize = SnappyNative.rawCompress(input, inputOffset, inputLength, output, outputOffset);
         return compressedSize;
+    }
+
+    /**
+     * Uncompress the content in the input buffer. The uncompressed data is
+     * written to the output buffer.
+     * 
+     * Note that if you pass the wrong data or the range [inputOffset,
+     * inputOffset + inputLength) that cannot be uncompressed, your JVM might
+     * crash due to the access violation exception issued in the native code
+     * written in C++. To avoid this type of crash, use
+     * {@link #isValidCompressedBuffer(byte[], int, int)} first.
+     * 
+     * @param input
+     *            input byte array
+     * @param inputOffset
+     *            byte offset
+     * @param inputLength
+     *            byte length of the input data
+     * @param output
+     *            output buffer, MUST be a primitive type array
+     * @param outputOffset
+     *            byte offset
+     * @return the byte size of the uncompressed data
+     * @throws SnappyException
+     */
+    public static int rawUncompress(byte[] input, int inputOffset, int inputLength, Object output, int outputOffset)
+            throws SnappyException {
+        if (input == null || output == null)
+            throw new NullPointerException("input or output is null");
+        return SnappyNative.rawUncompress(input, inputOffset, inputLength, output, outputOffset);
+    }
+
+    /**
+     * High-level API for uncompressing the input byte array.
+     * 
+     * @param input
+     * @return the uncompressed byte array
+     * @throws SnappyException
+     */
+    public static byte[] uncompress(byte[] input) throws SnappyException {
+        byte[] result = new byte[Snappy.uncompressedLength(input)];
+        int byteSize = Snappy.uncompress(input, 0, input.length, result, 0);
+        return result;
+    }
+
+    /**
+     * Uncompress the content in the input buffer. The uncompressed data is
+     * written to the output buffer.
+     * 
+     * Note that if you pass the wrong data or the range [inputOffset,
+     * inputOffset + inputLength) that cannot be uncompressed, your JVM might
+     * crash due to the access violation exception issued in the native code
+     * written in C++. To avoid this type of crash, use
+     * {@link #isValidCompressedBuffer(byte[], int, int)} first.
+     * 
+     * @param input
+     * @param inputOffset
+     * @param inputLength
+     * @param output
+     * @param outputOffset
+     * @return the byte size of the uncompressed data
+     * @throws SnappyException
+     */
+    public static int uncompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
+            throws SnappyException {
+        return rawUncompress(input, inputOffset, inputLength, output, outputOffset);
     }
 
     /**
@@ -307,77 +337,36 @@ public class Snappy
         return decompressedSize;
     }
 
-    /**
-     * Uncompress the content in the input buffer. The uncompressed data is
-     * written to the output buffer.
-     * 
-     * Note that if you pass the wrong data or the range [inputOffset,
-     * inputOffset + inputLength) that cannot be uncompressed, your JVM might
-     * crash due to the access violation exception issued in the native code
-     * written in C++. To avoid this type of crash, use
-     * {@link #isValidCompressedBuffer(byte[], int, int)} first.
-     * 
-     * @param input
-     * @param inputOffset
-     * @param inputLength
-     * @param output
-     * @param outputOffset
-     * @return the byte size of the uncompressed data
-     * @throws SnappyException
-     */
-    public static int uncompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
-            throws SnappyException {
-        return rawUncompress(input, inputOffset, inputLength, output, outputOffset);
+    public static char[] uncompressCharArray(byte[] input) throws SnappyException {
+        return uncompressCharArray(input, 0, input.length);
     }
 
-    /**
-     * Uncompress the content in the input buffer. The uncompressed data is
-     * written to the output buffer.
-     * 
-     * Note that if you pass the wrong data or the range [inputOffset,
-     * inputOffset + inputLength) that cannot be uncompressed, your JVM might
-     * crash due to the access violation exception issued in the native code
-     * written in C++. To avoid this type of crash, use
-     * {@link #isValidCompressedBuffer(byte[], int, int)} first.
-     * 
-     * @param input
-     *            input byte array
-     * @param inputOffset
-     *            byte offset
-     * @param inputLength
-     *            byte length of the input data
-     * @param output
-     *            output buffer, MUST be a primitive type array
-     * @param outputOffset
-     *            byte offset
-     * @return the byte size of the uncompressed data
-     * @throws SnappyException
-     */
-    public static int rawUncompress(byte[] input, int inputOffset, int inputLength, Object output, int outputOffset)
-            throws SnappyException {
-        if (input == null || output == null)
-            throw new NullPointerException("input or output is null");
-        return SnappyNative.rawUncompress(input, inputOffset, inputLength, output, outputOffset);
+    public static char[] uncompressCharArray(byte[] input, int offset, int length) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
+        char[] result = new char[uncompressedLength / 2];
+        int byteSize = SnappyNative.rawUncompress(input, offset, length, result, 0);
+        return result;
+    }
+
+    public static double[] uncompressDoubleArray(byte[] input) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
+        double[] result = new double[uncompressedLength / 8];
+        int byteSize = SnappyNative.rawUncompress(input, 0, input.length, result, 0);
+        return result;
     }
 
     /**
      * Get the uncompressed byte size of the given compressed input. This
-     * operation taks O(1) time.
+     * operation takes O(1) time.
      * 
-     * @param compressed
-     *            input data [pos() ... limit())
-     * @return uncompressed byte length of the given input
+     * @param input
+     * @return umcompressed byte size of the the given input data
      * @throws SnappyException
      *             when failed to uncompress the given input. The error code is
      *             {@link SnappyErrorCode#PARSING_ERROR}
-     * @throws SnappyError
-     *             when the input is not a direct buffer
      */
-    public static int uncompressedLength(ByteBuffer compressed) throws SnappyException {
-        if (!compressed.isDirect())
-            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
-
-        return SnappyNative.uncompressedLength(compressed, compressed.position(), compressed.remaining());
+    public static int uncompressedLength(byte[] input) throws SnappyException {
+        return SnappyNative.uncompressedLength(input, 0, input.length);
     }
 
     /**
@@ -400,50 +389,97 @@ public class Snappy
 
     /**
      * Get the uncompressed byte size of the given compressed input. This
-     * operation takes O(1) time.
+     * operation taks O(1) time.
      * 
-     * @param input
-     * @return umcompressed byte size of the the given input data
+     * @param compressed
+     *            input data [pos() ... limit())
+     * @return uncompressed byte length of the given input
      * @throws SnappyException
      *             when failed to uncompress the given input. The error code is
      *             {@link SnappyErrorCode#PARSING_ERROR}
+     * @throws SnappyError
+     *             when the input is not a direct buffer
      */
-    public static int uncompressedLength(byte[] input) throws SnappyException {
-        return SnappyNative.uncompressedLength(input, 0, input.length);
+    public static int uncompressedLength(ByteBuffer compressed) throws SnappyException {
+        if (!compressed.isDirect())
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
+
+        return SnappyNative.uncompressedLength(compressed, compressed.position(), compressed.remaining());
     }
 
-    /**
-     * Get the maximum byte size needed for compressing a data of the given byte
-     * size.
-     * 
-     * @param byteSize
-     *            byte size of the data to compress
-     * @return maximum byte size of the compressed data
-     */
-    public static int maxCompressedLength(int byteSize) {
-        return SnappyNative.maxCompressedLength(byteSize);
+    public static float[] uncompressFloatArray(byte[] input) throws SnappyException {
+        return uncompressFloatArray(input, 0, input.length);
     }
 
-    /**
-     * Returns true iff the contents of compressed buffer [pos() ... limit())
-     * can be uncompressed successfully. Does not return the uncompressed data.
-     * Takes time proportional to the input length, but is usually at least a
-     * factor of four faster than actual decompression.
-     */
-    public static boolean isValidCompressedBuffer(ByteBuffer compressed) throws SnappyException {
-        return SnappyNative.isValidCompressedBuffer(compressed, compressed.position(), compressed.remaining());
+    public static float[] uncompressFloatArray(byte[] input, int offset, int length) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
+        float[] result = new float[uncompressedLength / 4];
+        int byteSize = SnappyNative.rawUncompress(input, offset, length, result, 0);
+        return result;
     }
 
-    /**
-     * Returns true iff the contents of compressed buffer [offset,
-     * offset+length) can be uncompressed successfully. Does not return the
-     * uncompressed data. Takes time proportional to the input length, but is
-     * usually at least a factor of four faster than actual decompression.
-     */
-    public static boolean isValidCompressedBuffer(byte[] input, int offset, int length) throws SnappyException {
-        if (input == null)
-            throw new NullPointerException("input is null");
-        return SnappyNative.isValidCompressedBuffer(input, offset, length);
+    public static int[] uncompressIntArray(byte[] input) throws SnappyException {
+        return uncompressIntArray(input, 0, input.length);
+    }
+
+    public static int[] uncompressIntArray(byte[] input, int offset, int length) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
+        int[] result = new int[uncompressedLength / 4];
+        int byteSize = SnappyNative.rawUncompress(input, offset, length, result, 0);
+        return result;
+    }
+
+    public static long[] uncompressLongArray(byte[] input) throws SnappyException {
+        return uncompressLongArray(input, 0, input.length);
+    }
+
+    public static long[] uncompressLongArray(byte[] input, int offset, int length) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
+        long[] result = new long[uncompressedLength / 8];
+        int byteSize = SnappyNative.rawUncompress(input, length, length, result, 0);
+        return result;
+    }
+
+    public static short[] uncompressShortArray(byte[] input) throws SnappyException {
+        return uncompressShortArray(input, 0, input.length);
+    }
+
+    public static short[] uncompressShortArray(byte[] input, int offset, int length) throws SnappyException {
+        int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
+        short[] result = new short[uncompressedLength / 2];
+        int byteSize = SnappyNative.rawUncompress(input, offset, length, result, 0);
+        return result;
+    }
+
+    public static String uncompressString(byte[] input) throws SnappyException {
+        try {
+            return uncompressString(input, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 decoder is not found");
+        }
+    }
+
+    public static String uncompressString(byte[] input, int offset, int length) throws SnappyException {
+        try {
+            return uncompressString(input, offset, length, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 decoder is not found");
+        }
+    }
+
+    public static String uncompressString(byte[] input, int offset, int length, String encoding)
+            throws SnappyException, UnsupportedEncodingException {
+        byte[] uncompressed = new byte[uncompressedLength(input, offset, length)];
+        int compressedSize = uncompress(input, offset, length, uncompressed, 0);
+        return new String(uncompressed, encoding);
+    }
+
+    public static String uncompressString(byte[] input, String encoding) throws SnappyException,
+            UnsupportedEncodingException {
+        byte[] uncompressed = uncompress(input);
+        return new String(uncompressed, encoding);
     }
 
 }
