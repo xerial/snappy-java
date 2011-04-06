@@ -195,5 +195,12 @@
       <type>jar</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+    	<groupId>org.codehaus.plexus</groupId>
+    	<artifactId>plexus-classworlds</artifactId>
+    	<version>2.4</version>
+    	<type>jar</type>
+    	<scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

@@ -34,9 +34,6 @@ import java.nio.ByteBuffer;
  */
 public class SnappyNative
 {
-    static {
-        LoadSnappy.load();
-    }
 
     public native static String nativeLibraryVersion();
 

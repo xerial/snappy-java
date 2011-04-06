@@ -210,7 +210,12 @@ public class SnappyTest
         byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
         byte[] uncompressed = Snappy.uncompress(compressed);
         String result = new String(uncompressed, "UTF-8");
-        System.out.println(result);
+        _logger.debug(result);
+
+    }
+
+    @Test
+    public void loadByDifferentClassLoader() throws Exception {
 
     }
 

@@ -48,8 +48,10 @@ public class LoadSnappy
     private static boolean isLoaded = false;
 
     public static boolean load() {
-        if (!isLoaded)
+        if (!isLoaded) {
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             loadSnappyNativeLibrary();
+        }
         return isLoaded;
     }
 
