@@ -222,4 +222,20 @@ public class SnappyTest
         assertArrayEquals(data, result, 0.0f);
     }
 
+    @Test
+    public void doubleArray() throws Exception {
+        double[] data = new double[] { 1.0, -0.3, 1.3, 234.4, 34 };
+        byte[] compressed = Snappy.compress(data);
+        double[] result = Snappy.uncompressDouble(compressed);
+        assertArrayEquals(data, result, 0.0f);
+    }
+
+    @Test
+    public void longArray() throws Exception {
+        long[] data = new long[] { 2, 3, 15, 4234, 43251531412342342L, 23423422342L };
+        byte[] compressed = Snappy.compress(data);
+        long[] result = Snappy.uncompressLong(compressed);
+        assertArrayEquals(data, result);
+    }
+
 }
