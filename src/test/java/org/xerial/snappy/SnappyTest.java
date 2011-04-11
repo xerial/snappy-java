@@ -218,7 +218,8 @@ public class SnappyTest
     @Test
     public void simpleUsage() throws Exception {
 
-        String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper for using Snappy from Google (written in C++), a fast compresser/decompresser.";
+        String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper"
+                + " for using Snappy from Google (written in C++), a fast compresser/decompresser.";
         byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
         byte[] uncompressed = Snappy.uncompress(compressed);
         String result = new String(uncompressed, "UTF-8");
