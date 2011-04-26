@@ -38,7 +38,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
 /**
- * 
+ * This class loads a native library of Snappy according to the platform of the
+ * user.
  * 
  * @author leo
  * 
@@ -49,7 +50,6 @@ public class LoadSnappy
 
     public static boolean load() {
         if (!isLoaded) {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             loadSnappyNativeLibrary();
         }
         return isLoaded;
@@ -169,7 +169,7 @@ public class LoadSnappy
         if (isLoaded)
             return;
 
-        // Try loading library from org.sqlite.lib.path library path */
+        // Try loading the library from org.xerial.snappy.lib.path library path */
         String snappyNativeLibraryPath = System.getProperty("org.xerial.snappy.lib.path");
         String snappyNativeLibraryName = System.getProperty("org.xerial.snappy.lib.name");
 
@@ -192,7 +192,7 @@ public class LoadSnappy
             return;
         }
 
-        // temporary library folder
+        // Temporary library folder. Use the value of java.io.tmpdir 
         String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
         // Try extracting the library from jar 
         if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {

@@ -108,27 +108,27 @@ public class Snappy
     }
 
     public static byte[] compress(char[] input) {
-        return rawCompress(input, input.length * 2); // short use 2 bytes
+        return rawCompress(input, input.length * 2); // short uses 2 bytes
     }
 
     public static byte[] compress(double[] input) {
-        return rawCompress(input, input.length * 8); // double use 8 bytes
+        return rawCompress(input, input.length * 8); // double uses 8 bytes
     }
 
     public static byte[] compress(float[] input) {
-        return rawCompress(input, input.length * 4); // float use 4 bytes
+        return rawCompress(input, input.length * 4); // float uses 4 bytes
     }
 
     public static byte[] compress(int[] input) {
-        return rawCompress(input, input.length * 4); // int use 4 bytes
+        return rawCompress(input, input.length * 4); // int uses 4 bytes
     }
 
     public static byte[] compress(long[] input) {
-        return rawCompress(input, input.length * 8); // long use 8 bytes
+        return rawCompress(input, input.length * 8); // long uses 8 bytes
     }
 
     public static byte[] compress(short[] input) {
-        return rawCompress(input, input.length * 2); // short use 2 bytes
+        return rawCompress(input, input.length * 2); // short uses 2 bytes
     }
 
     public static byte[] compress(String s) throws SnappyException {
@@ -177,7 +177,7 @@ public class Snappy
     }
 
     /**
-     * Get the maximum byte size needed for compressing a data of the given byte
+     * Get the maximum byte size needed for compressing data of the given byte
      * size.
      * 
      * @param byteSize
@@ -189,7 +189,7 @@ public class Snappy
     }
 
     /**
-     * Compress the input data and produce an output array
+     * Compress the input data and produce a byte array of the uncompressed data
      * 
      * @param data
      *            input array. The input MUST be an array type
