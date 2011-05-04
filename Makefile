@@ -42,7 +42,7 @@ $(SNAPPY_OUT)/SnappyNative.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/
 
 
 $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
-	$(CXX) $(CXXFLAGS) $(LINKFLAGS) $+ -o $@ 
+	$(CXX) $(CXXFLAGS) -o $@ $+ $(LINKFLAGS) 
 	$(STRIP) $@
 
 clean-native: 
