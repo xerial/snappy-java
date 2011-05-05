@@ -78,3 +78,6 @@ win32:
 
 mac32: 
 	$(MAKE) native CXX=g++ OS_NAME=Mac OS_ARCH=i386
+
+linux32:
+	$(MAKE) native OS_NAME=Linux OS_ARCH=i386
