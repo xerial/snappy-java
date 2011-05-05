@@ -40,3 +40,15 @@ A native library for your machine environment and a jar package target/snappy-ja
 
 
 
+= Build static libraries with Linux and g++ =
+
+Download gcc-core-(version).tar.gz and gcc-g++-(version).tar.gz.
+
+$ cd gcc-(version)
+$ mkdir objdir
+$ cd objdir
+$ ../configure --prefix=$HOME/local --with-gmp=$HOME/local --with-mpfr=$HOME/local --with-mpc=$HOME/local --with-ppl=$HOME/local --with-cloog=$HOME/local 
+$ make 
+$ make install
+
+
