@@ -36,8 +36,8 @@ import java.io.InputStream;
  */
 public class SnappyInputStream extends InputStream
 {
-    protected final InputStream in;
     private boolean             finishedReading    = false;
+    protected final InputStream in;
     private int                 blockSize          = SnappyOutputStream.DEFAULT_BLOCK_SIZE;
 
     private byte[]              compressed;
@@ -60,6 +60,8 @@ public class SnappyInputStream extends InputStream
     protected void readHeader() throws IOException {
         byte[] header = new byte[SnappyCodec.headerSize()];
         int readBytes = in.read(header, 0, header.length);
+
+        // Quick test of the header 
         if (header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
             readFully(header, readBytes);
@@ -123,7 +125,7 @@ public class SnappyInputStream extends InputStream
                     return writtenBytes == 0 ? -1 : writtenBytes;
                 }
             }
-            int bytesToWrite = Math.min(uncompressedLimit - uncompressedCursor, len);
+            int bytesToWrite = Math.min(uncompressedLimit - uncompressedCursor, len - writtenBytes);
             System.arraycopy(uncompressed, uncompressedCursor, b, off + writtenBytes, bytesToWrite);
             writtenBytes += bytesToWrite;
             uncompressedCursor += bytesToWrite;

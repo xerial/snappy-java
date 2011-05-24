@@ -27,6 +27,7 @@ package org.xerial.snappy;
 import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import org.junit.Test;
@@ -74,6 +75,24 @@ public class SnappyOutputStreamTest
         decompressed.flush();
         assertEquals(orig.size(), decompressed.size());
         assertArrayEquals(orig.toByteArray(), decompressed.toByteArray());
+    }
+
+    @Test
+    public void bufferSize() throws Exception {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b, 500);
+        final int bytesToWrite = 5000;
+        byte[] orig = new byte[bytesToWrite];
+        for (int i = 0; i < 5000; ++i) {
+            byte v = (byte) (i % 128);
+            orig[i] = v;
+            os.write(v);
+        }
+        os.close();
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        byte[] buf = new byte[bytesToWrite / 101];
+        while (is.read(buf) != -1) {}
+        is.close();
     }
 
 }

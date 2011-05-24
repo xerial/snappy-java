@@ -31,8 +31,8 @@ import java.io.OutputStream;
  * This class implements a stream filter for writing compressed data using
  * Snappy.
  * 
- * The input data is blocked into 32KB size, and each block is compressed and
- * then passed to the given {@link OutputStream}.
+ * The input data is blocked into 4 MB size (in default), and each block is
+ * compressed and then passed to the given {@link OutputStream}.
  * 
  * The output data format is a sequence of (compressed chunk size, compressed
  * data chunk binary...) pair.
