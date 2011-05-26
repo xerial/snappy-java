@@ -187,20 +187,20 @@ public class LoadSnappy
         // Load the os-dependent library from a jar file
         snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
-        if (LoadSnappy.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) == null) {
-            // use nested VM version
-            return;
+        if (LoadSnappy.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
+            // Temporary library folder. Use the value of java.io.tmpdir
+            String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
+            // Try extracting the library from jar
+            if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
+                return;
+            }
         }
-
-        // Temporary library folder. Use the value of java.io.tmpdir 
-        String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
-        // Try extracting the library from jar 
-        if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
+        try {
+            System.loadLibrary("snappy");
             isLoaded = true;
-            return;
+        } catch (UnsatisfiedLinkError e) {
+            isLoaded = false;
         }
-
-        isLoaded = false;
         return;
     }
 
