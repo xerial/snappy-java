@@ -77,7 +77,7 @@ win32:
 	$(MAKE) native CXX=mingw32-g++ OS_NAME=Windows OS_ARCH=x86  
 
 mac32: 
-	$(MAKE) native CXX=g++ OS_NAME=Mac OS_ARCH=i386
+	$(MAKE) native OS_NAME=Mac OS_ARCH=i386
 
 linux32:
 	$(MAKE) native OS_NAME=Linux OS_ARCH=i386
