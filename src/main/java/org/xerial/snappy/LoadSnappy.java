@@ -175,7 +175,7 @@ public class LoadSnappy
 
         // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
         if (snappyNativeLibraryName == null)
-            snappyNativeLibraryName = System.mapLibraryName("snappy");
+            snappyNativeLibraryName = System.mapLibraryName("snappyjava");
 
         if (snappyNativeLibraryPath != null) {
             if (loadNativeLibrary(snappyNativeLibraryPath, snappyNativeLibraryName)) {
@@ -196,9 +196,10 @@ public class LoadSnappy
             }
         }
         try {
-            System.loadLibrary("snappy");
+            System.loadLibrary("snappyjava");
             isLoaded = true;
-        } catch (UnsatisfiedLinkError e) {
+        }
+        catch (UnsatisfiedLinkError e) {
             isLoaded = false;
         }
         return;
