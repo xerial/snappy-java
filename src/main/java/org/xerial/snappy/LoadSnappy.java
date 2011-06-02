@@ -192,6 +192,7 @@ public class LoadSnappy
             String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
             // Try extracting the library from jar
             if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
+                isLoaded = true;
                 return;
             }
         }
