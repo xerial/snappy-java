@@ -196,9 +196,9 @@ public class LoadSnappy
                 return;
             }
         }
-        // Try to load snappy in LD_PATH
+        // Try to load snappyjava DLL in LD_PATH
         try {
-            System.loadLibrary("snappy");
+            System.loadLibrary("snappyjava");
             isLoaded = true;
         }
         catch (UnsatisfiedLinkError e) {
