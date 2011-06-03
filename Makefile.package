@@ -18,7 +18,7 @@ AMD_SERVER=hx02
 
 BUILD_CMD_PREFIX = hg pull -u && make clean-native && make 
 BUILD_CMD = $(BUILD_CMD_PREFIX) native
-TEST_CMD = mvn test
+TEST_CMD = hg pull -u && mvn test
 
 all: compile test
 
