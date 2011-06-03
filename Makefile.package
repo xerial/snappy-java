@@ -33,33 +33,34 @@ DLL_TIGER_MAC=$(DLL_DIR)/Mac/i386/libsnappyjava.jnilib
 DLL_LINUX=$(DLL_DIR)/Linux/i386/libsnappyjava.so
 DLL_AMD64=$(DLL_DIR)/Linux/amd64/libsnappyjava.so
 
+version_file:=src/main/java/org/xerial/snappy/VERSION
 
-$(DLL_WIN): 
+$(DLL_WIN):  $(version_file)
 	ssh $(WIN64_SERVER) "source .zprofile && cd $(WORK) && $(BUILD_CMD_PREFIX) win32"
 	mkdir -p $(dir $(DLL_WIN))
 	$(RSYNC)  $(WIN_SERVER):./$(WORK)/$(DLL_WIN) $(DLL_WIN)
 
-$(DLL_WIN64): 
+$(DLL_WIN64): $(version_file)
 	ssh $(WIN64_SERVER) "source .zprofile && cd $(WORK) && $(BUILD_CMD)"
 	mkdir -p $(dir $(DLL_WIN64))
 	$(RSYNC)  $(WIN64_SERVER):./$(WORK)/$(DLL_WIN64) $(DLL_WIN64)
 
-$(DLL_MAC): 
+$(DLL_MAC): $(version_file)
 	ssh $(MAC_SERVER) "source .zprofile && cd $(WORK) && $(BUILD_CMD)"
 	mkdir -p $(dir $(DLL_MAC))
 	$(RSYNC)  $(MAC_SERVER):./$(WORK)/$(DLL_MAC) $(DLL_MAC)
 
-$(DLL_TIGER_MAC): 
+$(DLL_TIGER_MAC): $(version_file)
 	ssh $(MAC_TIGER_SERVER) "source .zprofile && cd $(WORK) && $(BUILD_CMD)"
 	mkdir -p $(dir $(DLL_TIGER_MAC))
 	$(RSYNC)  $(MAC_TIGER_SERVER):./$(WORK)/$(DLL_TIGER_MAC) $(DLL_TIGER_MAC)
 
-$(DLL_LINUX):
+$(DLL_LINUX):$(version_file)
 	ssh $(AMD_SERVER) "source .zprofile && cd $(WORK) && $(BUILD_CMD_PREFIX) linux32"
 	mkdir -p $(dir $(DLL_LINUX))
 	$(RSYNC)  $(AMD_SERVER):./$(WORK)/$(DLL_LINUX) $(DLL_LINUX)
 
-$(DLL_AMD64):
+$(DLL_AMD64):$(version_file)
 	ssh $(AMD_SERVER) "source .zprofile && cd $(WORK) && $(BUILD_CMD)"
 	mkdir -p $(dir $(DLL_AMD64))
 	$(RSYNC)  $(AMD_SERVER):./$(WORK)/$(DLL_AMD64) $(DLL_AMD64)

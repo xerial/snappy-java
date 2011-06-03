@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.xerial.snappy</groupId>
   <artifactId>snappy-java</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
   <name>Snappy for Java</name>
   <description>Compression/decompression library</description>
 
@@ -16,7 +16,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
-          <include>org/xerial/snappy/native/**</include>
+          <include>org/xerial/snappy/native/**</include>g
         </includes>
       </resource>
       <resource>
