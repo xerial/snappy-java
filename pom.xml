@@ -16,7 +16,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
-          <include>org/xerial/snappy/native/**</include>g
+          <include>org/xerial/snappy/native/**</include>
         </includes>
       </resource>
       <resource>
