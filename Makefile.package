@@ -69,7 +69,6 @@ $(DLL_AMD64):$(version_file)
 native: $(DLL_WIN) $(DLL_WIN64) $(DLL_MAC) $(DLL_TIGER_MAC) $(DLL_LINUX) $(DLL_AMD64)
 
 compile: native
-	cp -r $(DLL_DIR)/ $(RESOURCE_DIR)/native/
 
 test:
 	ssh $(WIN64_SERVER) "source .zprofile && cd $(WORK) && $(TEST_CMD)"
