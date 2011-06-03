@@ -196,14 +196,14 @@ public class LoadSnappy
                 return;
             }
         }
+        // Try to load snappy in LD_PATH
         try {
-            System.loadLibrary("snappyjava");
+            System.loadLibrary("snappy");
             isLoaded = true;
         }
         catch (UnsatisfiedLinkError e) {
-            isLoaded = false;
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e);
         }
-        return;
     }
 
     private static void getNativeLibraryFolderForTheCurrentOS() {
