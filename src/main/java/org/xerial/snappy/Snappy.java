@@ -384,7 +384,66 @@ public class Snappy
     public static int uncompressedLength(byte[] input, int offset, int length) throws SnappyException {
         if (input == null)
             throw new NullPointerException("input is null");
+
         return SnappyNative.uncompressedLength(input, offset, length);
+    }
+
+    public static class CompressedDataLength
+    {
+        public final int cursor;
+        public final int uncompressedLength;
+
+        public CompressedDataLength(int cursor, int uncompressedLength) {
+            this.cursor = cursor;
+            this.uncompressedLength = uncompressedLength;
+        }
+    }
+
+    public static CompressedDataLength getUncompressedLength(byte[] input, int offset, int limit)
+            throws SnappyException {
+        if (input == null)
+            throw new NullPointerException("input is null");
+
+        long b = 0;
+        long result = 0;
+        int cursor = offset;
+        if (cursor >= limit)
+            return null;
+        for (;;) {
+            b = input[cursor++];
+            result = b & 127;
+            if (b < 128)
+                break;
+            if (cursor >= limit)
+                return null;
+            b = input[cursor++];
+            result |= (b & 127) << 7;
+            if (b < 128)
+                break;
+            if (cursor >= limit)
+                return null;
+            b = input[cursor++];
+            result |= (b & 127) << 14;
+            if (b < 128)
+                break;
+            if (cursor >= limit)
+                return null;
+            b = input[cursor++];
+            result |= (b & 127) << 21;
+            if (b < 128)
+                break;
+            if (cursor >= limit)
+                return null;
+            b = input[cursor++];
+            result |= (b & 127) << 28;
+            if (b < 16)
+                break;
+            return null; // Value is too long to be a varint32
+        }
+        if (result > Integer.MAX_VALUE)
+            throw new IllegalStateException("cannot uncompress byte array longer than 2^31-1: " + result);
+
+        return new CompressedDataLength(cursor, (int) result);
     }
 
     /**
