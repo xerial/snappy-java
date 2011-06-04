@@ -108,7 +108,7 @@ public class Snappy
     }
 
     public static byte[] compress(char[] input) {
-        return rawCompress(input, input.length * 2); // short uses 2 bytes
+        return rawCompress(input, input.length * 2); // char uses 2 bytes
     }
 
     public static byte[] compress(double[] input) {
