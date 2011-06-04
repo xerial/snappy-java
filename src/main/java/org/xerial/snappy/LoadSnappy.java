@@ -96,7 +96,6 @@ public class LoadSnappy
             String targetFolder) {
         String nativeLibraryFilePath = libFolderForCurrentOS + "/" + libraryFileName;
         final String prefix = "snappy-" + getVersion() + "-";
-
         String extractedLibFileName = prefix + libraryFileName;
         File extractedLibFile = new File(targetFolder, extractedLibFileName);
 
@@ -226,7 +225,7 @@ public class LoadSnappy
 
         URL versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial.snappy/snappy-java/pom.properties");
         if (versionFile == null)
-            versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial.snappy/snappy-java/VERSION");
+            versionFile = LoadSnappy.class.getResource("/org/xerial/snappy/VERSION");
 
         String version = "unknown";
         try {
@@ -234,6 +233,8 @@ public class LoadSnappy
                 Properties versionData = new Properties();
                 versionData.load(versionFile.openStream());
                 version = versionData.getProperty("version", version);
+                if (version.equals("unknown"))
+                    version = versionData.getProperty("VERSION", version);
                 version = version.trim().replaceAll("[^0-9\\.]", "");
             }
         }

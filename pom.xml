@@ -14,6 +14,12 @@
   <build>
     <resources>
       <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>org/xerial/snappy/VERSION</include>
+        </includes>
+      </resource>
+      <resource>
         <directory>src/main/resources</directory>
         <includes>
           <include>org/xerial/snappy/native/**</include>
@@ -23,7 +29,6 @@
         <directory>${basedir}</directory>
         <targetPath>META-INF/maven/${project.groupId}/${project.artifactId}</targetPath>
         <includes>
-          <include>VERSION</include>
           <include>LICENSE*</include>
         </includes>
       </resource>
