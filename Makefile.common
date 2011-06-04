@@ -64,7 +64,7 @@ Linux-i386_SNAPPY_FLAGS:=
 
 Linux-amd64_CXX       := g++ 
 Linux-amd64_STRIP     := strip
-Linux-amd64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden  -m64 
+Linux-amd64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
 Linux-amd64_LINKFLAGS := -shared -static-libgcc -static-libstdc++ 
 Linux-amd64_LIBNAME   := libsnappyjava.so
 Linux-amd64_SNAPPY_FLAGS  := 
