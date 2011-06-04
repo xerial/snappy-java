@@ -81,3 +81,6 @@ mac32:
 
 linux32:
 	$(MAKE) native OS_NAME=Linux OS_ARCH=i386
+
+clean-native-linux32:
+	$(MAKE) clean-native OS_NAME=Linux OS_ARCH=i386
