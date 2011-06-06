@@ -176,7 +176,7 @@ public class SnappyInputStream extends InputStream
     @Override
     public int read() throws IOException {
         if (uncompressedCursor < uncompressedLimit) {
-            return uncompressed[uncompressedCursor++];
+            return uncompressed[uncompressedCursor++] & 0xFF;
         }
         else {
             if (hasNextChunk())

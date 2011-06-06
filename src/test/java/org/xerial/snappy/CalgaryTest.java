@@ -91,4 +91,28 @@ public class CalgaryTest
         }
     }
 
+    @Test
+    public void byteWiseRead() throws Exception {
+        for (String f : files) {
+            byte[] orig = readFile("testdata/calgary/" + f);
+
+            ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
+            SnappyOutputStream out = new SnappyOutputStream(compressedBuf);
+            out.write(orig);
+            out.close();
+
+            SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressedBuf.toByteArray()));
+            byte[] uncompressed = new byte[orig.length];
+            int cursor = 0;
+            for (;;) {
+                int b = in.read();
+                if (b == -1)
+                    break;
+                uncompressed[cursor++] = (byte) b;
+            }
+            assertEquals(orig.length, cursor);
+            assertArrayEquals(orig, uncompressed);
+        }
+    }
+
 }
