@@ -66,7 +66,7 @@ $(DLL_AMD64):$(version_file)
 	$(RSYNC)  $(AMD_SERVER):./$(WORK)/$(DLL_AMD64) $(DLL_AMD64)
 
 
-native: $(DLL_WIN) $(DLL_WIN64) $(DLL_MAC) $(DLL_TIGER_MAC) $(DLL_LINUX) $(DLL_AMD64)
+native: $(DLL_WIN) $(DLL_WIN64) $(DLL_LINUX) $(DLL_AMD64) $(DLL_MAC) $(DLL_TIGER_MAC) 
 
 compile: native
 
