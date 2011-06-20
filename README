@@ -1,3 +1,7 @@
+This document is a copy of http://code.google.com/p/snappy-java/
+
+---------------------------------------
+
 The snappy-java is a Java port of the snappy http://code.google.com/p/snappy/, a fast compresser/decompresser (written in C++ developed by Google). 
 
 == Features ==
@@ -58,7 +62,7 @@ Add the following dependency to your pom.xml:
 <dependency>
   <groupId>org.xerial.snappy</groupId>
   <artifactId>snappy-java</artifactId>
-  <version>1.0.1-rc4</version>
+  <version>(version)</version>
   <type>jar</type>
   <scope>compile</scope>
 </dependency>
@@ -94,7 +98,7 @@ If you are using Maven for your web application, set the dependency scope as 'pr
     <dependency>
       <groupId>org.xerial.snappy</groupId>
       <artifactId>snappy-java</artifactId>
-      <version>1.0.1-rc4</version>
+      <version>(version)</version>
       <scope>provided</scope>
     </dependency>
 }}}
@@ -104,7 +108,7 @@ Snappy-java is developed by [http://www.xerial.org/leo Taro L. Saito]. Twitter  
 
 [usage]
 
-* Add snappy-java-1.0.1.jar to your classpath
+* Add snappy-java-(version).jar to your classpath
 * Use the compress/decompress methods defined in org.xerial.snappy.Snappy class.
 
 == Contributors ==
