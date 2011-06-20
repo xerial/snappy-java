@@ -287,8 +287,15 @@ public class SnappyTest
     public void isValidCompressedData() throws Exception {
 
         byte[] b = new byte[] { (byte) 91, (byte) 34, (byte) 80, (byte) 73, (byte) 34, (byte) 93 };
-        if (Snappy.isValidCompressedBuffer(b, 0, b.length)) {
+
+        assertFalse(Snappy.isValidCompressedBuffer(b));
+
+        try {
             byte[] uncompressed = Snappy.uncompress(b);
+            fail("cannot reach here since the input is invalid data");
+        }
+        catch (SnappyException e) {
+            assertEquals(SnappyErrorCode.FAILED_TO_UNCOMPRESS, e.errorCode);
         }
 
     }

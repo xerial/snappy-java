@@ -37,7 +37,8 @@ public enum SnappyErrorCode {
     FAILED_TO_LOAD_NATIVE_LIBRARY(1),
     PARSING_ERROR(2),
     NOT_A_DIRECT_BUFFER(3),
-    OUT_OF_MEMORY(4);
+    OUT_OF_MEMORY(4),
+    FAILED_TO_UNCOMPRESS(5);
 
     public final int id;
 

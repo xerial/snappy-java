@@ -167,6 +167,16 @@ public class Snappy
     }
 
     /**
+     * Returns true iff the contents of compressed buffer [offset,
+     * offset+length) can be uncompressed successfully. Does not return the
+     * uncompressed data. Takes time proportional to the input length, but is
+     * usually at least a factor of four faster than actual decompression.
+     */
+    public static boolean isValidCompressedBuffer(byte[] input) throws SnappyException {
+        return isValidCompressedBuffer(input, 0, input.length);
+    }
+
+    /**
      * Returns true iff the contents of compressed buffer [pos() ... limit())
      * can be uncompressed successfully. Does not return the uncompressed data.
      * Takes time proportional to the input length, but is usually at least a

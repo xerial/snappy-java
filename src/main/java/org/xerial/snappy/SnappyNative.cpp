@@ -19,19 +19,18 @@
 
 void throw_exception(JNIEnv *env, jclass self, int errorCode)
 {
-    jmethodID mth_throwex = 0;
+    jmethodID mth_throwex = env->GetStaticMethodID(self, "throw_error", "(I)V");
 
-    if (!mth_throwex)
-        mth_throwex = env->GetMethodID(self, "throw_error", "(I)V");
-
-    env->CallVoidMethod(self, mth_throwex, (jint) errorCode);
+    if(mth_throwex == 0)
+    	return;
+    env->CallStaticVoidMethod(self, mth_throwex, (jint) errorCode);
 }
 
 
 JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
   (JNIEnv * env, jclass self)
 {
-	return env->NewStringUTF("1.0.1");
+	return env->NewStringUTF("1.0.3");
 }
 
 /*
@@ -94,7 +93,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 	env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
 
 	if(!ret) {
-		throw_exception(env, self, 2);
+		throw_exception(env, self, 5);
 		return 0;
 	}
 
@@ -121,7 +120,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 	snappy::GetUncompressedLength(compressedBuffer + cpos, (size_t) clen, &decompressedLength);
 	bool ret = snappy::RawUncompress(compressedBuffer + cpos, (size_t) clen, decompressedBuffer + dpos);
 	if(!ret) {
-		throw_exception(env, self, 2);
+		throw_exception(env, self, 5);
 		return 0;
 	}
 
@@ -179,6 +178,11 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__L
 	size_t result;
 	bool ret = snappy::GetUncompressedLength(in + offset, (size_t) length, &result);
 	env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+
+	if(!ret) {
+		throw_exception(env, self, 2);
+		return 0;
+	}
 
 	return (jint) result;
 }
