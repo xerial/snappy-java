@@ -283,4 +283,14 @@ public class SnappyTest
         assertEquals(s, uncompressedString);
     }
 
+    @Test
+    public void isValidCompressedData() throws Exception {
+
+        byte[] b = new byte[] { (byte) 91, (byte) 34, (byte) 80, (byte) 73, (byte) 34, (byte) 93 };
+        if (Snappy.isValidCompressedBuffer(b, 0, b.length)) {
+            byte[] uncompressed = Snappy.uncompress(b);
+        }
+
+    }
+
 }
