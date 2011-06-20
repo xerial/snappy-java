@@ -107,6 +107,8 @@ Snappy-java is developed by [http://www.xerial.org/leo Taro L. Saito]. Twitter  
 * Add snappy-java-1.0.1.jar to your classpath
 * Use the compress/decompress methods defined in org.xerial.snappy.Snappy class.
 
-
-
-
+== Contributors ==
+  * Tatu Saloranta  
+    * Providing benchmark suite
+  * Alec Wysoker
+    * Performance and memory usage improvement
