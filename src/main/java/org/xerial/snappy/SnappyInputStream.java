@@ -38,7 +38,6 @@ public class SnappyInputStream extends InputStream
 {
     private boolean             finishedReading    = false;
     protected final InputStream in;
-    private int                 blockSize          = SnappyOutputStream.DEFAULT_BLOCK_SIZE;
 
     private byte[]              compressed;
     private byte[]              uncompressed;
@@ -50,11 +49,6 @@ public class SnappyInputStream extends InputStream
     public SnappyInputStream(InputStream input) throws IOException {
         this.in = input;
         readHeader();
-
-        if (compressed == null)
-            compressed = new byte[blockSize];
-        if (uncompressed == null)
-            uncompressed = new byte[blockSize];
     }
 
     protected void readHeader() throws IOException {
@@ -70,7 +64,7 @@ public class SnappyInputStream extends InputStream
 
         SnappyCodec codec = SnappyCodec.readHeader(new ByteArrayInputStream(header));
         if (codec.isValidMagicHeader()) {
-            // compressed by SnappyOutputStream
+            // The input data is compressed by SnappyOutputStream
             if (codec.version < SnappyCodec.MINIMUM_COMPATIBLE_VERSION) {
                 throw new IOException(String.format(
                         "compressed with imcompatible codec version %d. At least version %d is required",
@@ -148,7 +142,7 @@ public class SnappyInputStream extends InputStream
         }
         int chunkSize = SnappyOutputStream.readInt(chunkSizeBuf, 0);
         // extend the compressed data buffer size
-        if (chunkSize > compressed.length) {
+        if (compressed == null || chunkSize > compressed.length) {
             compressed = new byte[chunkSize];
         }
         int readBytes = in.read(compressed, 0, chunkSize);
@@ -157,7 +151,7 @@ public class SnappyInputStream extends InputStream
         }
         try {
             int uncompressedLength = Snappy.uncompressedLength(compressed, 0, chunkSize);
-            if (uncompressedLength > uncompressed.length) {
+            if (uncompressed == null || uncompressedLength > uncompressed.length) {
                 uncompressed = new byte[uncompressedLength];
             }
             int actualUncompressedLength = Snappy.uncompress(compressed, 0, chunkSize, uncompressed, 0);
