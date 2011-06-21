@@ -38,8 +38,39 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 
 /**
- * This class loads a native library of Snappy according to the platform of the
- * user.
+ * This class loads a native library of snappy-java (snappyjava.dll,
+ * libsnappy.so, etc.) according to the user platform (<i>os.name</i> and
+ * <i>os.arch</i>). The natively compiled libraries bundled to snappy-java
+ * contain the codes of the original snappy and JNI programs to access Snappy.
+ * 
+ * In default, no configuration is required to use snappy-java, but you can load
+ * your own native library created by 'make native' command.
+ * 
+ * LoadSnappy searches for native libraries (snappyjava.dll, libsnappy.so, etc.)
+ * in the following order:
+ * <ol>
+ * <li>(System property: <i>org.xerial.snappy.lib.path</i>)/(System property:
+ * <i>org.xerial.lib.name</i>)
+ * <li>One of the libraries embedded in snappy-java-(version).jar extracted into
+ * (System property: <i>java.io.tempdir</i> or if
+ * <i>org.xerial.snappy.tempdir</i> is set, use this folder.)
+ * <li>Folders in LD_PATH environment variable (This is the default path that
+ * JVM searches for native libraries)
+ * </ol>
+ * 
+ * <p>
+ * If you do not want to use folder <i>java.io.tempdir</i>, set the System
+ * property <i>org.xerial.snappy.tempdir</i>. For example, to use
+ * <i>/tmp/leo</i> as a temporary folder to copy native libraries, use -D option
+ * of JVM:
+ * 
+ * <pre>
+ * <code>
+ * java -Dorg.xerial.snappy.tempdir="/tmp/leo" ...
+ * </code>
+ * </pre>
+ * 
+ * </p>
  * 
  * @author leo
  * 
@@ -54,6 +85,10 @@ public class LoadSnappy
         }
         return isLoaded;
     }
+
+    public static final String KEY_SNAPPY_LIB_PATH = "org.xerial.snappy.lib.path";
+    public static final String KEY_SNAPPY_LIB_NAME = "org.xerial.snappy.lib.name";
+    public static final String KEY_SNAPPY_TEMPDIR  = "org.xerial.snappy.tempdir";
 
     /**
      * Computes the MD5 value of the input stream
@@ -118,7 +153,7 @@ public class LoadSnappy
                 }
             }
 
-            // extract file into the current directory
+            // extract a native library file into the target directory
             InputStream reader = LoadSnappy.class.getResourceAsStream(nativeLibraryFilePath);
             FileOutputStream writer = new FileOutputStream(extractedLibFile);
             byte[] buffer = new byte[1024];
@@ -130,6 +165,7 @@ public class LoadSnappy
             writer.close();
             reader.close();
 
+            // Set executable (x) flag to enable Java to load the native library
             if (!System.getProperty("os.name").contains("Windows")) {
                 try {
                     Runtime.getRuntime().exec(new String[] { "chmod", "755", extractedLibFile.getAbsolutePath() })
@@ -183,12 +219,14 @@ public class LoadSnappy
             }
         }
 
-        // Load the os-dependent library from a jar file
+        // Load an os-dependent native library inside a jar file
         snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
         if (LoadSnappy.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
             // Temporary library folder. Use the value of java.io.tmpdir
-            String tempFolder = new File(System.getProperty("java.io.tmpdir")).getAbsolutePath();
+            String tempFolder = new File(System.getProperty(System.getProperty(KEY_SNAPPY_TEMPDIR), "java.io.tmpdir"))
+                    .getAbsolutePath();
+
             // Try extracting the library from jar
             if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
                 isLoaded = true;
