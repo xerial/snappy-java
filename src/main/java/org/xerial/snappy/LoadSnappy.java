@@ -205,8 +205,8 @@ public class LoadSnappy
             return;
 
         // Try loading the library from org.xerial.snappy.lib.path library path */
-        String snappyNativeLibraryPath = System.getProperty("org.xerial.snappy.lib.path");
-        String snappyNativeLibraryName = System.getProperty("org.xerial.snappy.lib.name");
+        String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
+        String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
 
         // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
         if (snappyNativeLibraryName == null)
@@ -224,7 +224,7 @@ public class LoadSnappy
 
         if (LoadSnappy.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
             // Temporary library folder. Use the value of java.io.tmpdir
-            String tempFolder = new File(System.getProperty(System.getProperty(KEY_SNAPPY_TEMPDIR), "java.io.tmpdir"))
+            String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR, System.getProperty("java.io.tmpdir")))
                     .getAbsolutePath();
 
             // Try extracting the library from jar
