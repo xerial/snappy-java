@@ -24,6 +24,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <includes>
+          <include>org/xerial/snappy/*.bytecode</include>
           <include>org/xerial/snappy/native/**</include>
         </includes>
       </resource>

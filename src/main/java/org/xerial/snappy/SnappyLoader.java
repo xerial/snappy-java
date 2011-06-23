@@ -95,7 +95,8 @@ public class SnappyLoader
     private static byte[] getByteCode(String resourcePath) throws IOException {
 
         InputStream in = SnappyLoader.class.getResourceAsStream(resourcePath);
-        assert (in != null);
+        if (in == null)
+            throw new IOException(resourcePath + " is not found");
         byte[] buf = new byte[1024];
         ByteArrayOutputStream byteCodeBuf = new ByteArrayOutputStream();
         for (int readLength; (readLength = in.read(buf)) != -1;) {
