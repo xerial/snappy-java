@@ -89,17 +89,7 @@ public class SnappyLoaderTest
 
     @Test
     public void load() throws Exception {
-        //SnappyLoader.load();
-        //        Class< ? > c1 = Class.forName("org.xerial.snappy.SnappyNative");
-        //        Class< ? > c2 = Class.forName("org.xerial.snappy.Snappy");
-        //        ClassLoader cl1 = c1.getClassLoader();
-        //        ClassLoader cl2 = c2.getClassLoader();
-        //        Method m = c1.getDeclaredMethod("nativeLibraryVersion");
-        //        m.setAccessible(true);
-        //        String version = (String) m.invoke(null);
-        //        _logger.info(version);
-
-        //_logger.info(SnappyNative.nativeLibraryVersion());
-        _logger.info(Snappy.getNativeLibraryVersion());
+        SnappyLoader.load();
+        _logger.debug(Snappy.getNativeLibraryVersion());
     }
 }

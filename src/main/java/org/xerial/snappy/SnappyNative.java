@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * Interface to access the native code of Snappy
+ * Interface to access the native code of Snappy. Although the methods in this
+ * class are public, do not use them.
+ * 
  * 
  * @author leo
  * 
@@ -67,7 +69,7 @@ public class SnappyNative
     public native static boolean isValidCompressedBuffer(Object input, int offset, int len) throws IOException;
 
     protected static void throw_error(int errorCode) throws IOException {
-        throw new IOException(SnappyErrorCode.getErrorMessage(errorCode));
+        throw new IOException(String.format("%s(%d)", SnappyErrorCode.getErrorMessage(errorCode), errorCode));
     }
 
 }

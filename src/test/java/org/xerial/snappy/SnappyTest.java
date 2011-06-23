@@ -296,15 +296,9 @@ public class SnappyTest
             fail("cannot reach here since the input is invalid data");
         }
         catch (IOException e) {
+            _logger.debug(e);
             //assertEquals(SnappyErrorCode.FAILED_TO_UNCOMPRESS, e.errorCode);
         }
-        //        catch (Exception e) {
-        //            Class< ? > c = e.getClass();
-        //            ClassLoader cl = c.getClassLoader();
-        //
-        //            ClassLoader cl2 = SnappyException.class.getClassLoader();
-        //            _logger.error(e);
-        //        }
 
     }
 

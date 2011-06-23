@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -57,8 +58,8 @@ import java.util.Properties;
  * <li>One of the libraries embedded in snappy-java-(version).jar extracted into
  * (System property: <i>java.io.tempdir</i> or if
  * <i>org.xerial.snappy.tempdir</i> is set, use this folder.)
- * <li>Folders in LD_PATH environment variable (This is the default path that
- * JVM searches for native libraries)
+ * <li>Folders specified by java.lib.path system property (This is the default
+ * path that JVM searches for native libraries)
  * </ol>
  * 
  * <p>
@@ -109,7 +110,7 @@ public class SnappyLoader
 
         if (!isInitialized) {
             final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
-            final String[] preloadClass = new String[] { "org.xerial.snappy.SnappyNative",
+            final String[] classesToPreload = new String[] { "org.xerial.snappy.SnappyNative",
                     "org.xerial.snappy.SnappyErrorCode" };
 
             try {
@@ -123,15 +124,15 @@ public class SnappyLoader
                     // Load a byte code 
                     byte[] byteCode = getByteCode("/org/xerial/snappy/SnappyNativeLoader.bytecode");
                     // In addition, load the SnappyNative and SnappyException class in the system class loader
-                    List<byte[]> preloadClassByteCode = new ArrayList<byte[]>(preloadClass.length);
-                    for (String each : preloadClass) {
+                    List<byte[]> preloadClassByteCode = new ArrayList<byte[]>(classesToPreload.length);
+                    for (String each : classesToPreload) {
                         preloadClassByteCode.add(getByteCode(String.format("/%s.class", each.replaceAll("\\.", "/"))));
                     }
 
                     // Create a new class to the system class loader
                     Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
-                    java.lang.reflect.Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] {
-                            String.class, byte[].class, int.class, int.class, ProtectionDomain.class });
+                    Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
+                            byte[].class, int.class, int.class, ProtectionDomain.class });
 
                     ClassLoader systemClassLoader = getSystemClassLoader();
                     defineClass.setAccessible(true);
@@ -140,9 +141,9 @@ public class SnappyLoader
                         defineClass.invoke(systemClassLoader, nativeLoaderClassName, byteCode, 0, byteCode.length,
                                 System.class.getProtectionDomain());
 
-                        for (int i = 0; i < preloadClass.length; ++i) {
+                        for (int i = 0; i < classesToPreload.length; ++i) {
                             byte[] b = preloadClassByteCode.get(i);
-                            defineClass.invoke(systemClassLoader, preloadClass[i], b, 0, b.length,
+                            defineClass.invoke(systemClassLoader, classesToPreload[i], b, 0, b.length,
                                     System.class.getProtectionDomain());
                         }
                     }
@@ -153,12 +154,11 @@ public class SnappyLoader
                     // Load the loader class
                     Class< ? > loaderClass = systemClassLoader.loadClass(nativeLoaderClassName);
                     if (loaderClass != null) {
-                        java.lang.reflect.Method loadMethod = loaderClass.getDeclaredMethod("load",
-                                new Class[] { String.class });
+                        Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
                         File nativeLib = findNativeLibrary();
                         loadMethod.invoke(null, nativeLib.getAbsolutePath());
 
-                        for (String each : preloadClass) {
+                        for (String each : classesToPreload) {
                             systemClassLoader.loadClass(each);
                         }
 
