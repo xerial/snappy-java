@@ -86,9 +86,10 @@ public class SnappyLoader
         return isLoaded;
     }
 
-    public static final String KEY_SNAPPY_LIB_PATH = "org.xerial.snappy.lib.path";
-    public static final String KEY_SNAPPY_LIB_NAME = "org.xerial.snappy.lib.name";
-    public static final String KEY_SNAPPY_TEMPDIR  = "org.xerial.snappy.tempdir";
+    public static final String KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
+    public static final String KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
+    public static final String KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
+    public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs";
 
     /**
      * Computes the MD5 value of the input stream
@@ -204,36 +205,39 @@ public class SnappyLoader
         if (isLoaded)
             return;
 
-        // Try loading the library from org.xerial.snappy.lib.path library path */
-        String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
-        String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
+        if (System.getProperty(KEY_SNAPPY_DISABLE_BUNDLED_LIBS, "false").equals("false")) {
+            // Try to load the library from org.xerial.snappy.lib.path library path */
+            String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
+            String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
 
-        // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
-        if (snappyNativeLibraryName == null)
-            snappyNativeLibraryName = System.mapLibraryName("snappyjava");
+            // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
+            if (snappyNativeLibraryName == null)
+                snappyNativeLibraryName = System.mapLibraryName("snappyjava");
 
-        if (snappyNativeLibraryPath != null) {
-            if (loadNativeLibrary(snappyNativeLibraryPath, snappyNativeLibraryName)) {
-                isLoaded = true;
-                return;
+            if (snappyNativeLibraryPath != null) {
+                if (loadNativeLibrary(snappyNativeLibraryPath, snappyNativeLibraryName)) {
+                    isLoaded = true;
+                    return;
+                }
+            }
+
+            // Load an OS-dependent native library inside a jar file
+            snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
+
+            if (SnappyLoader.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
+                // Temporary library folder. Use the value of org.xerial.snappy.tempdir or java.io.tmpdir
+                String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR,
+                        System.getProperty("java.io.tmpdir"))).getAbsolutePath();
+
+                // Extract and load a native library inside the jar file
+                if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
+                    isLoaded = true;
+                    return;
+                }
             }
         }
 
-        // Load an os-dependent native library inside a jar file
-        snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
-
-        if (SnappyLoader.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
-            // Temporary library folder. Use the value of java.io.tmpdir
-            String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR, System.getProperty("java.io.tmpdir")))
-                    .getAbsolutePath();
-
-            // Try extracting the library from jar
-            if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
-                isLoaded = true;
-                return;
-            }
-        }
-        // Try to load snappyjava DLL in LD_PATH
+        // Try to load snappyjava DLL in LD_LIBRARY_PATH
         try {
             System.loadLibrary("snappyjava");
             isLoaded = true;

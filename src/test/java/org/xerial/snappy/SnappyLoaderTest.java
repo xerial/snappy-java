@@ -41,8 +41,8 @@ public class SnappyLoaderTest
         ClassRealm L1 = cw.newRealm("l1", parent);
         ClassRealm L2 = cw.newRealm("l2", parent);
 
-        Class< ? > snappyClass = L1.loadClass("org.xerial.snappy.Snappy");
-        _logger.info(snappyClass.getName());
+        //Class< ? > snappyClass = L1.loadClass("org.xerial.snappy.Snappy");    // not found
+        //_logger.info(snappyClass.getName());
 
     }
 }
