@@ -16,7 +16,7 @@
 //--------------------------------------
 // snappy-java Project
 //
-// LoadSnappy.java
+// SnappyLoader.java
 // Since: 2011/03/29
 //
 // $URL$ 
@@ -75,7 +75,7 @@ import java.util.Properties;
  * @author leo
  * 
  */
-public class LoadSnappy
+public class SnappyLoader
 {
     private static boolean isLoaded = false;
 
@@ -137,7 +137,7 @@ public class LoadSnappy
         try {
             if (extractedLibFile.exists()) {
                 // test md5sum value
-                String md5sum1 = md5sum(LoadSnappy.class.getResourceAsStream(nativeLibraryFilePath));
+                String md5sum1 = md5sum(SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath));
                 String md5sum2 = md5sum(new FileInputStream(extractedLibFile));
 
                 if (md5sum1.equals(md5sum2)) {
@@ -154,7 +154,7 @@ public class LoadSnappy
             }
 
             // extract a native library file into the target directory
-            InputStream reader = LoadSnappy.class.getResourceAsStream(nativeLibraryFilePath);
+            InputStream reader = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
             FileOutputStream writer = new FileOutputStream(extractedLibFile);
             byte[] buffer = new byte[1024];
             int bytesRead = 0;
@@ -222,7 +222,7 @@ public class LoadSnappy
         // Load an os-dependent native library inside a jar file
         snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
-        if (LoadSnappy.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
+        if (SnappyLoader.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
             // Temporary library folder. Use the value of java.io.tmpdir
             String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR, System.getProperty("java.io.tmpdir")))
                     .getAbsolutePath();
@@ -261,9 +261,10 @@ public class LoadSnappy
 
     public static String getVersion() {
 
-        URL versionFile = LoadSnappy.class.getResource("/META-INF/maven/org.xerial.snappy/snappy-java/pom.properties");
+        URL versionFile = SnappyLoader.class
+                .getResource("/META-INF/maven/org.xerial.snappy/snappy-java/pom.properties");
         if (versionFile == null)
-            versionFile = LoadSnappy.class.getResource("/org/xerial/snappy/VERSION");
+            versionFile = SnappyLoader.class.getResource("/org/xerial/snappy/VERSION");
 
         String version = "unknown";
         try {

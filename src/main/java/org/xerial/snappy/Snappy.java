@@ -37,7 +37,7 @@ public class Snappy
 {
 
     static {
-        LoadSnappy.load();
+        SnappyLoader.load();
     }
 
     /**
