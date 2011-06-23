@@ -121,15 +121,10 @@ public class SnappyOutputStream extends OutputStream
             return; // no need to dump
 
         // Compress and dump the buffer content
-        try {
-            int compressedSize = Snappy.compress(uncompressed, 0, cursor, compressed, 0);
-            writeInt(out, compressedSize);
-            out.write(compressed, 0, compressedSize);
-            cursor = 0;
-        }
-        catch (SnappyException e) {
-            throw new IOException(e.getMessage());
-        }
+        int compressedSize = Snappy.compress(uncompressed, 0, cursor, compressed, 0);
+        writeInt(out, compressedSize);
+        out.write(compressed, 0, compressedSize);
+        cursor = 0;
     }
 
     @Override

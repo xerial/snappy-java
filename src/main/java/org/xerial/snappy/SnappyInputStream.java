@@ -95,16 +95,11 @@ public class SnappyInputStream extends InputStream
         finishedReading = true;
 
         // Uncompress
-        try {
-            int uncompressedLength = Snappy.uncompressedLength(compressed, 0, cursor);
-            uncompressed = new byte[uncompressedLength];
-            Snappy.uncompress(compressed, 0, cursor, uncompressed, 0);
-            this.uncompressedCursor = 0;
-            this.uncompressedLimit = uncompressedLength;
-        }
-        catch (SnappyException e) {
-            throw new IOException(e.getMessage());
-        }
+        int uncompressedLength = Snappy.uncompressedLength(compressed, 0, cursor);
+        uncompressed = new byte[uncompressedLength];
+        Snappy.uncompress(compressed, 0, cursor, uncompressed, 0);
+        this.uncompressedCursor = 0;
+        this.uncompressedLimit = uncompressedLength;
 
     }
 
@@ -160,7 +155,7 @@ public class SnappyInputStream extends InputStream
             }
             uncompressedLimit = actualUncompressedLength;
         }
-        catch (SnappyException e) {
+        catch (IOException e) {
             throw new IOException("failed to uncompress the chunk: " + e.getMessage());
         }
 

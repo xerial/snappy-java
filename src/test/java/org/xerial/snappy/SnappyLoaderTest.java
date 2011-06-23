@@ -24,8 +24,19 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.security.ProtectionDomain;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtNewMethod;
+
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xerial.util.log.Logger;
 
@@ -33,6 +44,7 @@ public class SnappyLoaderTest
 {
     private static Logger _logger = Logger.getLogger(SnappyLoaderTest.class);
 
+    @Ignore
     @Test
     public void loadFromSytemClassLoader() throws Exception {
 
@@ -41,8 +53,53 @@ public class SnappyLoaderTest
         ClassRealm L1 = cw.newRealm("l1", parent);
         ClassRealm L2 = cw.newRealm("l2", parent);
 
+        File nativeLib = SnappyLoader.findNativeLibrary();
+        assertNotNull(nativeLib);
+
+        ClassPool pool = ClassPool.getDefault();
+        CtClass cl = pool.makeClass("org.xerial.snappy.SnappyNativeLoader");
+        cl.addField(CtField.make("static boolean isLoaded = false;", cl));
+        String body = "public static void load(String lib) {if(!isLoaded) { try { System.load(lib); isLoaded=true; } catch(Exception e) { e.printStackTrace(); } }}";
+        cl.addMethod(CtNewMethod.make(body, cl));
+
+        ProtectionDomain systemPD = System.class.getProtectionDomain();
+        byte[] bytecode = cl.toBytecode();
+        //        FileOutputStream f = new FileOutputStream("src/main/java/org/xerial/snappy/SnappyNativeLoader.bytecode");
+        //        f.write(bytecode);
+        //        f.close();
+
+        //Class< ? > loaderClass = cl.toClass(parent, System.class.getProtectionDomain());
+        //_logger.info(cl.getName());
+        //Class< ? > loaderClass = cl.toClass();
+
+        Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
+        java.lang.reflect.Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
+                byte[].class, int.class, int.class, ProtectionDomain.class });
+
+        defineClass.setAccessible(true);
+        defineClass.invoke(parent, cl.getName(), bytecode, 0, bytecode.length, System.class.getProtectionDomain());
+
+        Class< ? > forName = parent.loadClass("org.xerial.snappy.SnappyNativeLoader");
+        _logger.info(forName.toString());
+
         //Class< ? > snappyClass = L1.loadClass("org.xerial.snappy.Snappy");    // not found
         //_logger.info(snappyClass.getName());
 
+    }
+
+    @Test
+    public void load() throws Exception {
+        //SnappyLoader.load();
+        //        Class< ? > c1 = Class.forName("org.xerial.snappy.SnappyNative");
+        //        Class< ? > c2 = Class.forName("org.xerial.snappy.Snappy");
+        //        ClassLoader cl1 = c1.getClassLoader();
+        //        ClassLoader cl2 = c2.getClassLoader();
+        //        Method m = c1.getDeclaredMethod("nativeLibraryVersion");
+        //        m.setAccessible(true);
+        //        String version = (String) m.invoke(null);
+        //        _logger.info(version);
+
+        //_logger.info(SnappyNative.nativeLibraryVersion());
+        _logger.info(Snappy.getNativeLibraryVersion());
     }
 }

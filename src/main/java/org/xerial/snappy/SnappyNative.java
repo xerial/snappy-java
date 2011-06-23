@@ -24,6 +24,7 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -35,37 +36,38 @@ import java.nio.ByteBuffer;
 public class SnappyNative
 {
 
-    native static String nativeLibraryVersion();
+    public native static String nativeLibraryVersion();
 
     // ------------------------------------------------------------------------
     // Generic compression/decompression routines.
     // ------------------------------------------------------------------------
-    native static int rawCompress(ByteBuffer input, int inputOffset, int inputLength, ByteBuffer compressed,
-            int outputOffset) throws SnappyException;
+    public native static int rawCompress(ByteBuffer input, int inputOffset, int inputLength, ByteBuffer compressed,
+            int outputOffset) throws IOException;
 
-    native static int rawCompress(Object input, int inputOffset, int inputByteLength, Object output, int outputOffset);
+    public native static int rawCompress(Object input, int inputOffset, int inputByteLength, Object output,
+            int outputOffset);
 
-    native static int rawUncompress(ByteBuffer compressed, int inputOffset, int inputLength, ByteBuffer uncompressed,
-            int outputOffset) throws SnappyException;
+    public native static int rawUncompress(ByteBuffer compressed, int inputOffset, int inputLength,
+            ByteBuffer uncompressed, int outputOffset) throws IOException;
 
-    native static int rawUncompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
-            throws SnappyException;
+    public native static int rawUncompress(Object input, int inputOffset, int inputLength, Object output,
+            int outputOffset) throws IOException;
 
     // Returns the maximal size of the compressed representation of
     // input data that is "source_bytes" bytes in length;
-    native static int maxCompressedLength(int source_bytes);
+    public native static int maxCompressedLength(int source_bytes);
 
     // This operation takes O(1) time.
-    native static int uncompressedLength(ByteBuffer compressed, int offset, int len) throws SnappyException;
+    public native static int uncompressedLength(ByteBuffer compressed, int offset, int len) throws IOException;
 
-    native static int uncompressedLength(Object input, int offset, int len) throws SnappyException;
+    public native static int uncompressedLength(Object input, int offset, int len) throws IOException;
 
-    native static boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len) throws SnappyException;
+    public native static boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len) throws IOException;
 
-    native static boolean isValidCompressedBuffer(Object input, int offset, int len) throws SnappyException;
+    public native static boolean isValidCompressedBuffer(Object input, int offset, int len) throws IOException;
 
-    protected static void throw_error(int errorCode) throws SnappyException {
-        throw new SnappyException(errorCode);
+    protected static void throw_error(int errorCode) throws IOException {
+        throw new IOException(SnappyErrorCode.getErrorMessage(errorCode));
     }
 
 }

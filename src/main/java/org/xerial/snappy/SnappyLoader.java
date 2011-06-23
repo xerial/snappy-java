@@ -35,6 +35,9 @@ import java.net.URL;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -77,13 +80,97 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    private static boolean isLoaded = false;
+    private static boolean isInitialized = false;
+    private static boolean isLoaded      = false;
 
-    public static boolean load() {
-        if (!isLoaded) {
-            loadSnappyNativeLibrary();
+    private static ClassLoader getSystemClassLoader() {
+        ClassLoader cl = SnappyLoader.class.getClassLoader();
+        while (cl.getParent() != null) {
+            cl = cl.getParent();
         }
-        return isLoaded;
+        return cl;
+    }
+
+    private static byte[] getByteCode(String resourcePath) throws IOException {
+
+        InputStream in = SnappyLoader.class.getResourceAsStream(resourcePath);
+        assert (in != null);
+        byte[] buf = new byte[1024];
+        ByteArrayOutputStream byteCodeBuf = new ByteArrayOutputStream();
+        for (int readLength; (readLength = in.read(buf)) != -1;) {
+            byteCodeBuf.write(buf, 0, readLength);
+        }
+        in.close();
+
+        return byteCodeBuf.toByteArray();
+    }
+
+    public static void load() {
+
+        if (!isInitialized) {
+            final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
+            final String[] preloadClass = new String[] { "org.xerial.snappy.SnappyNative",
+                    "org.xerial.snappy.SnappyErrorCode" };
+
+            try {
+                Class.forName(nativeLoaderClassName);
+                // If this native loader class is already defined, it means that another class loader already loaded the native library of snappy
+                isInitialized = true;
+                return;
+            }
+            catch (ClassNotFoundException e) {
+                try {
+                    // Load a byte code 
+                    byte[] byteCode = getByteCode("/org/xerial/snappy/SnappyNativeLoader.bytecode");
+                    // In addition, load the SnappyNative and SnappyException class in the system class loader
+                    List<byte[]> preloadClassByteCode = new ArrayList<byte[]>(preloadClass.length);
+                    for (String each : preloadClass) {
+                        preloadClassByteCode.add(getByteCode(String.format("/%s.class", each.replaceAll("\\.", "/"))));
+                    }
+
+                    // Create a new class to the system class loader
+                    Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
+                    java.lang.reflect.Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] {
+                            String.class, byte[].class, int.class, int.class, ProtectionDomain.class });
+
+                    ClassLoader systemClassLoader = getSystemClassLoader();
+                    defineClass.setAccessible(true);
+                    try {
+                        // Load SnappyNativeLoader
+                        defineClass.invoke(systemClassLoader, nativeLoaderClassName, byteCode, 0, byteCode.length,
+                                System.class.getProtectionDomain());
+
+                        for (int i = 0; i < preloadClass.length; ++i) {
+                            byte[] b = preloadClassByteCode.get(i);
+                            defineClass.invoke(systemClassLoader, preloadClass[i], b, 0, b.length,
+                                    System.class.getProtectionDomain());
+                        }
+                    }
+                    finally {
+                        defineClass.setAccessible(false);
+                    }
+
+                    // Load the loader class
+                    Class< ? > loaderClass = systemClassLoader.loadClass(nativeLoaderClassName);
+                    if (loaderClass != null) {
+                        java.lang.reflect.Method loadMethod = loaderClass.getDeclaredMethod("load",
+                                new Class[] { String.class });
+                        File nativeLib = findNativeLibrary();
+                        loadMethod.invoke(null, nativeLib.getAbsolutePath());
+
+                        for (String each : preloadClass) {
+                            systemClassLoader.loadClass(each);
+                        }
+
+                        isInitialized = true;
+                    }
+                }
+                catch (Exception e2) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
     public static final String KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
@@ -101,7 +188,6 @@ public class SnappyLoader
      */
     static String md5sum(InputStream input) throws IOException {
         BufferedInputStream in = new BufferedInputStream(input);
-
         try {
             MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
             DigestInputStream digestInputStream = new DigestInputStream(in, digest);
@@ -128,8 +214,7 @@ public class SnappyLoader
      * @param targetFolder
      * @return
      */
-    private static boolean extractAndLoadLibraryFile(String libFolderForCurrentOS, String libraryFileName,
-            String targetFolder) {
+    private static File extractLibraryFile(String libFolderForCurrentOS, String libraryFileName, String targetFolder) {
         String nativeLibraryFilePath = libFolderForCurrentOS + "/" + libraryFileName;
         final String prefix = "snappy-" + getVersion() + "-";
         String extractedLibFileName = prefix + libraryFileName;
@@ -142,7 +227,7 @@ public class SnappyLoader
                 String md5sum2 = md5sum(new FileInputStream(extractedLibFile));
 
                 if (md5sum1.equals(md5sum2)) {
-                    return loadNativeLibrary(targetFolder, extractedLibFileName);
+                    return new File(targetFolder, extractedLibFileName);
                 }
                 else {
                     // remove old native library file
@@ -154,10 +239,10 @@ public class SnappyLoader
                 }
             }
 
-            // extract a native library file into the target directory
+            // Extract a native library file into the target directory
             InputStream reader = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
             FileOutputStream writer = new FileOutputStream(extractedLibFile);
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[8192];
             int bytesRead = 0;
             while ((bytesRead = reader.read(buffer)) != -1) {
                 writer.write(buffer, 0, bytesRead);
@@ -175,52 +260,46 @@ public class SnappyLoader
                 catch (Throwable e) {}
             }
 
-            return loadNativeLibrary(targetFolder, extractedLibFileName);
+            return new File(targetFolder, extractedLibFileName);
         }
         catch (IOException e) {
-            System.err.println(e.getMessage());
-            return false;
+            e.printStackTrace(System.err);
+            return null;
         }
-
     }
 
-    private static synchronized boolean loadNativeLibrary(String path, String name) {
-        File libPath = new File(path, name);
+    private static synchronized boolean loadNativeLibrary(File libPath) {
         if (libPath.exists()) {
-
             try {
-                System.load(new File(path, name).getAbsolutePath());
+                System.load(libPath.getAbsolutePath());
                 return true;
             }
             catch (UnsatisfiedLinkError e) {
                 throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e);
             }
-
         }
         else
             return false;
     }
 
-    private static void loadSnappyNativeLibrary() {
-        if (isLoaded)
-            return;
+    static File findNativeLibrary() {
+        // Try to load the library from org.xerial.snappy.lib.path library path */
+        String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
+        String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
 
         if (System.getProperty(KEY_SNAPPY_DISABLE_BUNDLED_LIBS, "false").equals("false")) {
-            // Try to load the library from org.xerial.snappy.lib.path library path */
-            String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
-            String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
-
             // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
             if (snappyNativeLibraryName == null)
                 snappyNativeLibraryName = System.mapLibraryName("snappyjava");
 
             if (snappyNativeLibraryPath != null) {
-                if (loadNativeLibrary(snappyNativeLibraryPath, snappyNativeLibraryName)) {
-                    isLoaded = true;
-                    return;
-                }
+                File nativeLib = new File(snappyNativeLibraryPath, snappyNativeLibraryName);
+                if (nativeLib.exists())
+                    return nativeLib;
             }
+        }
 
+        {
             // Load an OS-dependent native library inside a jar file
             snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
@@ -230,10 +309,22 @@ public class SnappyLoader
                         System.getProperty("java.io.tmpdir"))).getAbsolutePath();
 
                 // Extract and load a native library inside the jar file
-                if (extractAndLoadLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder)) {
-                    isLoaded = true;
-                    return;
-                }
+                return extractLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder);
+            }
+        }
+
+        return null;
+    }
+
+    private static void loadSnappyNativeLibrary() {
+        if (isLoaded)
+            return;
+
+        File nativeLibrary = findNativeLibrary();
+        if (nativeLibrary != null) {
+            if (loadNativeLibrary(nativeLibrary)) {
+                isLoaded = true;
+                return;
             }
         }
 
