@@ -58,7 +58,7 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 snappy-jar-version:=snappy-java-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
 
 native: $(SNAPPY_UNPACKED) $(NATIVE_DLL) 
-snappy: $(TARGET)/$(snappy-jar-version).jar
+snappy: native $(TARGET)/$(snappy-jar-version).jar
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) 
 	@mkdir -p $(@D)

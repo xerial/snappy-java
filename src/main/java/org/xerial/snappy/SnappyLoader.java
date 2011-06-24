@@ -124,21 +124,22 @@ public class SnappyLoader
                 try {
                     // Load a byte code 
                     byte[] byteCode = getByteCode("/org/xerial/snappy/SnappyNativeLoader.bytecode");
-                    // In addition, load the SnappyNative and SnappyException class in the system class loader
+                    // In addition, we need to load the other dependent classes (e.g., SnappyNative and SnappyException) using the system class loader
                     List<byte[]> preloadClassByteCode = new ArrayList<byte[]>(classesToPreload.length);
                     for (String each : classesToPreload) {
                         preloadClassByteCode.add(getByteCode(String.format("/%s.class", each.replaceAll("\\.", "/"))));
                     }
 
-                    // Create a new class to the system class loader
+                    // Create a new class from a byte code
                     Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
                     Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
                             byte[].class, int.class, int.class, ProtectionDomain.class });
 
                     ClassLoader systemClassLoader = getSystemClassLoader();
+                    // ClassLoader.defineClass is a protected method, so we have to make it accessible
                     defineClass.setAccessible(true);
                     try {
-                        // Load SnappyNativeLoader
+                        // Create a new class using a ClassLoader#defineClass
                         defineClass.invoke(systemClassLoader, nativeLoaderClassName, byteCode, 0, byteCode.length,
                                 System.class.getProtectionDomain());
 
@@ -149,16 +150,18 @@ public class SnappyLoader
                         }
                     }
                     finally {
+                        // Reset the accessibility to defineClass method
                         defineClass.setAccessible(false);
                     }
 
-                    // Load the loader class
+                    // Load the snappy loader class
                     Class< ? > loaderClass = systemClassLoader.loadClass(nativeLoaderClassName);
                     if (loaderClass != null) {
                         Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
                         File nativeLib = findNativeLibrary();
                         loadMethod.invoke(null, nativeLib.getAbsolutePath());
 
+                        // And also, preload the other dependent classes 
                         for (String each : classesToPreload) {
                             systemClassLoader.loadClass(each);
                         }
@@ -167,7 +170,7 @@ public class SnappyLoader
                     }
                 }
                 catch (Exception e2) {
-                    e.printStackTrace();
+                    e2.printStackTrace();
                 }
             }
 

@@ -64,7 +64,7 @@ public class SnappyLoaderTest
 
         ProtectionDomain systemPD = System.class.getProtectionDomain();
         byte[] bytecode = cl.toBytecode();
-        //        FileOutputStream f = new FileOutputStream("src/main/java/org/xerial/snappy/SnappyNativeLoader.bytecode");
+        //        FileOutputStream f = new FileOutputStream("src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode");
         //        f.write(bytecode);
         //        f.close();
 

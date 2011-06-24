@@ -23,7 +23,7 @@ OS_NAME := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --os)
 OS_ARCH := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --arch)
 LIB_FOLDER := $(shell $(JAVA) -cp lib $(OSINFO_CLASS))
 
-# Windows uses different path separators, because they hate me
+# Windows uses different path separators
 ifeq ($(OS_NAME),Windows)
 	sep := ;
 else
@@ -50,7 +50,7 @@ endif
 
 Default_CXX          := g++
 Default_STRIP        := strip
-Default_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC
+Default_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
 Default_LINKFLAGS    := -shared -static
 Default_LIBNAME      := libsnappyjava.so
 Default_SNAPPY_FLAGS := 
