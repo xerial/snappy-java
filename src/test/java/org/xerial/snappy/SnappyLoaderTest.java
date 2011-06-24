@@ -27,6 +27,7 @@ package org.xerial.snappy;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.ProtectionDomain;
 
 import javassist.ClassPool;
@@ -38,6 +39,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
 
 public class SnappyLoaderTest
@@ -59,14 +61,16 @@ public class SnappyLoaderTest
         ClassPool pool = ClassPool.getDefault();
         CtClass cl = pool.makeClass("org.xerial.snappy.SnappyNativeLoader");
         cl.addField(CtField.make("static boolean isLoaded = false;", cl));
-        String body = "public static void load(String lib) {if(!isLoaded) { try { System.load(lib); isLoaded=true; } catch(Exception e) { e.printStackTrace(); } }}";
-        cl.addMethod(CtNewMethod.make(body, cl));
+        String m1 = FileResource.loadIntoString(SnappyLoaderTest.class, "load.code");
+        String m2 = FileResource.loadIntoString(SnappyLoaderTest.class, "loadLibrary.code");
+        cl.addMethod(CtNewMethod.make(m1, cl));
+        cl.addMethod(CtNewMethod.make(m2, cl));
 
         ProtectionDomain systemPD = System.class.getProtectionDomain();
         byte[] bytecode = cl.toBytecode();
-        //        FileOutputStream f = new FileOutputStream("src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode");
-        //        f.write(bytecode);
-        //        f.close();
+        FileOutputStream f = new FileOutputStream("src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode");
+        f.write(bytecode);
+        f.close();
 
         //Class< ? > loaderClass = cl.toClass(parent, System.class.getProtectionDomain());
         //_logger.info(cl.getName());

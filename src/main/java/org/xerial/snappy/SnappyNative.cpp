@@ -20,7 +20,6 @@
 void throw_exception(JNIEnv *env, jclass self, int errorCode)
 {
     jmethodID mth_throwex = env->GetStaticMethodID(self, "throw_error", "(I)V");
-
     if(mth_throwex == 0)
     	return;
     env->CallStaticVoidMethod(self, mth_throwex, (jint) errorCode);

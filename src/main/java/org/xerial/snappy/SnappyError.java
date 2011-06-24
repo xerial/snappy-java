@@ -49,4 +49,9 @@ public class SnappyError extends Error
         this.errorCode = code;
     }
 
+    @Override
+    public String getMessage() {
+        return String.format("[%s] %s", errorCode.name(), super.getMessage());
+    }
+
 }

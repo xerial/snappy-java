@@ -1,0 +1,13 @@
+public static void loadLibrary(String libname) {
+  if(isLoaded) 
+     return;
+      
+  try { 
+    System.load(libname); 
+    isLoaded=true;
+  } 
+  catch(Exception e) {
+    e.printStackTrace(); 
+  } 
+ }
+}

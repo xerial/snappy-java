@@ -24,12 +24,16 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.io.IOException;
+
 /**
  * Exception in snappy-java
  * 
+ * @deprecated Snappy-java now uses {@link IOException}
  * @author leo
  * 
  */
+@Deprecated
 public class SnappyException extends Exception
 {
     private static final long    serialVersionUID = 1L;
@@ -37,13 +41,7 @@ public class SnappyException extends Exception
     public final SnappyErrorCode errorCode;
 
     public SnappyException(int code) {
-        SnappyErrorCode[] values = SnappyErrorCode.values();
-        if (code < 0 || code >= values.length) {
-            this.errorCode = SnappyErrorCode.UNKNOWN;
-        }
-        else {
-            this.errorCode = values[code];
-        }
+        this(SnappyErrorCode.getErrorCode(code));
     }
 
     public SnappyException(SnappyErrorCode errorCode) {
@@ -62,6 +60,10 @@ public class SnappyException extends Exception
 
     public SnappyErrorCode getErrorCode() {
         return errorCode;
+    }
+
+    public static void throwException(int errorCode) throws SnappyException {
+        throw new SnappyException(errorCode);
     }
 
     @Override

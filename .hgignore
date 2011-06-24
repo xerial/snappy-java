@@ -8,3 +8,4 @@ syntax: glob
 *~
 *.sdf
 *.ipch
+hs_err_pid*

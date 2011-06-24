@@ -1,0 +1,14 @@
+public static void load(String lib) {
+  if(isLoaded) 
+     return;
+      
+  try { 
+    System.load(lib); 
+    isLoaded=true;
+  } 
+  catch(Exception e) {
+    e.printStackTrace(); 
+  } 
+ }
+}
+

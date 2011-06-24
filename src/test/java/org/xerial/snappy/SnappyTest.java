@@ -297,7 +297,6 @@ public class SnappyTest
         }
         catch (IOException e) {
             _logger.debug(e);
-            //assertEquals(SnappyErrorCode.FAILED_TO_UNCOMPRESS, e.errorCode);
         }
 
     }

@@ -46,11 +46,15 @@ public enum SnappyErrorCode {
         this.id = id;
     }
 
-    public static String getErrorMessage(int id) {
+    public static SnappyErrorCode getErrorCode(int id) {
         for (SnappyErrorCode code : SnappyErrorCode.values()) {
             if (code.id == id)
-                return code.name();
+                return code;
         }
-        return UNKNOWN.name();
+        return UNKNOWN;
+    }
+
+    public static String getErrorMessage(int id) {
+        return getErrorCode(id).name();
     }
 }
