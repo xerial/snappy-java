@@ -84,6 +84,14 @@ public class SnappyLoader
     private static boolean isInitialized = false;
     private static boolean isLoaded      = false;
 
+    private static ClassLoader getAncestorClassLoader() {
+        ClassLoader cl = SnappyLoader.class.getClassLoader();
+        while (cl.getParent() != null) {
+            cl = cl.getParent();
+        }
+        return cl;
+    }
+
     private static byte[] getByteCode(String resourcePath) throws IOException {
 
         InputStream in = SnappyLoader.class.getResourceAsStream(resourcePath);
@@ -134,7 +142,7 @@ public class SnappyLoader
                 Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
                         byte[].class, int.class, int.class, ProtectionDomain.class });
 
-                ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+                ClassLoader systemClassLoader = getAncestorClassLoader();
                 // ClassLoader.defineClass is a protected method, so we have to make it accessible
                 defineClass.setAccessible(true);
                 try {
