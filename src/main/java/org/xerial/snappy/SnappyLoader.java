@@ -86,9 +86,9 @@ public class SnappyLoader
 
     private static ClassLoader getAncestorClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
-        while (cl.getParent() != null) {
-            cl = cl.getParent();
-        }
+        //        while (cl.getParent() != null) {
+        //            cl = cl.getParent();
+        //        }
         return cl;
     }
 
