@@ -32,7 +32,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.ProtectionDomain;
 
 import javassist.ClassPool;
@@ -81,6 +83,28 @@ public class SnappyLoaderTest
         }
     }
 
+    @Test
+    public void loadSnappyByDiffentClassloadersInTheSameJVM() throws Exception {
+        ClassLoader parent = this.getClass().getClassLoader().getParent();
+        ClassWorld cw = new ClassWorld();
+        ClassRealm P = cw.newRealm("P", parent);
+
+        URL classPath = new File("target/classes").toURI().toURL();
+        ClassRealm L1 = cw.newRealm("l1", URLClassLoader.newInstance(new URL[] { classPath }, parent));
+        ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] { classPath }, parent));
+
+        Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
+        Method m = S1.getMethod("getNativeLibraryVersion");
+        String v = (String) m.invoke(null);
+
+        Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
+        Method m2 = S2.getMethod("getNativeLibraryVersion");
+        String v2 = (String) m2.invoke(null);
+
+        assertEquals(v, v2);
+
+    }
+
     @Ignore
     @Test
     public void loadFromSytemClassLoader() throws Exception {
@@ -127,6 +151,6 @@ public class SnappyLoaderTest
     @Test
     public void load() throws Exception {
         SnappyLoader.load();
-        _logger.info(Snappy.getNativeLibraryVersion());
+        _logger.debug(Snappy.getNativeLibraryVersion());
     }
 }
