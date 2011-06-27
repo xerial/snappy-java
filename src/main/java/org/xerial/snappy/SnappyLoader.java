@@ -81,14 +81,15 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    private static boolean isInitialized = false;
-    private static boolean isLoaded      = false;
+    private static boolean         isInitialized = false;
+    private static boolean         isLoaded      = false;
+    private static SnappyNativeAPI api           = null;
 
-    private static ClassLoader getAncestorClassLoader() {
+    private static ClassLoader getRootClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
-        //        while (cl.getParent() != null) {
-        //            cl = cl.getParent();
-        //        }
+        while (cl.getParent() != null) {
+            cl = cl.getParent();
+        }
         return cl;
     }
 
@@ -111,21 +112,22 @@ public class SnappyLoader
         return isLoaded;
     }
 
-    static void load() {
+    static SnappyNativeAPI load() {
 
         if (isInitialized)
-            return;
+            return api;
 
         isInitialized = true;
         final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
-        final String[] classesToPreload = new String[] { "org.xerial.snappy.SnappyNative",
-                "org.xerial.snappy.SnappyErrorCode" };
+        final String[] classesToPreload = new String[] { "org.xerial.snappy.SnappyNativeAPI",
+                "org.xerial.snappy.SnappyNative", "org.xerial.snappy.SnappyErrorCode" };
 
         try {
-            Class.forName(nativeLoaderClassName);
+            Class< ? > c = Class.forName(nativeLoaderClassName);
             // If this native loader class is already defined, it means that another class loader already loaded the native library of snappy
+            api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
             isLoaded = true;
-            return;
+            return api;
         }
         catch (ClassNotFoundException e) {
             try {
@@ -142,18 +144,19 @@ public class SnappyLoader
                 Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
                         byte[].class, int.class, int.class, ProtectionDomain.class });
 
-                ClassLoader systemClassLoader = getAncestorClassLoader();
+                // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice  
+                ClassLoader systemClassLoader = getRootClassLoader();
+                ProtectionDomain pd = System.class.getProtectionDomain();
+
                 // ClassLoader.defineClass is a protected method, so we have to make it accessible
                 defineClass.setAccessible(true);
                 try {
                     // Create a new class using a ClassLoader#defineClass
-                    defineClass.invoke(systemClassLoader, nativeLoaderClassName, byteCode, 0, byteCode.length,
-                            System.class.getProtectionDomain());
+                    defineClass.invoke(systemClassLoader, nativeLoaderClassName, byteCode, 0, byteCode.length, pd);
 
                     for (int i = 0; i < classesToPreload.length; ++i) {
                         byte[] b = preloadClassByteCode.get(i);
-                        defineClass.invoke(systemClassLoader, classesToPreload[i], b, 0, b.length,
-                                System.class.getProtectionDomain());
+                        defineClass.invoke(systemClassLoader, classesToPreload[i], b, 0, b.length, pd);
                     }
                 }
                 finally {
@@ -182,13 +185,23 @@ public class SnappyLoader
                         systemClassLoader.loadClass(each);
                     }
                     isLoaded = true;
+
+                    api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+                    return api;
                 }
+            }
+            catch (ClassNotFoundException ee) {
+                throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, ee.getMessage());
             }
             catch (Exception e2) {
                 throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
             }
         }
+        catch (Exception e) {
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
+        }
 
+        throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY);
     }
 
     public static final String KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";

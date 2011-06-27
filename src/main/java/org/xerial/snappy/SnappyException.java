@@ -34,7 +34,7 @@ import java.io.IOException;
  * 
  */
 @Deprecated
-public class SnappyException extends Exception
+public class SnappyException extends IOException
 {
     private static final long    serialVersionUID = 1L;
 
@@ -45,6 +45,7 @@ public class SnappyException extends Exception
     }
 
     public SnappyException(SnappyErrorCode errorCode) {
+        super();
         this.errorCode = errorCode;
     }
 

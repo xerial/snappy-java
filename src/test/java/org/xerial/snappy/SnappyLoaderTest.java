@@ -42,6 +42,7 @@ import javassist.CtNewMethod;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
@@ -80,6 +81,7 @@ public class SnappyLoaderTest
         }
     }
 
+    @Ignore
     @Test
     public void loadFromSytemClassLoader() throws Exception {
 
@@ -109,23 +111,22 @@ public class SnappyLoaderTest
         //_logger.info(cl.getName());
         //Class< ? > loaderClass = cl.toClass();
 
-        Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
-        java.lang.reflect.Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
-                byte[].class, int.class, int.class, ProtectionDomain.class });
-
-        defineClass.setAccessible(true);
-        defineClass.invoke(parent, cl.getName(), bytecode, 0, bytecode.length, System.class.getProtectionDomain());
-
-        Class< ? > forName = parent.loadClass("org.xerial.snappy.SnappyNativeLoader");
+        //        Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
+        //        java.lang.reflect.Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
+        //                byte[].class, int.class, int.class, ProtectionDomain.class });
+        //
+        //        defineClass.setAccessible(true);
+        //        defineClass.invoke(parent, cl.getName(), bytecode, 0, bytecode.length, System.class.getProtectionDomain());
+        //
+        //        Class< ? > forName = parent.loadClass("org.xerial.snappy.SnappyNativeLoader");
 
         //Class< ? > snappyClass = L1.loadClass("org.xerial.snappy.Snappy");    // not found
         //_logger.info(snappyClass.getName());
-
     }
 
     @Test
     public void load() throws Exception {
         SnappyLoader.load();
-        _logger.debug(Snappy.getNativeLibraryVersion());
+        _logger.info(Snappy.getNativeLibraryVersion());
     }
 }

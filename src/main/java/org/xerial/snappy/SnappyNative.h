@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
-  (JNIEnv *, jclass);
+  (JNIEnv *, jobject);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -21,7 +21,7 @@ JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersi
  * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
-  (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
+  (JNIEnv *, jobject, jobject, jint, jint, jobject, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -29,7 +29,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_ni
  * Signature: (Ljava/lang/Object;IILjava/lang/Object;I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_lang_Object_2IILjava_lang_Object_2I
-  (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
+  (JNIEnv *, jobject, jobject, jint, jint, jobject, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -37,7 +37,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_la
  * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
-  (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
+  (JNIEnv *, jobject, jobject, jint, jint, jobject, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -45,7 +45,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
  * Signature: (Ljava/lang/Object;IILjava/lang/Object;I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_lang_Object_2IILjava_lang_Object_2I
-  (JNIEnv *, jclass, jobject, jint, jint, jobject, jint);
+  (JNIEnv *, jobject, jobject, jint, jint, jobject, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -53,7 +53,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
-  (JNIEnv *, jclass, jint);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -61,7 +61,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_maxCompressedLength
  * Signature: (Ljava/nio/ByteBuffer;II)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__Ljava_nio_ByteBuffer_2II
-  (JNIEnv *, jclass, jobject, jint, jint);
+  (JNIEnv *, jobject, jobject, jint, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -69,7 +69,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__L
  * Signature: (Ljava/lang/Object;II)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__Ljava_lang_Object_2II
-  (JNIEnv *, jclass, jobject, jint, jint);
+  (JNIEnv *, jobject, jobject, jint, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -77,7 +77,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__L
  * Signature: (Ljava/nio/ByteBuffer;II)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_nio_ByteBuffer_2II
-  (JNIEnv *, jclass, jobject, jint, jint);
+  (JNIEnv *, jobject, jobject, jint, jint);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
@@ -85,7 +85,7 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressed
  * Signature: (Ljava/lang/Object;II)Z
  */
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_lang_Object_2II
-  (JNIEnv *, jclass, jobject, jint, jint);
+  (JNIEnv *, jobject, jobject, jint, jint);
 
 #ifdef __cplusplus
 }

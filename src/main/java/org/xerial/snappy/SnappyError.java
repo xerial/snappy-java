@@ -39,6 +39,11 @@ public class SnappyError extends Error
 
     public final SnappyErrorCode errorCode;
 
+    public SnappyError(SnappyErrorCode code) {
+        super();
+        this.errorCode = code;
+    }
+
     public SnappyError(SnappyErrorCode code, Error e) {
         super(e);
         this.errorCode = code;

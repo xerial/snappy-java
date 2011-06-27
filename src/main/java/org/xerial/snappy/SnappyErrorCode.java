@@ -32,7 +32,7 @@ package org.xerial.snappy;
  */
 public enum SnappyErrorCode {
 
-    // DO NOT change the id of the error codes since these IDs are also used in SnappyNative.cpp
+    // DO NOT change these error code IDs because these numbers are used inside SnappyNative.cpp
     UNKNOWN(0),
     FAILED_TO_LOAD_NATIVE_LIBRARY(1),
     PARSING_ERROR(2),
