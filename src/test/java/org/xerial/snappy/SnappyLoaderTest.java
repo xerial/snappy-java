@@ -85,18 +85,23 @@ public class SnappyLoaderTest
 
     @Test
     public void loadSnappyByDiffentClassloadersInTheSameJVM() throws Exception {
+
+        // Parent class loader cannot see Snappy.class
         ClassLoader parent = this.getClass().getClassLoader().getParent();
         ClassWorld cw = new ClassWorld();
         ClassRealm P = cw.newRealm("P", parent);
 
+        // Prepare the child class loaders which can load Snappy.class
         URL classPath = new File("target/classes").toURI().toURL();
         ClassRealm L1 = cw.newRealm("l1", URLClassLoader.newInstance(new URL[] { classPath }, parent));
         ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] { classPath }, parent));
 
+        // Actually load Snappy.class in a class loader
         Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
         Method m = S1.getMethod("getNativeLibraryVersion");
         String v = (String) m.invoke(null);
 
+        // Load Snappy.class from another class loader
         Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
         Method m2 = S2.getMethod("getNativeLibraryVersion");
         String v2 = (String) m2.invoke(null);
@@ -107,7 +112,7 @@ public class SnappyLoaderTest
 
     @Ignore
     @Test
-    public void loadFromSytemClassLoader() throws Exception {
+    public void createByteCodeOfSnappyLoader() throws Exception {
 
         ClassLoader parent = this.getClass().getClassLoader().getParent();
         ClassWorld cw = new ClassWorld();
