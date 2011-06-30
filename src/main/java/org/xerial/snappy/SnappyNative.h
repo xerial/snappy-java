@@ -87,6 +87,14 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressed
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_lang_Object_2II
   (JNIEnv *, jobject, jobject, jint, jint);
 
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    arrayCopy
+ * Signature: (Ljava/lang/Object;IILjava/lang/Object;I)V
+ */
+JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
+  (JNIEnv *, jobject, jobject, jint, jint, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif

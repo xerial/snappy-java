@@ -105,8 +105,12 @@ public class SnappyInputStream extends InputStream
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
+        return rawRead(b, off, len);
+    }
+
+    public int rawRead(Object array, int byteOffset, int byteLength) throws IOException {
         int writtenBytes = 0;
-        for (; writtenBytes < len;) {
+        for (; writtenBytes < byteLength;) {
             if (uncompressedCursor >= uncompressedLimit) {
                 if (hasNextChunk())
                     continue;
@@ -114,13 +118,31 @@ public class SnappyInputStream extends InputStream
                     return writtenBytes == 0 ? -1 : writtenBytes;
                 }
             }
-            int bytesToWrite = Math.min(uncompressedLimit - uncompressedCursor, len - writtenBytes);
-            System.arraycopy(uncompressed, uncompressedCursor, b, off + writtenBytes, bytesToWrite);
+            int bytesToWrite = Math.min(uncompressedLimit - uncompressedCursor, byteLength - writtenBytes);
+            Snappy.arrayCopy(uncompressed, uncompressedCursor, bytesToWrite, array, byteOffset + writtenBytes);
             writtenBytes += bytesToWrite;
             uncompressedCursor += bytesToWrite;
         }
 
         return writtenBytes;
+    }
+
+    /**
+     * @param d
+     *            input
+     * @param off
+     *            offset
+     * @param len
+     *            the number of long elements to read
+     * @return written bytes
+     * @throws IOException
+     */
+    public int read(long[] d, int off, int len) throws IOException {
+        return rawRead(d, off * 8, len * 8);
+    }
+
+    public int read(long[] d) throws IOException {
+        return read(d, 0, d.length);
     }
 
     protected boolean hasNextChunk() throws IOException {

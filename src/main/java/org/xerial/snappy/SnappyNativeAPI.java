@@ -66,6 +66,8 @@ public interface SnappyNativeAPI
 
     public boolean isValidCompressedBuffer(Object input, int offset, int len) throws IOException;
 
+    public void arrayCopy(Object src, int offset, int byteLength, Object dest, int dOffset) throws IOException;
+
     public void throw_error(int errorCode) throws IOException;
 
 }

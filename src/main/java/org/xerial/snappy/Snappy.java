@@ -43,6 +43,25 @@ public class Snappy
     }
 
     /**
+     * Copy bytes from source to destination
+     * 
+     * @param src
+     *            pointer to the source array
+     * @param offset
+     *            byte offset in the source array
+     * @param byteLength
+     *            the number of bytes to copy
+     * @param dest
+     *            pointer to the destination array
+     * @param dest_offset
+     *            byte offset in the destination array
+     * @throws IOException
+     */
+    static void arrayCopy(Object src, int offset, int byteLength, Object dest, int dest_offset) throws IOException {
+        impl.arrayCopy(src, offset, byteLength, dest, dest_offset);
+    }
+
+    /**
      * High-level API for compressing the input byte array. This method performs
      * array copy to generate the result. If you want to reduce the memory copy
      * cost, use {@link #compress(byte[], int, int, byte[], int)} or

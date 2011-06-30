@@ -95,4 +95,26 @@ public class SnappyOutputStreamTest
         is.close();
     }
 
+    @Test
+    public void longArrayCompress() throws Exception {
+        long[] l = new long[10];
+        for (int i = 0; i < l.length; ++i) {
+            l[i] = i % 3 + i * 11;
+        }
+
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+
+        os.write(l);
+        os.close();
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        long[] l2 = new long[10];
+        int readBytes = is.read(l2);
+        is.close();
+
+        assertEquals(10 * 8, readBytes);
+        assertArrayEquals(l, l2);
+
+    }
+
 }

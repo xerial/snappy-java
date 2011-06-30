@@ -14,6 +14,7 @@
  *  limitations under the License.
  *--------------------------------------------------------------------------*/
 #include <string>
+#include <cstring>
 #include <snappy.h>
 #include "SnappyNative.h"
 
@@ -215,4 +216,22 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressed
 	env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
 	return ret;
 }
+
+JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
+  (JNIEnv * env, jobject self, jobject input, jint offset, jint length, jobject output, jint output_offset)
+{
+	char* src = (char*) env->GetPrimitiveArrayCritical((jarray) input, 0);
+	char* dest = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
+	if(src == 0 || dest == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return;
+	}
+
+	memcpy(dest+output_offset, src+offset, (size_t) length);
+
+	env->ReleasePrimitiveArrayCritical((jarray) input, src, 0);
+	env->ReleasePrimitiveArrayCritical((jarray) output, dest, 0);
+}
+
 

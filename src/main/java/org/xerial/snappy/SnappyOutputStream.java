@@ -34,8 +34,13 @@ import java.io.OutputStream;
  * The input data is blocked into 32kb size (in default), and each block is
  * compressed and then passed to the given {@link OutputStream}.
  * 
- * The output data format is a sequence of (compressed data size, compressed
- * data...) pair.
+ * The output data format is:
+ * <ol>
+ * <li>snappy codec header defined in {@link SnappyCodec}
+ * <li>a pair of (compressed data size, compressed data...)
+ * <li>a pair of (compressed data size, compressed data...)
+ * <li>...
+ * </ol>
  * 
  * Note that the compressed data created by {@link SnappyOutputStream} cannot be
  * uncompressed by {@link Snappy#uncompress(byte[])} since the output formats of
@@ -74,10 +79,49 @@ public class SnappyOutputStream extends OutputStream
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
+        rawWrite(b, off, len);
+    }
 
-        for (int readBytes = 0; readBytes < len;) {
-            int copyLen = Math.min(uncompressed.length - cursor, len - readBytes);
-            System.arraycopy(b, off + readBytes, uncompressed, cursor, copyLen);
+    /**
+     * Compress the input long array data
+     * 
+     * @param d
+     *            input array
+     * @param off
+     *            offset in the array
+     * @param len
+     *            the number of elements in the array to copy
+     * @throws IOException
+     */
+    public void write(long[] d, int off, int len) throws IOException {
+        rawWrite(d, off * 8, len * 8);
+    }
+
+    public void write(float[] f, int off, int len) throws IOException {
+        rawWrite(f, off * 4, len * 4);
+    }
+
+    public void write(long[] d) throws IOException {
+        write(d, 0, d.length);
+    }
+
+    public void write(float[] f) throws IOException {
+        write(f, 0, f.length);
+    }
+
+    /**
+     * Compress the raw byte array data.
+     * 
+     * @param array
+     *            array data of any type (e.g., byte[], float[], long[], ...)
+     * @param byteOffset
+     * @param byteLength
+     * @throws IOException
+     */
+    public void rawWrite(Object array, int byteOffset, int byteLength) throws IOException {
+        for (int readBytes = 0; readBytes < byteLength;) {
+            int copyLen = Math.min(uncompressed.length - cursor, byteLength - readBytes);
+            Snappy.arrayCopy(array, byteOffset + readBytes, copyLen, uncompressed, cursor);
             readBytes += copyLen;
             cursor += copyLen;
 
@@ -101,14 +145,14 @@ public class SnappyOutputStream extends OutputStream
         out.flush();
     }
 
-    public static void writeInt(OutputStream out, int value) throws IOException {
+    static void writeInt(OutputStream out, int value) throws IOException {
         out.write((value >> 24) & 0xFF);
         out.write((value >> 16) & 0xFF);
         out.write((value >> 8) & 0xFF);
         out.write((value >> 0) & 0xFF);
     }
 
-    public static int readInt(byte[] buffer, int pos) {
+    static int readInt(byte[] buffer, int pos) {
         int b1 = (buffer[pos] & 0xFF) << 24;
         int b2 = (buffer[pos + 1] & 0xFF) << 16;
         int b3 = (buffer[pos + 2] & 0xFF) << 8;
