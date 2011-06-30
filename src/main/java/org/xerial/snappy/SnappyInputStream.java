@@ -51,6 +51,14 @@ public class SnappyInputStream extends InputStream
         readHeader();
     }
 
+    @Override
+    public void close() throws IOException {
+        compressed = null;
+        uncompressed = null;
+        if (in != null)
+            in.close();
+    }
+
     protected void readHeader() throws IOException {
         byte[] header = new byte[SnappyCodec.headerSize()];
         int readBytes = in.read(header, 0, header.length);
