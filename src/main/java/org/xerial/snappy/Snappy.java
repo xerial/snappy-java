@@ -57,7 +57,8 @@ public class Snappy
      *            byte offset in the destination array
      * @throws IOException
      */
-    static void arrayCopy(Object src, int offset, int byteLength, Object dest, int dest_offset) throws IOException {
+    public static void arrayCopy(Object src, int offset, int byteLength, Object dest, int dest_offset)
+            throws IOException {
         impl.arrayCopy(src, offset, byteLength, dest, dest_offset);
     }
 
