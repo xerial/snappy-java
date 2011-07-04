@@ -170,7 +170,13 @@ public class SnappyInputStream extends InputStream
         if (compressed == null || chunkSize > compressed.length) {
             compressed = new byte[chunkSize];
         }
-        int readBytes = in.read(compressed, 0, chunkSize);
+        int readBytes = 0;
+        while (readBytes < chunkSize) {
+            int ret = in.read(compressed, readBytes, chunkSize - readBytes);
+            if (ret == -1)
+                break;
+            readBytes += ret;
+        }
         if (readBytes < chunkSize) {
             throw new IOException("failed to read chunk");
         }
