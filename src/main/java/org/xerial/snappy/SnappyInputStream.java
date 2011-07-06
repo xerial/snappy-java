@@ -61,10 +61,16 @@ public class SnappyInputStream extends InputStream
 
     protected void readHeader() throws IOException {
         byte[] header = new byte[SnappyCodec.headerSize()];
-        int readBytes = in.read(header, 0, header.length);
+        int readBytes = 0;
+        while (readBytes < header.length) {
+            int ret = in.read(header, readBytes, header.length - readBytes);
+            if (ret == -1)
+                break;
+            readBytes += ret;
+        }
 
         // Quick test of the header 
-        if (header[0] != SnappyCodec.MAGIC_HEADER[0]) {
+        if (readBytes < header.length || header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
             readFully(header, readBytes);
             return;
