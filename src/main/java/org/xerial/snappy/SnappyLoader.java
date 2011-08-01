@@ -86,8 +86,10 @@ public class SnappyLoader
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
-        if (cl.getParent() != null) {
-            cl = cl.getParent();
+        if (!Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION, "false"))) {
+            while (cl.getParent() != null) {
+                cl = cl.getParent();
+            }
         }
         return cl;
         //return ClassLoader.getSystemClassLoader();
@@ -240,10 +242,11 @@ public class SnappyLoader
         throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY);
     }
 
-    public static final String KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
-    public static final String KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
-    public static final String KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
-    public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs";
+    public static final String KEY_SNAPPY_LIB_PATH                 = "org.xerial.snappy.lib.path";
+    public static final String KEY_SNAPPY_LIB_NAME                 = "org.xerial.snappy.lib.name";
+    public static final String KEY_SNAPPY_TEMPDIR                  = "org.xerial.snappy.tempdir";
+    public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS     = "org.xerial.snappy.disable.bundled.libs";
+    public static final String KEY_SNAPPY_DISABLE_NATIVE_INJECTION = "org.xerial.snappy.disable.inject";
 
     /**
      * Computes the MD5 value of the input stream
@@ -367,22 +370,6 @@ public class SnappyLoader
         }
 
         return null;
-    }
-
-    private static void getNativeLibraryFolderForTheCurrentOS() {
-        String osName = OSInfo.getOSName();
-        String archName = OSInfo.getArchName();
-
-    }
-
-    public static int getMajorVersion() {
-        String[] c = getVersion().split("\\.");
-        return (c.length > 0) ? Integer.parseInt(c[0]) : 1;
-    }
-
-    public static int getMinorVersion() {
-        String[] c = getVersion().split("\\.");
-        return (c.length > 1) ? Integer.parseInt(c[1]) : 0;
     }
 
     public static String getVersion() {
