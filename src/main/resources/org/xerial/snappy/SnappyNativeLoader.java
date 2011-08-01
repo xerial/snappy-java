@@ -31,7 +31,7 @@ public class SnappyNativeLoader
     private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
     private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
 
-    public static void load(String lib) {
+    public static synchronized void load(String lib) {
         if (loadedLibFiles.containsKey(lib) && loadedLibFiles.get(lib) == true)
             return;
 
@@ -44,7 +44,7 @@ public class SnappyNativeLoader
         }
     }
 
-    public static void loadLibrary(String libname) {
+    public static synchronized void loadLibrary(String libname) {
         if (loadedLib.containsKey(libname) && loadedLib.get(libname) == true)
             return;
 

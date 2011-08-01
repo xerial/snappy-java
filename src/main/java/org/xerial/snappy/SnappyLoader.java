@@ -112,7 +112,7 @@ public class SnappyLoader
         return isLoaded;
     }
 
-    static SnappyNativeAPI load() {
+    static synchronized SnappyNativeAPI load() {
 
         if (isInitialized)
             return api;
