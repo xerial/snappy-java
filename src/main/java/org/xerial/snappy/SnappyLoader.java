@@ -194,7 +194,7 @@ public class SnappyLoader
                 throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, ee.getMessage());
             }
             catch (Exception e2) {
-                throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
+                throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e2.getMessage());
             }
         }
         catch (Exception e) {
