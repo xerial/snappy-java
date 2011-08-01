@@ -190,13 +190,14 @@ public class SnappyLoader
         boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
                 "false"));
 
-        if (!useNativeCodeInjection) {
-            // Use the local loader
-            return LocalSnappyNativeLoader.class;
-        }
-        else {
-            // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice
-            try {
+        try {
+            if (!useNativeCodeInjection) {
+                // Use the local loader
+                return SnappyLoader.class.getClassLoader().loadClass(LocalSnappyNativeLoader.class.getName());
+            }
+            else {
+                // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice
+
                 final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
                 ClassLoader rootClassLoader = getRootClassLoader();
                 // Load a byte code 
@@ -235,10 +236,10 @@ public class SnappyLoader
                 // Load the SnappyNativeLoader class
                 return rootClassLoader.loadClass(nativeLoaderClassName);
             }
-            catch (Exception e) {
-                e.printStackTrace(System.err);
-                throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
-            }
+        }
+        catch (Exception e) {
+            e.printStackTrace(System.err);
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
         }
 
     }
