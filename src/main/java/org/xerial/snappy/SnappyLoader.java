@@ -81,9 +81,8 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    private static boolean         isInitialized = false;
-    private static boolean         isLoaded      = false;
-    private static SnappyNativeAPI api           = null;
+    private static boolean         isLoaded = false;
+    private static SnappyNativeAPI api      = null;
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
@@ -149,10 +148,8 @@ public class SnappyLoader
      */
     static synchronized SnappyNativeAPI load() {
 
-        if (isInitialized)
+        if (api != null)
             return api;
-
-        isInitialized = true;
 
         final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
         boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
