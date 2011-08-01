@@ -37,6 +37,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -86,10 +87,8 @@ public class SnappyLoader
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
-        if (!Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION, "false"))) {
-            while (cl.getParent() != null) {
-                cl = cl.getParent();
-            }
+        while (cl.getParent() != null) {
+            cl = cl.getParent();
         }
         return cl;
         //return ClassLoader.getSystemClassLoader();
@@ -154,14 +153,24 @@ public class SnappyLoader
             return api;
 
         isInitialized = true;
+
         final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
+        boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
+                "false"));
 
         // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice  
         ClassLoader rootClassLoader = getRootClassLoader();
         try {
-            Class< ? > c = Class.forName(nativeLoaderClassName);
-            // If this native loader class is already defined, it means that another class loader already loaded the native library of snappy
-            api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+            if (!useNativeCodeInjection) {
+                // Use the local loader
+                Class< ? > loaderClass = LocalSnappyNativeLoader.class;
+                loadNativeLibrary(loaderClass);
+            }
+            else {
+                Class< ? > c = Class.forName(nativeLoaderClassName);
+                // If this native loader class is already defined, it means that another class loader already loaded the native library of snappy
+                api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+            }
             isLoaded = true;
             return api;
         }
@@ -203,43 +212,79 @@ public class SnappyLoader
 
                 // Load the SnappyNativeLoader class
                 Class< ? > loaderClass = rootClassLoader.loadClass(nativeLoaderClassName);
-                if (loaderClass != null) {
-
-                    File nativeLib = findNativeLibrary();
-                    if (nativeLib != null) {
-                        // Load extracted or specified snappyjava native library. 
-                        Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
-                        loadMethod.invoke(null, nativeLib.getAbsolutePath());
-                    }
-                    else {
-                        // Load preinstalled snappyjava (in the path -Djava.library.path) 
-                        Method loadMethod = loaderClass.getDeclaredMethod("loadLibrary", new Class[] { String.class });
-                        loadMethod.invoke(null, "snappyjava");
-                    }
-
-                    // And also, preload the other dependent classes 
-                    for (String each : classesToPreload) {
-                        rootClassLoader.loadClass(each);
-                    }
-                    isLoaded = true;
-                    api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
-                    return api;
-                }
+                loadNativeLibrary(loaderClass);
+                return api;
             }
             catch (ClassNotFoundException ee) {
                 throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, ee.getMessage());
             }
             catch (Exception e2) {
-                e2.printStackTrace();
+                e2.printStackTrace(System.err);
                 throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e2.getMessage());
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.err);
             throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
         }
 
-        throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY);
+    }
+
+    private static void loadNativeLibrary(Class< ? > loaderClass) {
+        try {
+            if (loaderClass != null) {
+                File nativeLib = findNativeLibrary();
+                if (nativeLib != null) {
+                    // Load extracted or specified snappyjava native library. 
+                    Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
+                    loadMethod.invoke(null, nativeLib.getAbsolutePath());
+                }
+                else {
+                    // Load preinstalled snappyjava (in the path -Djava.library.path) 
+                    Method loadMethod = loaderClass.getDeclaredMethod("loadLibrary", new Class[] { String.class });
+                    loadMethod.invoke(null, "snappyjava");
+                }
+                isLoaded = true;
+                api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace(System.err);
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
+        }
+
+    }
+
+    private static class LocalSnappyNativeLoader
+    {
+        private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
+        private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
+
+        public static synchronized void load(String lib) {
+            if (loadedLibFiles.containsKey(lib) && loadedLibFiles.get(lib) == true)
+                return;
+
+            try {
+                System.load(lib);
+                loadedLibFiles.put(lib, true);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        public static synchronized void loadLibrary(String libname) {
+            if (loadedLib.containsKey(libname) && loadedLib.get(libname) == true)
+                return;
+
+            try {
+                System.loadLibrary(libname);
+                loadedLib.put(libname, true);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static final String KEY_SNAPPY_LIB_PATH                 = "org.xerial.snappy.lib.path";
