@@ -139,7 +139,7 @@ public class SnappyLoader
                     preloadClassByteCode.add(getByteCode(String.format("/%s.class", each.replaceAll("\\.", "/"))));
                 }
 
-                // Create a new class from a byte code
+                // Create SnappyNative class from a byte code
                 Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
                 Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class,
                         byte[].class, int.class, int.class, ProtectionDomain.class });
@@ -168,16 +168,24 @@ public class SnappyLoader
                 Class< ? > loaderClass = systemClassLoader.loadClass(nativeLoaderClassName);
                 if (loaderClass != null) {
 
-                    File nativeLib = findNativeLibrary();
-                    if (nativeLib != null) {
-                        // Load extracted or specified snappyjava native library. 
-                        Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
-                        loadMethod.invoke(null, nativeLib.getAbsolutePath());
-                    }
-                    else {
-                        // Load preinstalled snappyjava (in the path -Djava.library.path) 
-                        Method loadMethod = loaderClass.getDeclaredMethod("loadLibrary", new Class[] { String.class });
-                        loadMethod.invoke(null, "snappyjava");
+                    final String KEY_SNAPPY_NATIVE_LOAD_FLAG = "org.xerial.snappy.native_is_loaded";
+                    boolean isNativeLibLoaded = Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_NATIVE_LOAD_FLAG,
+                            "false"));
+                    if (!isNativeLibLoaded) {
+                        File nativeLib = findNativeLibrary();
+                        if (nativeLib != null) {
+                            // Load extracted or specified snappyjava native library. 
+                            Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
+                            loadMethod.invoke(null, nativeLib.getAbsolutePath());
+                        }
+                        else {
+                            // Load preinstalled snappyjava (in the path -Djava.library.path) 
+                            Method loadMethod = loaderClass.getDeclaredMethod("loadLibrary",
+                                    new Class[] { String.class });
+                            loadMethod.invoke(null, "snappyjava");
+                        }
+
+                        System.setProperty(KEY_SNAPPY_NATIVE_LOAD_FLAG, "true");
                     }
 
                     // And also, preload the other dependent classes 
