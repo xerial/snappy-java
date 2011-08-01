@@ -96,16 +96,22 @@ public class SnappyLoaderTest
         ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] { classPath }, parent));
 
         // Actually load Snappy.class in a class loader
-        Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
-        Method m = S1.getMethod("getNativeLibraryVersion");
-        String v = (String) m.invoke(null);
+        try {
+            Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
+            Method m = S1.getMethod("getNativeLibraryVersion");
+            String v = (String) m.invoke(null);
 
-        // Load Snappy.class from another class loader
-        Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
-        Method m2 = S2.getMethod("getNativeLibraryVersion");
-        String v2 = (String) m2.invoke(null);
+            // Load Snappy.class from another class loader
+            Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
+            Method m2 = S2.getMethod("getNativeLibraryVersion");
+            String v2 = (String) m2.invoke(null);
 
-        assertEquals(v, v2);
+            assertEquals(v, v2);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
