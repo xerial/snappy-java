@@ -81,9 +81,13 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    private static boolean         isInitialized = false;
-    private static boolean         isLoaded      = false;
-    private static SnappyNativeAPI api           = null;
+    private static boolean                  isInitialized  = false;
+    private static boolean                  isLoaded       = false;
+    private static SnappyNativeAPI          api            = null;
+
+    // preserved for LocalSnappyNativeLoader
+    private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
+    private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
@@ -158,8 +162,6 @@ public class SnappyLoader
         boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
                 "false"));
 
-        // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice
-
         if (useNativeCodeInjection) {
             try {
                 Class< ? > c = Class.forName(nativeLoaderClassName);
@@ -177,7 +179,9 @@ public class SnappyLoader
             }
         }
 
+        // Prepare SnappyNativeLoader or LocalSnappyNativeLoader
         Class< ? > nativeLoader = prepareNativeLoader();
+        // Load the code
         loadNativeLibrary(nativeLoader);
         return api;
     }
@@ -191,6 +195,7 @@ public class SnappyLoader
             return LocalSnappyNativeLoader.class;
         }
         else {
+            // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice
             try {
                 final String nativeLoaderClassName = "org.xerial.snappy.SnappyNativeLoader";
                 ClassLoader rootClassLoader = getRootClassLoader();
@@ -239,22 +244,23 @@ public class SnappyLoader
     }
 
     private static void loadNativeLibrary(Class< ? > loaderClass) {
+        if (loaderClass == null)
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, "missing snappy loader class");
+
         try {
-            if (loaderClass != null) {
-                File nativeLib = findNativeLibrary();
-                if (nativeLib != null) {
-                    // Load extracted or specified snappyjava native library. 
-                    Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
-                    loadMethod.invoke(null, nativeLib.getAbsolutePath());
-                }
-                else {
-                    // Load preinstalled snappyjava (in the path -Djava.library.path) 
-                    Method loadMethod = loaderClass.getDeclaredMethod("loadLibrary", new Class[] { String.class });
-                    loadMethod.invoke(null, "snappyjava");
-                }
-                isLoaded = true;
-                api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+            File nativeLib = findNativeLibrary();
+            if (nativeLib != null) {
+                // Load extracted or specified snappyjava native library. 
+                Method loadMethod = loaderClass.getDeclaredMethod("load", new Class[] { String.class });
+                loadMethod.invoke(null, nativeLib.getAbsolutePath());
             }
+            else {
+                // Load preinstalled snappyjava (in the path -Djava.library.path) 
+                Method loadMethod = loaderClass.getDeclaredMethod("loadLibrary", new Class[] { String.class });
+                loadMethod.invoke(null, "snappyjava");
+            }
+            isLoaded = true;
+            api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
         }
         catch (Exception e) {
             e.printStackTrace(System.err);
@@ -265,8 +271,6 @@ public class SnappyLoader
 
     private static class LocalSnappyNativeLoader
     {
-        private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
-        private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
 
         public static synchronized void load(String lib) {
             if (loadedLibFiles.containsKey(lib) && loadedLibFiles.get(lib) == true)
