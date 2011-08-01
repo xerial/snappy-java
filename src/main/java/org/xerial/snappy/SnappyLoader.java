@@ -196,7 +196,6 @@ public class SnappyLoader
                     e.printStackTrace(System.err);
                     throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
                 }
-
             }
         }
 
