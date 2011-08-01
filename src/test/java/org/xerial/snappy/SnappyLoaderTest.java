@@ -82,6 +82,13 @@ public class SnappyLoaderTest
         ClassLoader parent = this.getClass().getClassLoader().getParent();
         ClassWorld cw = new ClassWorld();
         ClassRealm P = cw.newRealm("P", parent);
+        try {
+            P.loadClass("org.xerial.snappy.Snappy");
+            fail("org.xerial.snappy.Snappy is found in the parent");
+        }
+        catch (ClassNotFoundException e) {
+            // OK
+        }
 
         // Prepare the child class loaders which can load Snappy.class
         URL classPath = new File("target/classes").toURI().toURL();
