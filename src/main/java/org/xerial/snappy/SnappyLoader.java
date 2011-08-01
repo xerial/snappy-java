@@ -81,13 +81,9 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    private static boolean                  isInitialized  = false;
-    private static boolean                  isLoaded       = false;
-    private static SnappyNativeAPI          api            = null;
-
-    // preserved for LocalSnappyNativeLoader
-    private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
-    private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
+    private static boolean         isInitialized = false;
+    private static boolean         isLoaded      = false;
+    private static SnappyNativeAPI api           = null;
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = SnappyLoader.class.getClassLoader();
@@ -193,7 +189,8 @@ public class SnappyLoader
         try {
             if (!useNativeCodeInjection) {
                 // Use the local loader
-                return SnappyLoader.class.getClassLoader().loadClass(LocalSnappyNativeLoader.class.getName());
+                return Thread.currentThread().getContextClassLoader()
+                        .loadClass(LocalSnappyNativeLoader.class.getName());
             }
             else {
                 // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice
@@ -246,7 +243,7 @@ public class SnappyLoader
 
     private static void loadNativeLibrary(Class< ? > loaderClass) {
         if (loaderClass == null)
-            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, "missing snappy loader class");
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, "missing snappy native loader class");
 
         try {
             File nativeLib = findNativeLibrary();
@@ -272,9 +269,12 @@ public class SnappyLoader
 
     private static class LocalSnappyNativeLoader
     {
+        // preserved for LocalSnappyNativeLoader
+        private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
+        private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
 
         public static synchronized void load(String lib) {
-            if (loadedLibFiles.containsKey(lib) && loadedLibFiles.get(lib) == true)
+            if (loadedLibFiles.containsKey(lib))
                 return;
 
             try {
@@ -287,7 +287,7 @@ public class SnappyLoader
         }
 
         public static synchronized void loadLibrary(String libname) {
-            if (loadedLib.containsKey(libname) && loadedLib.get(libname) == true)
+            if (loadedLib.containsKey(libname))
                 return;
 
             try {
