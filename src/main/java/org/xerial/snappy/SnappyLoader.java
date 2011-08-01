@@ -151,7 +151,7 @@ public class SnappyLoader
             return api;
 
         boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
-                "false"));
+                "true"));
 
         if (useNativeCodeInjection) {
             try {
