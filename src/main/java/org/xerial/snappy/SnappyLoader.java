@@ -37,7 +37,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 
@@ -186,8 +186,7 @@ public class SnappyLoader
         try {
             if (!useNativeCodeInjection) {
                 // Use the local loader
-                return Thread.currentThread().getContextClassLoader()
-                        .loadClass(LocalSnappyNativeLoader.class.getName());
+                return LocalSnappyNativeLoader.class;
             }
             else {
                 // Use parent class loader to load SnappyNative, since Tomcat, which uses different class loaders for each webapps, cannot load JNI interface twice
@@ -267,16 +266,16 @@ public class SnappyLoader
     private static class LocalSnappyNativeLoader
     {
         // preserved for LocalSnappyNativeLoader
-        private static HashMap<String, Boolean> loadedLibFiles = new HashMap<String, Boolean>();
-        private static HashMap<String, Boolean> loadedLib      = new HashMap<String, Boolean>();
+        private static HashSet<String> loadedLibFiles = new HashSet<String>();
+        private static HashSet<String> loadedLib      = new HashSet<String>();
 
         public static synchronized void load(String lib) {
-            if (loadedLibFiles.containsKey(lib))
+            if (loadedLibFiles.contains(lib))
                 return;
 
             try {
                 System.load(lib);
-                loadedLibFiles.put(lib, true);
+                loadedLibFiles.add(lib);
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -284,12 +283,12 @@ public class SnappyLoader
         }
 
         public static synchronized void loadLibrary(String libname) {
-            if (loadedLib.containsKey(libname))
+            if (loadedLib.contains(libname))
                 return;
 
             try {
                 System.loadLibrary(libname);
-                loadedLib.put(libname, true);
+                loadedLib.add(libname);
             }
             catch (Exception e) {
                 e.printStackTrace();
