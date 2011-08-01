@@ -114,8 +114,8 @@ public class SnappyLoader
 
     /**
      * Load SnappyNative and its JNI native implementation in the root class
-     * loader. This is necessary to avoid JNI multi-loading issues when the same
-     * JNI library is loaded by different class loaders in the same JVM.
+     * loader. This is necessary to avoid the JNI multi-loading issue when the
+     * same JNI library is loaded by different class loaders in the same JVM.
      * 
      * In order to load native code in the root class loader, this method first
      * inject SnappyNativeLoader class into the root class loader, because
@@ -123,14 +123,26 @@ public class SnappyLoader
      * class when loading native libraries.
      * 
      * <pre>
-     * (root class loader) -> [SnappyNativeLoader, SnappyNative, SnappyNativeAPI, SnappyErrorCode]  (injected by this method)
+     * (root class loader) -> [SnappyNativeLoader (load JNI code), SnappyNative (has native methods), SnappyNativeAPI, SnappyErrorCode]  (injected by this method)
      *    |
      *    |
-     * (child class loader) -> See the above classes loaded by the root class loader.
+     * (child class loader) -> Sees the above classes loaded by the root class loader.
      *   Then creates SnappyNativeAPI implementation by instantiating SnappyNaitive class.
      * </pre>
      * 
      * 
+     * <pre>
+     * (root class loader) -> [SnappyNativeLoader, SnappyNative ...]  -> native code is loaded by once in this class loader 
+     *   |   \
+     *   |    (child2 class loader)      
+     * (child1 class loader)
+     * 
+     * child1 and child2 share the same SnappyNative code loaded by the root class loader.
+     * </pre>
+     * 
+     * Note that Java's class loader first delegates the class lookup to its
+     * parent class loader. So once SnappyNativeLoader is loaded by the root
+     * class loader, no child class loader initialize SnappyNativeLoader again.
      * 
      * @return
      */
