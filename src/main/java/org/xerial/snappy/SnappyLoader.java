@@ -151,7 +151,8 @@ public class SnappyLoader
             return api;
 
         boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
-                "true"));
+                "false"));
+        System.out.println("use native code injection: " + useNativeCodeInjection);
 
         if (useNativeCodeInjection) {
             try {
@@ -187,9 +188,8 @@ public class SnappyLoader
                         // Load preinstalled snappyjava (in the path -Djava.library.path)
                         System.loadLibrary("snappyjava");
                     }
-
-                    api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
                     isLoaded = true;
+                    api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
                 }
                 catch (Exception e) {
                     e.printStackTrace(System.err);
