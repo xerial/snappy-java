@@ -82,14 +82,13 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    public static final String     KEY_SNAPPY_LIB_PATH                 = "org.xerial.snappy.lib.path";
-    public static final String     KEY_SNAPPY_LIB_NAME                 = "org.xerial.snappy.lib.name";
-    public static final String     KEY_SNAPPY_TEMPDIR                  = "org.xerial.snappy.tempdir";
-    public static final String     KEY_SNAPPY_DISABLE_BUNDLED_LIBS     = "org.xerial.snappy.disable.bundled.libs";
-    public static final String     KEY_SNAPPY_DISABLE_NATIVE_INJECTION = "org.xerial.snappy.disable.inject";
+    public static final String     KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
+    public static final String     KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
+    public static final String     KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
+    public static final String     KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs";
 
-    private static boolean         isLoaded                            = false;
-    private static SnappyNativeAPI api                                 = null;
+    private static boolean         isLoaded                        = false;
+    private static SnappyNativeAPI api                             = null;
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -97,7 +96,6 @@ public class SnappyLoader
             cl = cl.getParent();
         }
         return cl;
-        //return ClassLoader.getSystemClassLoader();
     }
 
     private static byte[] getByteCode(String resourcePath) throws IOException {
@@ -166,36 +164,17 @@ public class SnappyLoader
      * 
      * @return
      */
-    static SnappyNativeAPI load() {
+    static synchronized SnappyNativeAPI load() {
 
         if (api != null)
             return api;
 
-        boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
-                "false"));
-        //System.out.println("use native code injection: " + useNativeCodeInjection);
-
         try {
-            if (useNativeCodeInjection) {
-                if (!hasInjectedNativeLoader()) {
-                    // Prepare SnappyNativeLoader or LocalSnappyNativeLoader
-                    Class< ? > nativeLoader = injectSnappyNativeLoader();
-                    // Load the JNI code
-                    loadNativeLibrary(nativeLoader);
-                }
-            }
-            else {
-                if (!isLoaded) {
-                    // load locally
-                    File nativeLib = findNativeLibrary();
-                    if (nativeLib != null) {
-                        System.load(nativeLib.getAbsolutePath());
-                    }
-                    else {
-                        // Load pre-installed libsnappyjava (in the path -Djava.library.path)
-                        System.loadLibrary("snappyjava");
-                    }
-                }
+            if (!hasInjectedNativeLoader()) {
+                // Prepare SnappyNativeLoader or LocalSnappyNativeLoader
+                Class< ? > nativeLoader = injectSnappyNativeLoader();
+                // Load the JNI code
+                loadNativeLibrary(nativeLoader);
             }
 
             isLoaded = true;
