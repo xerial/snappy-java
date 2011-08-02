@@ -34,6 +34,10 @@ import java.io.InputStream;
  * @author leo
  * 
  */
+/**
+ * @author leo
+ * 
+ */
 public class SnappyInputStream extends InputStream
 {
     private boolean             finishedReading    = false;
@@ -122,6 +126,15 @@ public class SnappyInputStream extends InputStream
         return rawRead(b, off, len);
     }
 
+    /**
+     * Read uncompressed data into the specified array
+     * 
+     * @param array
+     * @param byteOffset
+     * @param byteLength
+     * @return
+     * @throws IOException
+     */
     public int rawRead(Object array, int byteOffset, int byteLength) throws IOException {
         int writtenBytes = 0;
         for (; writtenBytes < byteLength;) {
@@ -142,20 +155,137 @@ public class SnappyInputStream extends InputStream
     }
 
     /**
+     * Read long array from the stream
+     * 
      * @param d
      *            input
      * @param off
      *            offset
      * @param len
      *            the number of long elements to read
-     * @return written bytes
+     * @return the number of read bytes
      * @throws IOException
      */
     public int read(long[] d, int off, int len) throws IOException {
         return rawRead(d, off * 8, len * 8);
     }
 
+    /**
+     * Read long array from the stream
+     * 
+     * @param d
+     * @return the number of read bytes
+     * @throws IOException
+     */
     public int read(long[] d) throws IOException {
+        return read(d, 0, d.length);
+    }
+
+    /**
+     * Read double array from the stream
+     * 
+     * @param d
+     *            input
+     * @param off
+     *            offset
+     * @param len
+     *            the number of double elements to read
+     * @return the number of read bytes
+     * @throws IOException
+     */
+    public int read(double[] d, int off, int len) throws IOException {
+        return rawRead(d, off * 8, len * 8);
+    }
+
+    /**
+     * Read double array from the stream
+     * 
+     * @param d
+     * @return read bytes
+     * @throws IOException
+     */
+    public int read(double[] d) throws IOException {
+        return read(d, 0, d.length);
+    }
+
+    /**
+     * Read int array from the stream
+     * 
+     * @param d
+     * @return read bytes
+     * @throws IOException
+     */
+    public int read(int[] d) throws IOException {
+        return read(d, 0, d.length);
+    }
+
+    /**
+     * Read int array from the stream
+     * 
+     * @param d
+     *            input
+     * @param off
+     *            offset
+     * @param len
+     *            the number of int elements to read
+     * @return the number of read bytes
+     * @throws IOException
+     */
+    public int read(int[] d, int off, int len) throws IOException {
+        return rawRead(d, off * 4, len * 4);
+    }
+
+    /**
+     * Read float array from the stream
+     * 
+     * @param d
+     *            input
+     * @param off
+     *            offset
+     * @param len
+     *            the number of float elements to read
+     * @return the number of read bytes
+     * @throws IOException
+     */
+    public int read(float[] d, int off, int len) throws IOException {
+        return rawRead(d, off * 4, len * 4);
+    }
+
+    /**
+     * Read float array from the stream
+     * 
+     * @param d
+     * @return the number of read bytes
+     * @throws IOException
+     */
+    public int read(float[] d) throws IOException {
+        return read(d, 0, d.length);
+    }
+
+    /**
+     * Read short array from the stream
+     * 
+     * @param d
+     *            input
+     * @param off
+     *            offset
+     * @param len
+     *            the number of short elements to read
+     * @return the number of read bytes
+     * @throws IOException
+     */
+    public int read(short[] d, int off, int len) throws IOException {
+        return rawRead(d, off * 2, len * 2);
+    }
+
+    /**
+     * Read short array from the stream
+     * 
+     * @param d
+     * @return the number of read bytes
+     * @throws IOException
+     */
+    public int read(short[] d) throws IOException {
         return read(d, 0, d.length);
     }
 

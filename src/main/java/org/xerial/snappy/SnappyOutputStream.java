@@ -97,15 +97,39 @@ public class SnappyOutputStream extends OutputStream
         rawWrite(d, off * 8, len * 8);
     }
 
+    public void write(double[] f, int off, int len) throws IOException {
+        rawWrite(f, off * 8, len * 8);
+    }
+
     public void write(float[] f, int off, int len) throws IOException {
         rawWrite(f, off * 4, len * 4);
+    }
+
+    public void write(int[] f, int off, int len) throws IOException {
+        rawWrite(f, off * 4, len * 4);
+    }
+
+    public void write(short[] f, int off, int len) throws IOException {
+        rawWrite(f, off * 2, len * 2);
     }
 
     public void write(long[] d) throws IOException {
         write(d, 0, d.length);
     }
 
+    public void write(double[] f) throws IOException {
+        write(f, 0, f.length);
+    }
+
     public void write(float[] f) throws IOException {
+        write(f, 0, f.length);
+    }
+
+    public void write(int[] f) throws IOException {
+        write(f, 0, f.length);
+    }
+
+    public void write(short[] f) throws IOException {
         write(f, 0, f.length);
     }
 

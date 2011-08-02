@@ -117,4 +117,72 @@ public class SnappyOutputStreamTest
 
     }
 
+    @Test
+    public void writeDoubleArray() throws Exception {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+
+        double[] orig = new double[] { 1.0, 2.0, 1.4, 0.00343430014, -4.4, 4e-20 };
+        os.write(orig);
+        os.close();
+
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        double[] uncompressed = new double[orig.length];
+        is.read(uncompressed);
+        is.close();
+
+        assertArrayEquals(orig, uncompressed, 0.0);
+    }
+
+    @Test
+    public void writeFloatArray() throws Exception {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+
+        float[] orig = new float[] { 1.0f, 2.0f, 1.4f, 0.00343430014f, -4.4f, 4e-20f };
+        os.write(orig);
+        os.close();
+
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        float[] uncompressed = new float[orig.length];
+        is.read(uncompressed);
+        is.close();
+
+        assertArrayEquals(orig, uncompressed, 0.0f);
+    }
+
+    @Test
+    public void writeIntArray() throws Exception {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+
+        int[] orig = new int[] { 0, -1, -34, 43, 234, 34324, -234 };
+        os.write(orig);
+        os.close();
+
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        int[] uncompressed = new int[orig.length];
+        is.read(uncompressed);
+        is.close();
+
+        assertArrayEquals(orig, uncompressed);
+    }
+
+    @Test
+    public void writeShortArray() throws Exception {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+
+        short[] orig = new short[] { 0, -1, -34, 43, 234, 324, -234 };
+        os.write(orig);
+        os.close();
+
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        short[] uncompressed = new short[orig.length];
+        is.read(uncompressed);
+        is.close();
+
+        assertArrayEquals(orig, uncompressed);
+    }
+
 }
