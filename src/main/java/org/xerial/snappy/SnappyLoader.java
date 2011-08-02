@@ -152,7 +152,7 @@ public class SnappyLoader
 
         boolean useNativeCodeInjection = !Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_NATIVE_INJECTION,
                 "false"));
-        System.out.println("use native code injection: " + useNativeCodeInjection);
+        //System.out.println("use native code injection: " + useNativeCodeInjection);
 
         if (useNativeCodeInjection) {
             try {
