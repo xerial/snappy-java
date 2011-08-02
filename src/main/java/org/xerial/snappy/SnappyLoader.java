@@ -239,6 +239,17 @@ public class SnappyLoader
 
     }
 
+    /**
+     * Load snappy-java's native code using load method of the
+     * SnappyNativeLoader class injected to the root class loader.
+     * 
+     * @param loaderClass
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     private static void loadNativeLibrary(Class< ? > loaderClass) throws SecurityException, NoSuchMethodException,
             IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         if (loaderClass == null)
