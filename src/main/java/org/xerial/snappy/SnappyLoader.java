@@ -82,11 +82,17 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    private static boolean         isLoaded = false;
-    private static SnappyNativeAPI api      = null;
+    public static final String     KEY_SNAPPY_LIB_PATH                 = "org.xerial.snappy.lib.path";
+    public static final String     KEY_SNAPPY_LIB_NAME                 = "org.xerial.snappy.lib.name";
+    public static final String     KEY_SNAPPY_TEMPDIR                  = "org.xerial.snappy.tempdir";
+    public static final String     KEY_SNAPPY_DISABLE_BUNDLED_LIBS     = "org.xerial.snappy.disable.bundled.libs";
+    public static final String     KEY_SNAPPY_DISABLE_NATIVE_INJECTION = "org.xerial.snappy.disable.inject";
+
+    private static boolean         isLoaded                            = false;
+    private static SnappyNativeAPI api                                 = null;
 
     private static ClassLoader getRootClassLoader() {
-        ClassLoader cl = SnappyLoader.class.getClassLoader();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         while (cl.getParent() != null) {
             cl = cl.getParent();
         }
@@ -271,12 +277,6 @@ public class SnappyLoader
             loadMethod.invoke(null, "snappyjava");
         }
     }
-
-    public static final String KEY_SNAPPY_LIB_PATH                 = "org.xerial.snappy.lib.path";
-    public static final String KEY_SNAPPY_LIB_NAME                 = "org.xerial.snappy.lib.name";
-    public static final String KEY_SNAPPY_TEMPDIR                  = "org.xerial.snappy.tempdir";
-    public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS     = "org.xerial.snappy.disable.bundled.libs";
-    public static final String KEY_SNAPPY_DISABLE_NATIVE_INJECTION = "org.xerial.snappy.disable.inject";
 
     /**
      * Computes the MD5 value of the input stream
