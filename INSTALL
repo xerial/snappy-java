@@ -1,6 +1,7 @@
 [Installation note of snappy-java]
 
-If your OS platform is one of the Windows/Linux/Mac OS X (32/64 bit Intel CPUs), the installation process described here is unnecessary. Simply put snappy-java-(version).jar to your Java classpath. If your OS is not in the above list, create your own snappy-java-(version).jar file as follows. 
+If your OS platform is one of the Windows/Linux/Mac OS X (32/64 bit Intel CPUs), the installation process described here is unnecessary. Simply put snappy-java-(version).jar to your Java classpath. If your OS is not listed above, create your own snappy-java-(version).jar file as follows. 
+
 
 = Required tools for building snappy-java =
 
@@ -13,7 +14,7 @@ If your OS platform is one of the Windows/Linux/Mac OS X (32/64 bit Intel CPUs),
 
 [Windows (32/64-bit)]
 * GNU make 
-* And also tar, curl, cp, rm, grep commands are needed. (I use Cygwin for building snappy-java in Windows)
+* And also tar, curl, cp, rm, grep commands are needed. (I use Cygwin and MinGW for building snappy-java in Windows)
 
 [Windows (32-bit only)]
 * Install MinGW http://www.mingw.org/
@@ -32,7 +33,7 @@ To build x86 (32bit) dll under 64-bit Windows, use "make win32" target.
 NOTICE: Do not use the Cygwin version of MinGW-w64. It fails to build assemblies for 64bit environment.
 
 [Linux (32/64-bit)]
-* gcc-4.5.x or higher is necessary because snappy-java uses -static-libstdc++ option. 
+* gcc-4.5.x or higher is necessary because snappy-java uses -static-libstdc++ option. It is possible to use gcc-4.3.x but a dependency to libstdc++ remains in the generated jar file; That means if another version of libstdc++ is used, snappy-java might not work correctly.
 * You can build 32-bit native library with 64-bit Linux machine (do make linux32)
 
 [Mac]
