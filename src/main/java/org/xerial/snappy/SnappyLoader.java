@@ -205,7 +205,7 @@ public class SnappyLoader
                 preloadClassByteCode.add(getByteCode(String.format("/%s.class", each.replaceAll("\\.", "/"))));
             }
 
-            // Create SnappyNative class from a byte code
+            // Create SnappyNativeLoader class from a byte code
             Class< ? > classLoader = Class.forName("java.lang.ClassLoader");
             Method defineClass = classLoader.getDeclaredMethod("defineClass", new Class[] { String.class, byte[].class,
                     int.class, int.class, ProtectionDomain.class });
@@ -218,6 +218,7 @@ public class SnappyLoader
                 // Create a new class using a ClassLoader#defineClass
                 defineClass.invoke(rootClassLoader, nativeLoaderClassName, byteCode, 0, byteCode.length, pd);
 
+                // And also define dependent classes in the root class loader
                 for (int i = 0; i < classesToPreload.length; ++i) {
                     byte[] b = preloadClassByteCode.get(i);
                     defineClass.invoke(rootClassLoader, classesToPreload[i], b, 0, b.length, pd);
