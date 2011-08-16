@@ -51,8 +51,8 @@ import java.util.Properties;
  * In default, no configuration is required to use snappy-java, but you can load
  * your own native library created by 'make native' command.
  * 
- * This SnappyLoader searches for native libraries (snappyjava.dll, libsnappy.so, etc.)
- * in the following order:
+ * This SnappyLoader searches for native libraries (snappyjava.dll,
+ * libsnappy.so, etc.) in the following order:
  * <ol>
  * <li>(System property: <i>org.xerial.snappy.lib.path</i>)/(System property:
  * <i>org.xerial.lib.name</i>)
@@ -82,13 +82,14 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    public static final String     KEY_SNAPPY_LIB_PATH            = "org.xerial.snappy.lib.path";
-    public static final String     KEY_SNAPPY_LIB_NAME            = "org.xerial.snappy.lib.name";
-    public static final String     KEY_SNAPPY_TEMPDIR             = "org.xerial.snappy.tempdir";
-    public static final String     KEY_SNAPPY_ENABLE_BUNDLED_LIBS = "org.xerial.snappy.enable.bundled.libs";
+    public static final String     KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
+    public static final String     KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
+    public static final String     KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
+    public static final String     KEY_SNAPPY_USE_SYSTEMLIB        = "org.xerial.snappy.use.systemlib";
+    public static final String     KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
-    private static boolean         isLoaded                       = false;
-    private static SnappyNativeAPI api                            = null;
+    private static boolean         isLoaded                        = false;
+    private static SnappyNativeAPI api                             = null;
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -132,8 +133,9 @@ public class SnappyLoader
 
     /**
      * Load SnappyNative and its JNI native implementation in the root class
-     * loader. This process is necessary to avoid the JNI multi-loading issue when the
-     * same JNI library is loaded by different class loaders in the same JVM.
+     * loader. This process is necessary to avoid the JNI multi-loading issue
+     * when the same JNI library is loaded by different class loaders in the
+     * same JVM.
      * 
      * In order to load native code in the root class loader, this method first
      * inject SnappyNativeLoader class into the root class loader, because
@@ -361,33 +363,41 @@ public class SnappyLoader
     }
 
     static File findNativeLibrary() {
-        // Try to load the library from org.xerial.snappy.lib.path library path */
+
+        boolean useSystemLib = Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_USE_SYSTEMLIB, "false"));
+        if (useSystemLib)
+            return null;
+
+        boolean disabledBundledLibs = Boolean
+                .parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_BUNDLED_LIBS, "false"));
+        if (disabledBundledLibs)
+            return null;
+
+        // Try to load the library in org.xerial.snappy.lib.path  */
         String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
         String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
 
-        if (System.getProperty(KEY_SNAPPY_ENABLE_BUNDLED_LIBS, "true").equals("true")) {
-            // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
-            if (snappyNativeLibraryName == null)
-                snappyNativeLibraryName = System.mapLibraryName("snappyjava");
+        // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
+        if (snappyNativeLibraryName == null)
+            snappyNativeLibraryName = System.mapLibraryName("snappyjava");
 
-            if (snappyNativeLibraryPath != null) {
-                File nativeLib = new File(snappyNativeLibraryPath, snappyNativeLibraryName);
-                if (nativeLib.exists())
-                    return nativeLib;
-            }
+        if (snappyNativeLibraryPath != null) {
+            File nativeLib = new File(snappyNativeLibraryPath, snappyNativeLibraryName);
+            if (nativeLib.exists())
+                return nativeLib;
+        }
 
-            {
-                // Load an OS-dependent native library inside a jar file
-                snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
+        {
+            // Load an OS-dependent native library inside a jar file
+            snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
-                if (SnappyLoader.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
-                    // Temporary library folder. Use the value of org.xerial.snappy.tempdir or java.io.tmpdir
-                    String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR,
-                            System.getProperty("java.io.tmpdir"))).getAbsolutePath();
+            if (SnappyLoader.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
+                // Temporary library folder. Use the value of org.xerial.snappy.tempdir or java.io.tmpdir
+                String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR,
+                        System.getProperty("java.io.tmpdir"))).getAbsolutePath();
 
-                    // Extract and load a native library inside the jar file
-                    return extractLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder);
-                }
+                // Extract and load a native library inside the jar file
+                return extractLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder);
             }
         }
 

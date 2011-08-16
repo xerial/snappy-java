@@ -117,7 +117,7 @@ public class SnappyLoaderTest
 
     public static void main(String[] args) {
         // Test for loading native library specified in -Djava.library.path
-        System.setProperty(SnappyLoader.KEY_SNAPPY_ENABLE_BUNDLED_LIBS, "false");
+        System.setProperty(SnappyLoader.KEY_SNAPPY_USE_SYSTEMLIB, "true");
         _logger.debug(Snappy.getNativeLibraryVersion());
     }
 }
