@@ -54,3 +54,11 @@ $ make native
 $ make clean-native native
 
 
+= Using system installed libsnappyjava (or snappyjava.dll) 
+
+Use org.xerial.snappy.enable.bundled.libs system property:
+
+java -Djava.library.path=(path to the installed snappyjava lib) -Dorg.xerial.snappy.enable.bundled.libs=false  ...
+
+With this setting snappy-java does not use bundled native libraries. Insted it tries to load native library installed at the path specified in java.library.path.
+
