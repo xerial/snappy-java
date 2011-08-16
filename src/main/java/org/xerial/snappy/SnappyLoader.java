@@ -51,7 +51,7 @@ import java.util.Properties;
  * In default, no configuration is required to use snappy-java, but you can load
  * your own native library created by 'make native' command.
  * 
- * LoadSnappy searches for native libraries (snappyjava.dll, libsnappy.so, etc.)
+ * This SnappyLoader searches for native libraries (snappyjava.dll, libsnappy.so, etc.)
  * in the following order:
  * <ol>
  * <li>(System property: <i>org.xerial.snappy.lib.path</i>)/(System property:
@@ -132,7 +132,7 @@ public class SnappyLoader
 
     /**
      * Load SnappyNative and its JNI native implementation in the root class
-     * loader. This is necessary to avoid the JNI multi-loading issue when the
+     * loader. This process is necessary to avoid the JNI multi-loading issue when the
      * same JNI library is loaded by different class loaders in the same JVM.
      * 
      * In order to load native code in the root class loader, this method first
@@ -171,13 +171,14 @@ public class SnappyLoader
 
         try {
             if (!hasInjectedNativeLoader()) {
-                // Prepare SnappyNativeLoader or LocalSnappyNativeLoader
+                // Inject SnappyNativeLoader (src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode) to the root class loader  
                 Class< ? > nativeLoader = injectSnappyNativeLoader();
-                // Load the JNI code
+                // Load the JNI code using the injected loader
                 loadNativeLibrary(nativeLoader);
             }
 
             isLoaded = true;
+            // Look up SnappyNative, injected to the root classloder, using reflection to order to avoid the initialization of SnappyNative class in this context class loader.
             api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
         }
         catch (Exception e) {
