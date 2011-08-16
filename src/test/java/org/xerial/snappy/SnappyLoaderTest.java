@@ -95,29 +95,29 @@ public class SnappyLoaderTest
         ClassRealm L1 = cw.newRealm("l1", URLClassLoader.newInstance(new URL[] { classPath }, parent));
         ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] { classPath }, parent));
 
-        // Actually load Snappy.class in a class loader
-        try {
-            Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
-            Method m = S1.getMethod("getNativeLibraryVersion");
-            String v = (String) m.invoke(null);
+        // Actually load Snappy.class in a child class loader
 
-            // Load Snappy.class from another class loader
-            Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
-            Method m2 = S2.getMethod("getNativeLibraryVersion");
-            String v2 = (String) m2.invoke(null);
+        Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
+        Method m = S1.getMethod("getNativeLibraryVersion");
+        String v = (String) m.invoke(null);
 
-            assertEquals(v, v2);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+        // Load Snappy.class from another child class loader
+        Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
+        Method m2 = S2.getMethod("getNativeLibraryVersion");
+        String v2 = (String) m2.invoke(null);
 
+        assertEquals(v, v2);
     }
 
     @Test
     public void load() throws Exception {
         SnappyLoader.load();
+        _logger.debug(Snappy.getNativeLibraryVersion());
+    }
+
+    public static void main(String[] args) {
+        // Test for loading native library specified in -Djava.library.path
+        System.setProperty(SnappyLoader.KEY_SNAPPY_ENABLE_BUNDLED_LIBS, "false");
         _logger.debug(Snappy.getNativeLibraryVersion());
     }
 }
