@@ -54,13 +54,15 @@ import java.util.Properties;
  * This SnappyLoader searches for native libraries (snappyjava.dll,
  * libsnappy.so, etc.) in the following order:
  * <ol>
+ * <li>If system property <i>org.xerial.snappy.use.systemlib</i> is set to true,
+ * lookup folders specified by <i>java.lib.path</i> system property (This is the
+ * default path that JVM searches for native libraries)
  * <li>(System property: <i>org.xerial.snappy.lib.path</i>)/(System property:
  * <i>org.xerial.lib.name</i>)
  * <li>One of the libraries embedded in snappy-java-(version).jar extracted into
- * (System property: <i>java.io.tempdir</i> or if
- * <i>org.xerial.snappy.tempdir</i> is set, use this folder.)
- * <li>Folders specified by java.lib.path system property (This is the default
- * path that JVM searches for native libraries)
+ * (System property: <i>java.io.tempdir</i>). If
+ * <i>org.xerial.snappy.tempdir</i> is set, use this folder instead of
+ * <i>java.io.tempdir</i>.
  * </ol>
  * 
  * <p>
@@ -132,10 +134,9 @@ public class SnappyLoader
     }
 
     /**
-     * Load SnappyNative and its JNI native implementation in the root class
-     * loader. This process is necessary to avoid the JNI multi-loading issue
-     * when the same JNI library is loaded by different class loaders in the
-     * same JVM.
+     * Load SnappyNative and its JNI native implementation using the root class
+     * loader. This hack is for avoiding the JNI multi-loading issue when the
+     * same JNI library is loaded by different class loaders.
      * 
      * In order to load native code in the root class loader, this method first
      * inject SnappyNativeLoader class into the root class loader, because
