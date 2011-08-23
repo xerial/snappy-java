@@ -181,7 +181,7 @@ public class SnappyLoader
             }
 
             isLoaded = true;
-            // Look up SnappyNative, injected to the root classloder, using reflection to order to avoid the initialization of SnappyNative class in this context class loader.
+            // Look up SnappyNative, injected to the root classloder, using reflection in order to avoid the initialization of SnappyNative class in this context class loader.
             api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
         }
         catch (Exception e) {
@@ -192,6 +192,11 @@ public class SnappyLoader
         return api;
     }
 
+    /**
+     * Inject SnappyNativeLoader class to the root class loader
+     * 
+     * @return native code loader class initialized in the root class loader
+     */
     private static Class< ? > injectSnappyNativeLoader() {
 
         try {
