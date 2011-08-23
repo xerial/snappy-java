@@ -453,7 +453,7 @@ public class SnappyLoader
      * This version data is used as a suffix of a dll file extracted from the
      * jar.
      * 
-     * @return
+     * @return the version string
      */
     public static String getVersion() {
 

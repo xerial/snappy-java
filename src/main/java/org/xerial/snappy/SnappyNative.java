@@ -32,8 +32,10 @@ import java.nio.ByteBuffer;
  * method in this class is defined in SnappyNative.h (genereted by javah) and
  * SnappyNative.cpp
  * 
- * NEVER USE THIS CLASS DIRECTLY since it breaks the native library code
- * loading.
+ * <p>
+ * <b> DO NOT USE THIS CLASS DIRECTLY since the direct use of this class might
+ * break the native library code loading in {@link SnappyLoader}. </b>
+ * </p>
  * 
  * @author leo
  * 

@@ -38,7 +38,6 @@ import java.io.OutputStream;
  * <ol>
  * <li>snappy codec header defined in {@link SnappyCodec}
  * <li>a pair of (compressed data size, compressed data...)
- * <li>a pair of (compressed data size, compressed data...)
  * <li>...
  * </ol>
  * 

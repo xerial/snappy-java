@@ -34,10 +34,6 @@ import java.io.InputStream;
  * @author leo
  * 
  */
-/**
- * @author leo
- * 
- */
 public class SnappyInputStream extends InputStream
 {
     private boolean             finishedReading    = false;
@@ -132,7 +128,7 @@ public class SnappyInputStream extends InputStream
      * @param array
      * @param byteOffset
      * @param byteLength
-     * @return
+     * @return written bytes
      * @throws IOException
      */
     public int rawRead(Object array, int byteOffset, int byteLength) throws IOException {

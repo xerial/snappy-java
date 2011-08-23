@@ -33,7 +33,16 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
- * Preamble header for {@link SnappyOutputStream}
+ * Preamble header for {@link SnappyOutputStream}.
+ * 
+ * <p>
+ * The magic header is the following 8 bytes data:
+ * 
+ * <pre>
+ * -126, 'S', 'N', 'A', 'P', 'P', 'Y', 0
+ * </pre>
+ * 
+ * </p>
  * 
  * @author leo
  * 
