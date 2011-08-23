@@ -54,11 +54,25 @@ $ make native
 $ make clean-native native
 
 
-= Using system installed libsnappyjava (or snappyjava.dll) 
+= Using system installed libsnappyjava (or snappyjava.dll) = 
 
 Set org.xerial.snappy.use.systemlib system property to true:
 
 java -Djava.library.path=(path to the installed snappyjava lib) -Dorg.xerial.snappy.use.systemlib=true  ...
 
 With this setting snappy-java does not use bundled native libraries. Insted it tries to load native library installed at the path specified in java.library.path.
+
+
+= Configure snappy-java using property file =
+
+Prepare org-xerial-snappy.properties file (under the root path of your library) in Java's property file format.
+Here is a list of the available properties:
+
+ * org.xerial.snappy.lib.path   (directory containing a snappyjava's native library)
+ * org.xerial.snappy.lib.name   (library file name)
+ * org.xerial.snappy.tempdir    (temporary directory to extract a native library bundled in snappy-java)
+ * org.xerial.snappy.use.systemlib  (if this value is true, use system installed libsnappyjava.so looking the path specified by java.library.path) 
+
+
+
 

@@ -1,22 +1,29 @@
 This document is a copy of http://code.google.com/p/snappy-java/
 
 ---------------------------------------
-
-The snappy-java is a Java port of the snappy http://code.google.com/p/snappy/, a fast compresser/decompresser (written in C++ developed by Google). 
+The snappy-java is a Java port of the snappy http://code.google.com/p/snappy/, a fast compresser/decompresser written in C++ developed by Google.
 
 == Features ==
-  * [http://www.apache.org/licenses/LICENSE-2.0 Apache Licence Version 2.0]. Free for both commercial and non-commercial use!
+  * [http://www.apache.org/licenses/LICENSE-2.0 Apache Licence Version 2.0]. Free for both commercial and non-commercial use.
   * Fast compression/decompression tailored to 64-bit CPU architecture. 
-  * JNI-based implemenation to achieve comparable performance to the native C++ version.  
-  * Portable across various operating systems; Snappy-java contains the native libraries built for Window/Mac/Linux (32/64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
+  * JNI-based implementation to achieve comparable performance to the native C++ version.  
+     * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). 
+  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (32/64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in org.xerial.snappy.Snappy. 
 
 == Performance ==
-  * Here are some [https://github.com/ning/jvm-compressor-benchmark/wiki benchmark results], comparing snappy-java and the other compressors `LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [http://twitter.com/#!/cowtowncoder Tatu Saloranta @cowtowncoder] for providing the benchmark suite. 
-  * Snappy's main target is very high-speed compression/decompression with reasonable compression size. Although the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset), among the Java-based compressors in the benchmark snappy-java is as fast as the fastest for compression, and the decompression speed is 2x as fast to the others. 
+  * Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset).
+
+  * Here are some [https://github.com/ning/jvm-compressor-benchmark/wiki benchmark results], comparing snappy-java and the other compressors `LZO-java`/`LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [http://twitter.com/#!/cowtowncoder Tatu Saloranta @cowtowncoder] for providing the benchmark suite. 
+ * The benchmark result indicates snappy-java is the fastest compreesor/decompressor in Java:
+    * http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html
+ * The decompression speed is twice as fast as the others:
+    * http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html
+
+
 
 == Download ==
-The current version 1.0.3 is available from here:
+The current stable version 1.0.3.1 is available from here:
   * Release version: http://maven.xerial.org/repository/artifact/org/xerial/snappy/snappy-java
     * [Milestone] release plans
   * Snapshot version (the latest beta version): http://maven.xerial.org/repository/snapshot/org/xerial/snappy/snappy-java/
@@ -40,7 +47,7 @@ String result = new String(uncompressed, "UTF-8");
 System.out.println(result);
 }}}
 
-In addition, high-level methods (Snappy.compress(String), Snappy.compress(float[] ..) etc. ) and low-level ones (e.g. Snappy.rawCompress(.. ),  Snappy.rawUncompress(..), etc.), which minimize memory copies, can be used. See also 
+In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. See also 
 [http://code.google.com/p/snappy-java/source/browse/src/main/java/org/xerial/snappy/Snappy.java Snappy.java]
 
 ===Stream-based API===
@@ -75,7 +82,7 @@ Public discussion forum is here: [http://groups.google.com/group/xerial?hl=en Xe
 
 
 == Building from the source code ==
-See the [http://code.google.com/p/snappy-java/source/browse/INSTALL installation instruction]. Building from the source code is an option when JNI-related error (e.g., Java VM crash) is observed in your machine environment. To build snappy-java, you need Mercurial(hg), JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.
+See the [http://code.google.com/p/snappy-java/source/browse/INSTALL installation instruction]. Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Mercurial(hg), JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.
 
 {{{
 $ hg clone https://snappy-java.googlecode.com/hg/ snappy-java 
@@ -83,36 +90,13 @@ $ cd snappy-java
 $ make
 }}}
 
-A file `target/snappy-java-$(version).jar` is the product containing the native library built for your platform.
+A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
 ==Miscellaneous Notes==
-===Using snappy-java with Tomcat6 Web Server===
+===Using snappy-java with Tomcat 6 (or higher) Web Server===
 
-Do not include snappy-java-(version).jar in WEB-INF/lib folder of your web application package, since multiple web applications hosted by the same Tomcat server cannot load the snappy-java's native library multiple times due to the specification of JNI (See Section 11.2.4 A Type Safety Restriction http://java.sun.com/docs/books/jni/html/design.html#8628). If Snappy is loaded by different class loaders under the same JVM, you will see `UnsatisfiedLinkError` exception.
+Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders in the same JVM by using native code injection to the parent class loader (Issue 21). 
 
-A workaround of this problem is to put snappy-java-(version).jar file into `(TOMCAT_HOME)/lib` direcotry, in which multiple web applications can share the same native library file (.dll, .jnilib, .so) extracted from this snappy-java-(version).jar file.
 
-If you are using Maven for your web application, set the dependency scope as 'provided', and manually put the snappy-java jar file into (TOMCAT_HOME)/lib folder.
-
-{{{
-    <dependency>
-      <groupId>org.xerial.snappy</groupId>
-      <artifactId>snappy-java</artifactId>
-      <version>(version)</version>
-      <scope>provided</scope>
-    </dependency>
-}}}
 ----
 Snappy-java is developed by [http://www.xerial.org/leo Taro L. Saito]. Twitter  [http://twitter.com/#!/taroleo @taroleo]
-
-
-[usage]
-
-* Add snappy-java-(version).jar to your classpath
-* Use the compress/decompress methods defined in org.xerial.snappy.Snappy class.
-
-== Contributors ==
-  * Tatu Saloranta  
-    * Providing benchmark suite
-  * Alec Wysoker
-    * Performance and memory usage improvement
