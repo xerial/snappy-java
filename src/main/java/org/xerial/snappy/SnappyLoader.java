@@ -39,6 +39,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -84,6 +85,7 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
+    public static final String     SNAPPY_SYSTEM_PROPERTIES_FILE   = "org-xerial-snappy.properties";
     public static final String     KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
     public static final String     KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
     public static final String     KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
@@ -92,6 +94,42 @@ public class SnappyLoader
 
     private static boolean         isLoaded                        = false;
     private static SnappyNativeAPI api                             = null;
+
+    /**
+     * load system properties when configuration file of the name
+     * {@link #SNAPPY_SYSTEM_PROPERTIES_FILE} is found
+     */
+    private static void loadSnappySystemProperties() {
+        try {
+            InputStream is = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream(SNAPPY_SYSTEM_PROPERTIES_FILE);
+
+            if (is == null)
+                return; // no configuration file is found 
+
+            // Load property file
+            Properties props = new Properties();
+            props.load(is);
+            is.close();
+            Enumeration< ? > names = props.propertyNames();
+            while (names.hasMoreElements()) {
+                String name = (String) names.nextElement();
+                if (name.startsWith("org.xerial.snappy.")) {
+                    if (System.getProperty(name) == null) {
+                        System.setProperty(name, props.getProperty(name));
+                    }
+                }
+            }
+        }
+        catch (Throwable ex) {
+            System.err.println("Could not load '" + SNAPPY_SYSTEM_PROPERTIES_FILE + "' from classpath: "
+                    + ex.toString());
+        }
+    }
+
+    static {
+        loadSnappySystemProperties();
+    }
 
     private static ClassLoader getRootClassLoader() {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
@@ -407,9 +445,16 @@ public class SnappyLoader
             }
         }
 
-        return null; // Use a pre-installed snappyjava
+        return null; // Use a pre-installed libsnappyjava
     }
 
+    /**
+     * Get the snappy-java version by reading pom.properties embedded in jar.
+     * This version data is used as a suffix of a dll file extracted from the
+     * jar.
+     * 
+     * @return
+     */
     public static String getVersion() {
 
         URL versionFile = SnappyLoader.class
