@@ -85,15 +85,15 @@ import java.util.Properties;
  */
 public class SnappyLoader
 {
-    public static final String     SNAPPY_SYSTEM_PROPERTIES_FILE   = "org-xerial-snappy.properties";
-    public static final String     KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
-    public static final String     KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
-    public static final String     KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
-    public static final String     KEY_SNAPPY_USE_SYSTEMLIB        = "org.xerial.snappy.use.systemlib";
-    public static final String     KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
+    public static final String SNAPPY_SYSTEM_PROPERTIES_FILE   = "org-xerial-snappy.properties";
+    public static final String KEY_SNAPPY_LIB_PATH             = "org.xerial.snappy.lib.path";
+    public static final String KEY_SNAPPY_LIB_NAME             = "org.xerial.snappy.lib.name";
+    public static final String KEY_SNAPPY_TEMPDIR              = "org.xerial.snappy.tempdir";
+    public static final String KEY_SNAPPY_USE_SYSTEMLIB        = "org.xerial.snappy.use.systemlib";
+    public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
-    private static boolean         isLoaded                        = false;
-    private static SnappyNativeAPI api                             = null;
+    private static boolean     isLoaded                        = false;
+    private static Object      api                             = null;
 
     /**
      * load system properties when configuration file of the name
@@ -205,7 +205,7 @@ public class SnappyLoader
      * 
      * @return
      */
-    static synchronized SnappyNativeAPI load() {
+    static synchronized Object load() {
 
         if (api != null)
             return api;
@@ -220,7 +220,8 @@ public class SnappyLoader
 
             isLoaded = true;
             // Look up SnappyNative, injected to the root classloder, using reflection in order to avoid the initialization of SnappyNative class in this context class loader.
-            api = (SnappyNativeAPI) Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+            Object nativeCode = Class.forName("org.xerial.snappy.SnappyNative").newInstance();
+            api = nativeCode;
         }
         catch (Exception e) {
             e.printStackTrace();

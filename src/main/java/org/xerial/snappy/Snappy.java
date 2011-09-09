@@ -36,11 +36,19 @@ import java.nio.ByteBuffer;
  */
 public class Snappy
 {
-    private static SnappyNativeAPI impl;
-
     static {
-        impl = SnappyLoader.load();
+        try {
+            impl = SnappyLoader.load();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    /**
+     * An instance of SnappyNativeAPI
+     */
+    private static Object impl;
 
     /**
      * Copy bytes from source to destination
@@ -59,7 +67,7 @@ public class Snappy
      */
     public static void arrayCopy(Object src, int offset, int byteLength, Object dest, int dest_offset)
             throws IOException {
-        impl.arrayCopy(src, offset, byteLength, dest, dest_offset);
+        ((SnappyNativeAPI) impl).arrayCopy(src, offset, byteLength, dest, dest_offset);
     }
 
     /**
@@ -120,7 +128,8 @@ public class Snappy
         // output: compressed
         int uPos = uncompressed.position();
         int uLen = uncompressed.remaining();
-        int compressedSize = impl.rawCompress(uncompressed, uPos, uLen, compressed, compressed.position());
+        int compressedSize = ((SnappyNativeAPI) impl).rawCompress(uncompressed, uPos, uLen, compressed,
+                compressed.position());
 
         //         pos  limit
         // [ ......BBBBBBB.........]
@@ -173,7 +182,7 @@ public class Snappy
      * @return native library version
      */
     public static String getNativeLibraryVersion() {
-        return impl.nativeLibraryVersion();
+        return ((SnappyNativeAPI) impl).nativeLibraryVersion();
     }
 
     /**
@@ -185,7 +194,7 @@ public class Snappy
     public static boolean isValidCompressedBuffer(byte[] input, int offset, int length) throws IOException {
         if (input == null)
             throw new NullPointerException("input is null");
-        return impl.isValidCompressedBuffer(input, offset, length);
+        return ((SnappyNativeAPI) impl).isValidCompressedBuffer(input, offset, length);
     }
 
     /**
@@ -205,7 +214,8 @@ public class Snappy
      * factor of four faster than actual decompression.
      */
     public static boolean isValidCompressedBuffer(ByteBuffer compressed) throws IOException {
-        return impl.isValidCompressedBuffer(compressed, compressed.position(), compressed.remaining());
+        return ((SnappyNativeAPI) impl).isValidCompressedBuffer(compressed, compressed.position(),
+                compressed.remaining());
     }
 
     /**
@@ -217,7 +227,7 @@ public class Snappy
      * @return maximum byte size of the compressed data
      */
     public static int maxCompressedLength(int byteSize) {
-        return impl.maxCompressedLength(byteSize);
+        return ((SnappyNativeAPI) impl).maxCompressedLength(byteSize);
     }
 
     /**
@@ -231,7 +241,7 @@ public class Snappy
      */
     public static byte[] rawCompress(Object data, int byteSize) {
         byte[] buf = new byte[Snappy.maxCompressedLength(byteSize)];
-        int compressedByteSize = impl.rawCompress(data, 0, byteSize, buf, 0);
+        int compressedByteSize = ((SnappyNativeAPI) impl).rawCompress(data, 0, byteSize, buf, 0);
         byte[] result = new byte[compressedByteSize];
         System.arraycopy(buf, 0, result, 0, compressedByteSize);
         return result;
@@ -259,7 +269,8 @@ public class Snappy
         if (input == null || output == null)
             throw new NullPointerException("input or output is null");
 
-        int compressedSize = impl.rawCompress(input, inputOffset, inputLength, output, outputOffset);
+        int compressedSize = ((SnappyNativeAPI) impl)
+                .rawCompress(input, inputOffset, inputLength, output, outputOffset);
         return compressedSize;
     }
 
@@ -290,7 +301,7 @@ public class Snappy
             throws IOException {
         if (input == null || output == null)
             throw new NullPointerException("input or output is null");
-        return impl.rawUncompress(input, inputOffset, inputLength, output, outputOffset);
+        return ((SnappyNativeAPI) impl).rawUncompress(input, inputOffset, inputLength, output, outputOffset);
     }
 
     /**
@@ -362,7 +373,8 @@ public class Snappy
 
         //         pos  limit
         // [ ......UUUUUU.........]
-        int decompressedSize = impl.rawUncompress(compressed, cPos, cLen, uncompressed, uncompressed.position());
+        int decompressedSize = ((SnappyNativeAPI) impl).rawUncompress(compressed, cPos, cLen, uncompressed,
+                uncompressed.position());
         uncompressed.limit(uncompressed.position() + decompressedSize);
 
         return decompressedSize;
@@ -375,14 +387,14 @@ public class Snappy
     public static char[] uncompressCharArray(byte[] input, int offset, int length) throws IOException {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         char[] result = new char[uncompressedLength / 2];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        int byteSize = ((SnappyNativeAPI) impl).rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
     public static double[] uncompressDoubleArray(byte[] input) throws IOException {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         double[] result = new double[uncompressedLength / 8];
-        int byteSize = impl.rawUncompress(input, 0, input.length, result, 0);
+        int byteSize = ((SnappyNativeAPI) impl).rawUncompress(input, 0, input.length, result, 0);
         return result;
     }
 
@@ -397,7 +409,7 @@ public class Snappy
      *             {@link SnappyErrorCode#PARSING_ERROR}
      */
     public static int uncompressedLength(byte[] input) throws IOException {
-        return impl.uncompressedLength(input, 0, input.length);
+        return ((SnappyNativeAPI) impl).uncompressedLength(input, 0, input.length);
     }
 
     /**
@@ -416,7 +428,7 @@ public class Snappy
         if (input == null)
             throw new NullPointerException("input is null");
 
-        return impl.uncompressedLength(input, offset, length);
+        return ((SnappyNativeAPI) impl).uncompressedLength(input, offset, length);
     }
 
     /**
@@ -436,7 +448,7 @@ public class Snappy
         if (!compressed.isDirect())
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
 
-        return impl.uncompressedLength(compressed, compressed.position(), compressed.remaining());
+        return ((SnappyNativeAPI) impl).uncompressedLength(compressed, compressed.position(), compressed.remaining());
     }
 
     public static float[] uncompressFloatArray(byte[] input) throws IOException {
@@ -446,7 +458,7 @@ public class Snappy
     public static float[] uncompressFloatArray(byte[] input, int offset, int length) throws IOException {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         float[] result = new float[uncompressedLength / 4];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        int byteSize = ((SnappyNativeAPI) impl).rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -457,7 +469,7 @@ public class Snappy
     public static int[] uncompressIntArray(byte[] input, int offset, int length) throws IOException {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         int[] result = new int[uncompressedLength / 4];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        int byteSize = ((SnappyNativeAPI) impl).rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -468,7 +480,7 @@ public class Snappy
     public static long[] uncompressLongArray(byte[] input, int offset, int length) throws IOException {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         long[] result = new long[uncompressedLength / 8];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        int byteSize = ((SnappyNativeAPI) impl).rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -479,7 +491,7 @@ public class Snappy
     public static short[] uncompressShortArray(byte[] input, int offset, int length) throws IOException {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         short[] result = new short[uncompressedLength / 2];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        int byteSize = ((SnappyNativeAPI) impl).rawUncompress(input, offset, length, result, 0);
         return result;
     }
 

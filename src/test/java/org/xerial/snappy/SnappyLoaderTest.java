@@ -115,6 +115,11 @@ public class SnappyLoaderTest
         _logger.debug(Snappy.getNativeLibraryVersion());
     }
 
+    @Test
+    public void autoLoad() throws Exception {
+        _logger.debug(Snappy.getNativeLibraryVersion());
+    }
+
     public static void main(String[] args) {
         // Test for loading native library specified in -Djava.library.path
         System.setProperty(SnappyLoader.KEY_SNAPPY_USE_SYSTEMLIB, "true");

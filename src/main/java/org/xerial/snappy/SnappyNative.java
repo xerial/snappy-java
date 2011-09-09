@@ -33,8 +33,8 @@ import java.nio.ByteBuffer;
  * SnappyNative.cpp
  * 
  * <p>
- * <b> DO NOT USE THIS CLASS DIRECTLY since the direct use of this class might
- * break the native library code loading in {@link SnappyLoader}. </b>
+ * <b> DO NOT USE THIS CLASS since the direct use of this class might break the
+ * native library code loading in {@link SnappyLoader}. </b>
  * </p>
  * 
  * @author leo
