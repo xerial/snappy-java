@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.xerial.snappy</groupId>
@@ -82,10 +83,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.8</version>
-	<configuration>
-	  <charset>UTF-8</charset>
-	  <locale>en_US</locale>
-	</configuration>
+        <configuration>
+          <charset>UTF-8</charset>
+          <locale>en_US</locale>
+        </configuration>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -135,20 +136,21 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>
-	  <descriptors>
-	    <descriptor>src/assembly/project.xml</descriptor>
-	  </descriptors>
-	  <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/assembly/project.xml</descriptor>
+          </descriptors>
+          <appendAssemblyId>false</appendAssemblyId>
+          <attach>false</attach>
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id> 
-            <phase>package</phase> 
+            <id>make-assembly</id>
+            <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
           </execution>
-        </executions>      
+        </executions>
       </plugin>
     </plugins>
 
@@ -163,6 +165,12 @@
   </build>
 
 
+  <url>http://code.google.com/p/snappy-java/</url>
+  <issueManagement>
+  	<system>Google Code</system>
+  	<url>http://code.google.com/p/snappy-java/issues/list</url>
+  </issueManagement>
+  <inceptionYear>2011</inceptionYear>
   <scm>
     <connection>scm:hg:https://snappy-java.googlecode.com/hg/</connection>
     <developerConnection>scm:hg:default</developerConnection>
@@ -250,11 +258,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>org.xerial</groupId>
-    	<artifactId>xerial-core</artifactId>
-    	<version>1.0.21</version>
-    	<type>jar</type>
-    	<scope>test</scope>
+      <groupId>org.xerial</groupId>
+      <artifactId>xerial-core</artifactId>
+      <version>1.0.21</version>
+      <type>jar</type>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
