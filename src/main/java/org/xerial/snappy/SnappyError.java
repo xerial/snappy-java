@@ -25,7 +25,7 @@
 package org.xerial.snappy;
 
 /**
- * Used when serious errors (unchecked exception) in snappy-java are observed.
+ * Used when serious errors (unchecked exception) are observed.
  * 
  * @author leo
  * 

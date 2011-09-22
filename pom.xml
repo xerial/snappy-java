@@ -87,6 +87,7 @@
           <charset>UTF-8</charset>
           <locale>en_US</locale>
           <show>public</show>
+          <stylesheetfile>stylesheet.css</stylesheetfile>
         </configuration>
         <executions>
           <execution>
