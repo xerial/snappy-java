@@ -31,6 +31,7 @@ import java.io.InputStream;
 /**
  * A stream filter for reading data compressed by {@link SnappyOutputStream}.
  * 
+ * 
  * @author leo
  * 
  */
@@ -46,11 +47,23 @@ public class SnappyInputStream extends InputStream
 
     private byte[]              chunkSizeBuf       = new byte[4];
 
+    /**
+     * Create a filter for reading compressed data as a uncompressed stream
+     * 
+     * @param input
+     * @throws IOException
+     */
     public SnappyInputStream(InputStream input) throws IOException {
         this.in = input;
         readHeader();
     }
 
+    /**
+     * Close the stream
+     */
+    /* (non-Javadoc)
+     * @see java.io.InputStream#close()
+     */
     @Override
     public void close() throws IOException {
         compressed = null;
@@ -117,6 +130,13 @@ public class SnappyInputStream extends InputStream
 
     }
 
+    /**
+     * Reads up to len bytes of data from the input stream into an array of
+     * bytes.
+     */
+    /* (non-Javadoc)
+     * @see java.io.InputStream#read(byte[], int, int)
+     */
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         return rawRead(b, off, len);
@@ -159,7 +179,8 @@ public class SnappyInputStream extends InputStream
      *            offset
      * @param len
      *            the number of long elements to read
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(long[] d, int off, int len) throws IOException {
@@ -170,7 +191,8 @@ public class SnappyInputStream extends InputStream
      * Read long array from the stream
      * 
      * @param d
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(long[] d) throws IOException {
@@ -186,7 +208,8 @@ public class SnappyInputStream extends InputStream
      *            offset
      * @param len
      *            the number of double elements to read
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(double[] d, int off, int len) throws IOException {
@@ -197,7 +220,8 @@ public class SnappyInputStream extends InputStream
      * Read double array from the stream
      * 
      * @param d
-     * @return read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(double[] d) throws IOException {
@@ -208,7 +232,8 @@ public class SnappyInputStream extends InputStream
      * Read int array from the stream
      * 
      * @param d
-     * @return read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(int[] d) throws IOException {
@@ -224,7 +249,8 @@ public class SnappyInputStream extends InputStream
      *            offset
      * @param len
      *            the number of int elements to read
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(int[] d, int off, int len) throws IOException {
@@ -240,7 +266,8 @@ public class SnappyInputStream extends InputStream
      *            offset
      * @param len
      *            the number of float elements to read
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(float[] d, int off, int len) throws IOException {
@@ -251,7 +278,8 @@ public class SnappyInputStream extends InputStream
      * Read float array from the stream
      * 
      * @param d
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(float[] d) throws IOException {
@@ -267,7 +295,8 @@ public class SnappyInputStream extends InputStream
      *            offset
      * @param len
      *            the number of short elements to read
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(short[] d, int off, int len) throws IOException {
@@ -278,7 +307,8 @@ public class SnappyInputStream extends InputStream
      * Read short array from the stream
      * 
      * @param d
-     * @return the number of read bytes
+     * @return the total number of bytes read into the buffer, or -1 if there is
+     *         no more data because the end of the stream has been reached.
      * @throws IOException
      */
     public int read(short[] d) throws IOException {
@@ -330,6 +360,16 @@ public class SnappyInputStream extends InputStream
         return true;
     }
 
+    /**
+     * Reads the next byte of uncompressed data from the input stream. The value
+     * byte is returned as an int in the range 0 to 255. If no byte is available
+     * because the end of the stream has been reached, the value -1 is returned.
+     * This method blocks until input data is available, the end of the stream
+     * is detected, or an exception is thrown.
+     */
+    /* (non-Javadoc)
+     * @see java.io.InputStream#read()
+     */
     @Override
     public int read() throws IOException {
         if (uncompressedCursor < uncompressedLimit) {

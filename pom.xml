@@ -86,6 +86,7 @@
         <configuration>
           <charset>UTF-8</charset>
           <locale>en_US</locale>
+          <show>public</show>
         </configuration>
         <executions>
           <execution>
