@@ -44,10 +44,11 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * This class loads a native library of snappy-java (snappyjava.dll,
- * libsnappy.so, etc.) according to the user platform (<i>os.name</i> and
- * <i>os.arch</i>). The natively compiled libraries bundled to snappy-java
- * contain the codes of the original snappy and JNI programs to access Snappy.
+ * <b>Internal only - Do not use this class.</b> This class loads a native
+ * library of snappy-java (snappyjava.dll, libsnappy.so, etc.) according to the
+ * user platform (<i>os.name</i> and <i>os.arch</i>). The natively compiled
+ * libraries bundled to snappy-java contain the codes of the original snappy and
+ * JNI programs to access Snappy.
  * 
  * In default, no configuration is required to use snappy-java, but you can load
  * your own native library created by 'make native' command.

@@ -94,3 +94,6 @@ clean-native-linux32:
 
 clean-native-win32:
 	$(MAKE) clean-native OS_NAME=Windows OS_ARCH=x86
+
+javadoc:
+	$(MVN) javadoc:javadoc -DreportOutputDirectory=wiki/apidocs

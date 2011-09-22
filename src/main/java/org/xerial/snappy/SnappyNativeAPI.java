@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ * <b>Internal only - Do not use this class.</b>
+ * 
  * Interface to access the native code of Snappy. Although this class members
  * are public, do not use them directly. Use {@link Snappy} API instead.
  * 

@@ -28,9 +28,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * JNI interface of the {@link SnappyNativeAPI} implementation. The native
- * method in this class is defined in SnappyNative.h (genereted by javah) and
- * SnappyNative.cpp
+ * <b>Internal only - Do not use this class.</b> JNI interface of the
+ * {@link SnappyNativeAPI} implementation. The native method in this class is
+ * defined in SnappyNative.h (genereted by javah) and SnappyNative.cpp
  * 
  * <p>
  * <b> DO NOT USE THIS CLASS since the direct use of this class might break the
