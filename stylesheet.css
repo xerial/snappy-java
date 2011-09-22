@@ -5,14 +5,16 @@
 /* Page background color */
 body { background-color: #FFFFFF; color:#000000; font-family: Arial, sans-serif; }
 
+code { font-family: mono-space, Arial, sans-serif; }
+
 /* Headings */
 h1 { font-size: 145% }
 
 a:link { color: #006699; }
-a:hover { color: #6699CC; }
+a:hover { color: #6699CC; } 
 a:active { color: #6699CC; }
-a:visited { color: #669999; }
-
+a:visited { color: #333366; }
+ 
 /* Table colors */
 .TableHeadingColor     { background: #3399CC; color:#FFFFFF } /* Dark mauve */
 .TableSubHeadingColor  { background: #EEEEFF; color:#000000 } /* Light mauve */

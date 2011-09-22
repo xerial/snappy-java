@@ -37,8 +37,9 @@ import java.io.OutputStream;
  * The output data format is:
  * <ol>
  * <li>snappy codec header defined in {@link SnappyCodec} (8 bytes)
- * <li>a pair of (compressed data size [4 byte integer. Big-endian], compressed
- * data...)
+ * <li>compressed block 1 : a pair of (compressed data size [4 byte integer.
+ * Big-endian], compressed data...)
+ * <li>compressed block 2
  * <li>...
  * </ol>
  * 
@@ -65,6 +66,12 @@ public class SnappyOutputStream extends OutputStream
         this(out, DEFAULT_BLOCK_SIZE);
     }
 
+    /**
+     * @param out
+     * @param blockSize
+     *            byte size of the internal buffer size
+     * @throws IOException
+     */
     public SnappyOutputStream(OutputStream out, int blockSize) throws IOException {
         this.out = out;
         this.blockSize = blockSize;
@@ -77,6 +84,16 @@ public class SnappyOutputStream extends OutputStream
         SnappyCodec.currentHeader().writeHeader(out);
     }
 
+    /**
+     * Writes len bytes from the specified byte array starting at offset off to
+     * this output stream. The general contract for write(b, off, len) is that
+     * some of the bytes in the array b are written to the output stream in
+     * order; element b[off] is the first byte written and b[off+len-1] is the
+     * last byte written by this operation.
+     */
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#write(byte[], int, int)
+     */
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
         rawWrite(b, off, len);
@@ -97,38 +114,112 @@ public class SnappyOutputStream extends OutputStream
         rawWrite(d, off * 8, len * 8);
     }
 
+    /**
+     * Compress the input double array data
+     * 
+     * @param f
+     *            input array
+     * @param off
+     *            offset in the array
+     * @param len
+     *            the number of elements in the array to copy
+     * @throws IOException
+     */
     public void write(double[] f, int off, int len) throws IOException {
         rawWrite(f, off * 8, len * 8);
     }
 
+    /**
+     * Compress the input float array data
+     * 
+     * @param f
+     *            input array
+     * @param off
+     *            offset in the array
+     * @param len
+     *            the number of elements in the array to copy
+     * @throws IOException
+     */
     public void write(float[] f, int off, int len) throws IOException {
         rawWrite(f, off * 4, len * 4);
     }
 
+    /**
+     * Compress the input int array data
+     * 
+     * @param f
+     *            input array
+     * @param off
+     *            offset in the array
+     * @param len
+     *            the number of elements in the array to copy
+     * @throws IOException
+     */
     public void write(int[] f, int off, int len) throws IOException {
         rawWrite(f, off * 4, len * 4);
     }
 
+    /**
+     * Compress the input short array data
+     * 
+     * @param f
+     *            input array
+     * @param off
+     *            offset in the array
+     * @param len
+     *            the number of elements in the array to copy
+     * @throws IOException
+     */
     public void write(short[] f, int off, int len) throws IOException {
         rawWrite(f, off * 2, len * 2);
     }
 
+    /**
+     * Compress the input array data
+     * 
+     * @param d
+     * @throws IOException
+     */
     public void write(long[] d) throws IOException {
         write(d, 0, d.length);
     }
 
+    /**
+     * Compress the input array data
+     * 
+     * @param f
+     * @throws IOException
+     */
     public void write(double[] f) throws IOException {
         write(f, 0, f.length);
     }
 
+    /**
+     * Compress the input array data
+     * 
+     * @param f
+     * @throws IOException
+     */
     public void write(float[] f) throws IOException {
         write(f, 0, f.length);
     }
 
+    /**
+     * Compress the input array data
+     * 
+     * @param f
+     * @throws IOException
+     */
     public void write(int[] f) throws IOException {
         write(f, 0, f.length);
     }
 
+    /**
+     * Compress the input array data
+     * 
+     * @param f
+     * @throws IOException
+     */
     public void write(short[] f) throws IOException {
         write(f, 0, f.length);
     }
@@ -155,6 +246,15 @@ public class SnappyOutputStream extends OutputStream
         }
     }
 
+    /**
+     * Writes the specified byte to this output stream. The general contract for
+     * write is that one byte is written to the output stream. The byte to be
+     * written is the eight low-order bits of the argument b. The 24 high-order
+     * bits of b are ignored.
+     */
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#write(int)
+     */
     @Override
     public void write(int b) throws IOException {
         if (cursor >= uncompressed.length) {
@@ -163,6 +263,9 @@ public class SnappyOutputStream extends OutputStream
         uncompressed[cursor++] = (byte) b;
     }
 
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#flush()
+     */
     @Override
     public void flush() throws IOException {
         dump();
@@ -195,6 +298,12 @@ public class SnappyOutputStream extends OutputStream
         cursor = 0;
     }
 
+    /**
+     * close the stream
+     */
+    /* (non-Javadoc)
+     * @see java.io.OutputStream#close()
+     */
     @Override
     public void close() throws IOException {
         flush();
