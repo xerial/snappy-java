@@ -12,6 +12,34 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>leo</id>
+      <name>Taro L. Saito</name>
+      <email>leo@xerial.org</email>
+      <organization>Xerial Project</organization>
+      <roles>
+        <role>Architect</role>
+        <role>Project Manager</role>
+        <role>Chief Developer</role>
+      </roles>
+      <timezone>+9</timezone>
+    </developer>
+  </developers>
+
+  <organization>
+  	<name>xerial.org</name>
+  	<url>http://www.xerial.org/</url>
+  </organization>
+
   <build>
     <resources>
       <resource>

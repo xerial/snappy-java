@@ -98,31 +98,31 @@ public class SnappyLoaderTest
         // Actually load Snappy.class in a child class loader
 
         Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
-        Method m = S1.getMethod("getNativeLibraryVersion");
-        String v = (String) m.invoke(null);
+        Method m = S1.getMethod("compress", String.class);
+        byte[] v = (byte[]) m.invoke(null, "hello world");
 
         // Load Snappy.class from another child class loader
         Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
-        Method m2 = S2.getMethod("getNativeLibraryVersion");
-        String v2 = (String) m2.invoke(null);
+        Method m2 = S2.getMethod("compress", String.class);
+        byte[] v2 = (byte[]) m2.invoke(null, "hello world");
 
-        assertEquals(v, v2);
+        assertArrayEquals(v, v2);
     }
 
     @Test
     public void load() throws Exception {
         SnappyLoader.load();
-        _logger.debug(Snappy.getNativeLibraryVersion());
+        _logger.debug(Snappy.maxCompressedLength(1024));
     }
 
     @Test
     public void autoLoad() throws Exception {
-        _logger.debug(Snappy.getNativeLibraryVersion());
+        _logger.debug(Snappy.maxCompressedLength(1024));
     }
 
     public static void main(String[] args) {
         // Test for loading native library specified in -Djava.library.path
         System.setProperty(SnappyLoader.KEY_SNAPPY_USE_SYSTEMLIB, "true");
-        _logger.debug(Snappy.getNativeLibraryVersion());
+        _logger.debug(Snappy.maxCompressedLength(1024));
     }
 }

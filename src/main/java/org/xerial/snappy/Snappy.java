@@ -26,8 +26,10 @@ package org.xerial.snappy;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Properties;
 
 /**
  * Snappy API for data compression/decompression
@@ -249,7 +251,24 @@ public class Snappy
      * @return native library version
      */
     public static String getNativeLibraryVersion() {
-        return ((SnappyNativeAPI) impl).nativeLibraryVersion();
+
+        URL versionFile = SnappyLoader.class.getResource("/org/xerial/snappy/VERSION");
+
+        String version = "unknown";
+        try {
+            if (versionFile != null) {
+                Properties versionData = new Properties();
+                versionData.load(versionFile.openStream());
+                version = versionData.getProperty("version", version);
+                if (version.equals("unknown"))
+                    version = versionData.getProperty("VERSION", version);
+                version = version.trim().replaceAll("[^0-9\\.]", "");
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return version;
     }
 
     /**
@@ -354,15 +373,16 @@ public class Snappy
      * @param input
      *            input byte array
      * @param inputOffset
-     *            byte offset
+     *            byte offset in the input byte array
      * @param inputLength
      *            byte length of the input data
      * @param output
      *            output buffer, MUST be a primitive type array
      * @param outputOffset
-     *            byte offset
+     *            byte offset in the output buffer
      * @return the byte size of the uncompressed data
      * @throws IOException
+     *             when failed to uncompress the input data
      */
     public static int rawUncompress(byte[] input, int inputOffset, int inputLength, Object output, int outputOffset)
             throws IOException {
@@ -420,7 +440,7 @@ public class Snappy
      * @param compressed
      *            buffer[pos() ... limit()) containing the input data
      * @param uncompressed
-     *            output of the the uncompressed data. It uses buffer[pot()..]
+     *            output of the the uncompressed data. It uses buffer[pos()..]
      * @return uncompressed data size
      * 
      * @throws IOException
@@ -451,7 +471,7 @@ public class Snappy
      * Uncompress the input data as char array
      * 
      * @param input
-     * @return the umcompressed data
+     * @return the uncompressed data
      * @throws IOException
      */
     public static char[] uncompressCharArray(byte[] input) throws IOException {
@@ -493,7 +513,7 @@ public class Snappy
      * operation takes O(1) time.
      * 
      * @param input
-     * @return umcompressed byte size of the the given input data
+     * @return uncompressed byte size of the the given input data
      * @throws IOException
      *             when failed to uncompress the given input. The error code is
      *             {@link SnappyErrorCode#PARSING_ERROR}
@@ -509,7 +529,7 @@ public class Snappy
      * @param input
      * @param offset
      * @param length
-     * @return umcompressed byte size of the the given input data
+     * @return uncompressed byte size of the the given input data
      * @throws IOException
      *             when failed to uncompress the given input. The error code is
      *             {@link SnappyErrorCode#PARSING_ERROR}
