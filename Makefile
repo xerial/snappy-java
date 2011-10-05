@@ -97,3 +97,21 @@ clean-native-win32:
 
 javadoc:
 	$(MVN) javadoc:javadoc -DreportOutputDirectory=wiki/apidocs
+
+
+googlecode-upload: googlecode-lib-upload googlecode-src-upload
+
+googlecode-lib-upload: $(TARGET)/snappy-java-$(VERSION)-lib.upload
+googlecode-src-upload: $(TARGET)/snappy-java-$(VERSION)-src.upload
+
+GOOGLECODE_USER:=leo@xerial.org
+
+$(TARGET)/snappy-java-$(VERSION)-lib.upload:
+	./googlecode_upload.py -s "library for all platforms" -p snappy-java -l "Type-Executable,Featured,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).jar 
+	touch $@
+
+$(TARGET)/snappy-java-$(VERSION)-src.upload:
+	./googlecode_upload.py -s "source code archive" -p snappy-java -l "Type-Source,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).tar.gz 
+	touch $@
+
+

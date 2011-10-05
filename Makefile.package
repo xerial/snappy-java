@@ -85,3 +85,5 @@ release-xerial:
 
 release-sourceforge:
 	mvn release:perform -Darguments="-P sourceforge" -Dtag=snappy-java-$(VERSION)
+
+
