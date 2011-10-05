@@ -322,17 +322,21 @@ public class SnappyInputStream extends InputStream
         uncompressedCursor = 0;
         uncompressedLimit = 0;
 
-        int chunkSizeDataLen = in.read(chunkSizeBuf, 0, 4);
-        if (chunkSizeDataLen < 4) {
-            finishedReading = true;
-            return false;
+        int readBytes = 0;
+        while (readBytes < 4) {
+            int ret = in.read(chunkSizeBuf, readBytes, 4 - readBytes);
+            if (ret == -1) {
+                finishedReading = true;
+                return false;
+            }
+            readBytes += ret;
         }
         int chunkSize = SnappyOutputStream.readInt(chunkSizeBuf, 0);
         // extend the compressed data buffer size
         if (compressed == null || chunkSize > compressed.length) {
             compressed = new byte[chunkSize];
         }
-        int readBytes = 0;
+        readBytes = 0;
         while (readBytes < chunkSize) {
             int ret = in.read(compressed, readBytes, chunkSize - readBytes);
             if (ret == -1)
