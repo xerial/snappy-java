@@ -387,4 +387,21 @@ public class SnappyInputStream extends InputStream
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.io.InputStream#available()
+     */
+    @Override
+    public int available() throws IOException {
+        if (uncompressedCursor < uncompressedLimit) {
+            return uncompressedLimit - uncompressedCursor;
+        }
+        else {
+            if (hasNextChunk()) {
+                return uncompressedLimit - uncompressedCursor;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
 }

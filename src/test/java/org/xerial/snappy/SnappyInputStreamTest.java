@@ -48,13 +48,18 @@ public class SnappyInputStreamTest
     }
 
     public static byte[] readFully(InputStream input) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buf = new byte[4096];
-        for (int readBytes = 0; (readBytes = input.read(buf)) != -1;) {
-            out.write(buf, 0, readBytes);
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            byte[] buf = new byte[4096];
+            for (int readBytes = 0; (readBytes = input.read(buf)) != -1;) {
+                out.write(buf, 0, readBytes);
+            }
+            out.flush();
+            return out.toByteArray();
         }
-        out.flush();
-        return out.toByteArray();
+        finally {
+            input.close();
+        }
     }
 
     public static byte[] biteWiseReadFully(InputStream input) throws IOException {
@@ -107,6 +112,21 @@ public class SnappyInputStreamTest
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
+
+    }
+
+    @Test
+    public void available() throws Exception {
+        byte[] orig = readResourceFile("testdata/calgary/paper6");
+        byte[] compressed = Snappy.compress(orig);
+
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
+        byte[] buf = new byte[4];
+        for (int readBytes = 0; (readBytes = in.read(buf)) != -1;) {
+            assertTrue(in.available() >= 0);
+        }
+        assertTrue(in.available() == 0);
+        in.close();
     }
 
 }
