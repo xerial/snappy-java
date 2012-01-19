@@ -157,6 +157,7 @@
             <Bundle-Version>${project.version}</Bundle-Version>
             <Bundle-Activator>org.xerial.snappy.SnappyBundleActivator</Bundle-Activator>
             <Export-Package>org.xerial.snappy</Export-Package>
+            <Import-Package>org.osgi.framework;version="[1.5,2)"</Import-Package>
           </instructions>
         </configuration>
       </plugin>
