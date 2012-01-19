@@ -154,6 +154,7 @@ public class SnappyInputStream extends InputStream
     public int rawRead(Object array, int byteOffset, int byteLength) throws IOException {
         int writtenBytes = 0;
         for (; writtenBytes < byteLength;) {
+
             if (uncompressedCursor >= uncompressedLimit) {
                 if (hasNextChunk())
                     continue;
