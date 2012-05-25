@@ -28,6 +28,7 @@ jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
 
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/SnappyNative.java
+	@mkdir -p $(TARGET)/classes
 	$(JAVAH) -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
 
 bytecode: src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode
