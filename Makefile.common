@@ -41,7 +41,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-i386 Linux-amd64 Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
+known_os_archs := Linux-i386 Linux-amd64 Linux-arm Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 
 ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
@@ -68,6 +68,13 @@ Linux-amd64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O
 Linux-amd64_LINKFLAGS := -shared -static-libgcc -static-libstdc++ 
 Linux-amd64_LIBNAME   := libsnappyjava.so
 Linux-amd64_SNAPPY_FLAGS  := 
+
+Linux-arm_CXX       := g++
+Linux-arm_STRIP     := strip
+Linux-arm_CXXFLAGS  := -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=softfp
+Linux-arm_LINKFLAGS := -shared -static-libgcc
+Linux-arm_LIBNAME   := libsnappyjava.so
+Linux-arm_SNAPPY_FLAGS:= 
 
 Mac-i386_CXX       := g++ -arch $(OS_ARCH) 
 Mac-i386_STRIP     := strip -x
