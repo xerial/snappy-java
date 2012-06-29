@@ -17,7 +17,7 @@ OSINFO_PROG := lib/org/xerial/snappy/OSInfo.class
 ## building OSInfo.java 
 #$(info compiling OSInfo.java)
 #$(shell mkdir -p lib)
-#$(shell $(JAVAC) src/main/java/org/sqlite/OSInfo.java -d lib)
+#$(shell $(JAVAC) src/main/java/org/xerial/snappy/OSInfo.java -d lib)
 
 OS_NAME := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --os)
 OS_ARCH := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --arch)
@@ -41,40 +41,55 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-i386 Linux-amd64 Linux-arm Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
+known_os_archs := Linux-i386 Linux-amd64 Linux-arm Linux-armhf Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 
 ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
   os_arch := Default
 endif
 
-Default_CXX          := g++
-Default_STRIP        := strip
+# cross-compilation toolchain prefix (e.g. "arm-linux-gnueabi-")
+CROSS_PREFIX :=
+
+Default_CXX          := $(CROSS_PREFIX)g++
+Default_STRIP        := $(CROSS_PREFIX)strip
 Default_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
 Default_LINKFLAGS    := -shared -static
 Default_LIBNAME      := libsnappyjava.so
 Default_SNAPPY_FLAGS := 
 
-Linux-i386_CXX       := g++
-Linux-i386_STRIP     := strip
+Linux-i386_CXX       := $(CROSS_PREFIX)g++
+Linux-i386_STRIP     := $(CROSS_PREFIX)strip
 Linux-i386_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m32
-Linux-i386_LINKFLAGS := -shared -static-libgcc -static-libstdc++ 
+Linux-i386_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-i386_LIBNAME   := libsnappyjava.so
 Linux-i386_SNAPPY_FLAGS:= 
 
-Linux-amd64_CXX       := g++ 
-Linux-amd64_STRIP     := strip
+Linux-amd64_CXX       := $(CROSS_PREFIX)g++ 
+Linux-amd64_STRIP     := $(CROSS_PREFIX)strip
 Linux-amd64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
-Linux-amd64_LINKFLAGS := -shared -static-libgcc -static-libstdc++ 
+Linux-amd64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-amd64_LIBNAME   := libsnappyjava.so
 Linux-amd64_SNAPPY_FLAGS  := 
 
-Linux-arm_CXX       := g++
-Linux-arm_STRIP     := strip
-Linux-arm_CXXFLAGS  := -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=softfp
+# '-include lib/inc_linux/jni_md.h' is used to force the use of our version,
+# which defines JNIEXPORT differently; otherwise, since OpenJDK includes
+# jni_md.h in same directory as jni.h, the include path is ignored when
+# jni_md.h is included from jni.h
+
+Linux-arm_CXX       := $(CROSS_PREFIX)g++
+Linux-arm_STRIP     := $(CROSS_PREFIX)strip
+Linux-arm_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=softfp
 Linux-arm_LINKFLAGS := -shared -static-libgcc
 Linux-arm_LIBNAME   := libsnappyjava.so
 Linux-arm_SNAPPY_FLAGS:= 
+
+Linux-armhf_CXX       := $(CROSS_PREFIX)g++
+Linux-armhf_STRIP     := $(CROSS_PREFIX)strip
+Linux-armhf_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=hard
+Linux-armhf_LINKFLAGS := -shared -static-libgcc
+Linux-armhf_LIBNAME   := libsnappyjava.so
+Linux-armhf_SNAPPY_FLAGS:= 
 
 Mac-i386_CXX       := g++ -arch $(OS_ARCH) 
 Mac-i386_STRIP     := strip -x

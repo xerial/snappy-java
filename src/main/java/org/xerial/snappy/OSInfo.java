@@ -24,6 +24,8 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.io.IOException;
+
 /**
  * Provides OS name and architecture name.
  * 
@@ -56,10 +58,30 @@ public class OSInfo
     }
 
     public static String getArchName() {
-        return translateArchNameToFolderName(System.getProperty("os.arch"));
+        // if running Linux on ARM, need to determine ABI of JVM
+        String osArch = System.getProperty("os.arch");
+        if (osArch.startsWith("arm") && System.getProperty("os.name").contains("Linux")) {
+            String javaHome = System.getProperty("java.home");
+            try {
+                // determine if first JVM found uses ARM hard-float ABI
+                String[] cmdarray = { "/bin/sh", "-c", "find '" + javaHome +
+                    "' -name 'libjvm.so' | head -1 | xargs readelf -A | " +
+                    "grep 'Tag_ABI_VFP_args: VFP registers'" };
+                int exitCode = Runtime.getRuntime().exec(cmdarray).waitFor();
+                if (exitCode == 0)
+                    return "armhf";
+            }
+            catch (IOException e) {
+                // ignored: fall back to "arm" arch (soft-float ABI)
+            }
+            catch (InterruptedException e) {
+                // ignored: fall back to "arm" arch (soft-float ABI)
+            }
+        }
+        return translateArchNameToFolderName(osArch);
     }
 
-    public static String translateOSNameToFolderName(String osName) {
+    static String translateOSNameToFolderName(String osName) {
         if (osName.contains("Windows")) {
             return "Windows";
         }
@@ -74,7 +96,7 @@ public class OSInfo
         }
     }
 
-    public static String translateArchNameToFolderName(String archName) {
+    static String translateArchNameToFolderName(String archName) {
         return archName.replaceAll("\\W", "");
     }
 }
