@@ -60,14 +60,14 @@ Default_SNAPPY_FLAGS :=
 
 Linux-i386_CXX       := $(CROSS_PREFIX)g++
 Linux-i386_STRIP     := $(CROSS_PREFIX)strip
-Linux-i386_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
+Linux-i386_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
 Linux-i386_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-i386_LIBNAME   := libsnappyjava.so
 Linux-i386_SNAPPY_FLAGS:= 
 
 Linux-amd64_CXX       := $(CROSS_PREFIX)g++ 
 Linux-amd64_STRIP     := $(CROSS_PREFIX)strip
-Linux-amd64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64
+Linux-amd64_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64
 Linux-amd64_LINKFLAGS := -shared -static-libgcc 
 Linux-amd64_LIBNAME   := libsnappyjava.so
 Linux-amd64_SNAPPY_FLAGS  := 
