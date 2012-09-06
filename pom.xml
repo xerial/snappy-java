@@ -108,7 +108,8 @@
         <configuration>
           <!-- do not run site-deploy goal, included in the default settings -->
           <goals>deploy</goals>
-          <connectionUrl>scm:git:git@github.com:xerial/snappy-java/</connectionUrl>
+          <pushChanges>false</pushChanges>
+          <localCheckout>true</localCheckout>
         </configuration>
       </plugin>
 
