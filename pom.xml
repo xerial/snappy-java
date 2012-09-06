@@ -8,6 +8,12 @@
   <description>snappy-java: A fast compression/decompression library</description>
   <packaging>bundle</packaging>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -102,8 +108,26 @@
         <configuration>
           <!-- do not run site-deploy goal, included in the default settings -->
           <goals>deploy</goals>
-          <connectionUrl>scm:hg:https://snappy-java.googlecode.com/hg/</connectionUrl>
+          <connectionUrl>scm:git:git@github.com:xerial/snappy-java/</connectionUrl>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.4</version>
+        <configuration>
+          <useAgent>true</useAgent>
+        </configuration>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
@@ -139,7 +163,7 @@
             <id>attach-sources</id>
             <phase>verify</phase>
             <goals>
-              <goal>jar</goal>
+              <goal>jar-no-fork</goal>
             </goals>
           </execution>
         </executions>
@@ -195,50 +219,19 @@
   </build>
 
 
-  <url>http://code.google.com/p/snappy-java/</url>
+  <url>http://github.com/xerial/snappy-java/</url>
   <issueManagement>
-  	<system>Google Code</system>
-  	<url>http://code.google.com/p/snappy-java/issues/list</url>
+  	<system>GitHub</system>
+  	<url>http://github.com/xerial/snappy-java/issues/list</url>
   </issueManagement>
   <inceptionYear>2011</inceptionYear>
   <scm>
-    <connection>scm:hg:https://snappy-java.googlecode.com/hg/</connection>
-    <developerConnection>scm:hg:default</developerConnection>
-    <url>scm:hg:https://snappy-java.googlecode.com/hg/</url>
+    <connection>scm:git@github.com:xerial/snappy-java.git</connection>
+    <developerConnection>scm:git:git@github.com:xerial/snappy-java.git</developerConnection>
+    <url>git@github.com:xerial/snappy-java.git</url>
   </scm>
 
-  <distributionManagement>
-    <!-- for development releases -->
-    <site>
-      <id>xerial.scp</id>
-      <url>scpexe://www.xerial.org/home/web/maven.xerial.org/repository/site</url>
-    </site>
-    <repository>
-      <id>xerial.scp</id>
-      <name>Xerial Maven Repository</name>
-      <url>scpexe://www.xerial.org/home/web/maven.xerial.org/repository/artifact</url>
-    </repository>
-    <snapshotRepository>
-      <id>xerial.scp</id>
-      <name>Xerial Maven Snapshot Repository</name>
-      <url>scpexe://www.xerial.org/home/web/maven.xerial.org/repository/snapshot</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-  </distributionManagement>
-
   <profiles>
-    <!-- for directly sending artifacts to sourceforge.net repository -->
-    <profile>
-      <id>sourceforge</id>
-      <distributionManagement>
-        <repository>
-          <id>xerial.sourceforge</id>
-          <name>Xerial maven repository at sourceforge.jp</name>
-          <url>scpexe://shell.sourceforge.jp/home/groups/x/xe/xerial/htdocs/maven/release</url>
-        </repository>
-      </distributionManagement>
-    </profile>
-
     <!-- for local updates -->
     <profile>
       <id>xerial.local</id>
