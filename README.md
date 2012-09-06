@@ -12,8 +12,7 @@ The snappy-java is a Java port of the snappy
 ## Performance 
   * Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset).
 
-  * Here are some [benchmark
- results](https://github.com/ning/jvm-compressor-benchmark/wiki), comparing
+  * Here are some [benchmark results](https://github.com/ning/jvm-compressor-benchmark/wiki), comparing
  snappy-java and the other compressors
  `LZO-java`/`LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [Tatu Saloranta @cotowncoder](http://twitter.com/#!/cowtowncoder) for providing the benchmark suite. 
  * The benchmark result indicates snappy-java is the fastest compreesor/decompressor in Java:
@@ -22,11 +21,10 @@ The snappy-java is a Java port of the snappy
     * <http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html>
 
 
-
 ## Download 
-The current stable version 1.0.3.1 is available from here:
+The current stable version is available from here:
   * Release version: http://maven.xerial.org/repository/artifact/org/xerial/snappy/snappy-java
-    * [Milestone] release plans
+    * [release plans](Milestone.md) 
   * Snapshot version (the latest beta version): http://maven.xerial.org/repository/snapshot/org/xerial/snappy/snappy-java/
 
 If you are a Maven user, see [#Using_with_Maven]
@@ -49,7 +47,7 @@ Then use `Snappy.compress(byte[])` and `Snappy.uncompress(byte[])`:
 
 
 In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. See also 
-[http://code.google.com/p/snappy-java/source/browse/src/main/java/org/xerial/snappy/Snappy.java Snappy.java]
+[Snappy.java](https://github.com/xerial/snappy-java/blob/master/src/main/java/org/xerial/snappy/Snappy.java)
 
 ### Stream-based API
 Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets.
@@ -63,7 +61,7 @@ If you have snappy-java-(VERSION).jar in the current directory, use `-classpath`
 
 
 ### Using with Maven
-  * Snappy-java is available from Maven's central repository:  http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java 
+  * Snappy-java is available from Maven's central repository:  <http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java>
 
 Add the following dependency to your pom.xml:
 
@@ -77,14 +75,13 @@ Add the following dependency to your pom.xml:
 
 
 ## Public discussion group
-Post bug reports or feature request to the Issue Tracker: <http://code.google.com/p/snappy-java/issues/list>
+Post bug reports or feature request to the Issue Tracker: <https://github.com/xerial/snappy-java/issues>
 
 Public discussion forum is here: <http://groups.google.com/group/xerial?hl=en Xerial Public Discussion Group>
 
 
 ## Building from the source code 
-See the [http://code.google.com/p/snappy-java/source/browse/INSTALL installation instruction]. Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Mercurial(hg), JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.
-
+See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.
 
     $ git clone https://github.com/xerial/snappy-java.git
     $ cd snappy-java
