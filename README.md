@@ -55,9 +55,9 @@ Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` ar
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
 
-   $ javac -classpath ".;snappy-java-(VERSION).jar" Sample.java  # in Windows
-   or 
-   $ javac -classpath ".:snappy-java-(VERSION).jar" Sample.java  # in Mac or Linux
+    $ javac -classpath ".;snappy-java-(VERSION).jar" Sample.java  # in Windows
+    or 
+    $ javac -classpath ".:snappy-java-(VERSION).jar" Sample.java  # in Mac or Linux
 
 
 ### Using with Maven
