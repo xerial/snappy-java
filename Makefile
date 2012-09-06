@@ -90,6 +90,14 @@ mac32:
 linux32:
 	$(MAKE) native OS_NAME=Linux OS_ARCH=i386
 
+# for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabi package
+linux-arm:
+	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm
+
+# for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabihf package
+linux-armhf:
+	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armhf
+
 clean-native-linux32:
 	$(MAKE) clean-native OS_NAME=Linux OS_ARCH=i386
 
