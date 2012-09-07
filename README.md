@@ -106,6 +106,9 @@ Of course, you must first have the necessary cross-compilers and development lib
 
 Unfortunately, cross-compiling for Mac OS X is not currently possible; you must compile within OS X.
 
+If you are using openjdk7 (or higher), use the following option:
+    $ make native LIBNAME=libsnappyjava.dylib
+
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
