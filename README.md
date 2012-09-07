@@ -90,6 +90,23 @@ See the [installation instruction](https://github.com/xerial/snappy-java/blob/de
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
+## Cross-compiling for other platforms
+The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:
+
+    $ make linux32 win32 win64 linux-arm linux-armhf
+
+If you append `snappy` to the line above, it will also build the native library for the current platform and then build the snappy-java JAR (containing all native libraries built so far).
+
+Of course, you must first have the necessary cross-compilers and development libraries installed for each target CPU and OS. For example, on Ubuntu 12.04 for x86-64, install the following packages for each target:
+
+  * linux32: `sudo apt-get install g++-multilib libc6-dev-i386 lib32stdc++6`
+  * win32: `sudo apt-get install g++-mingw-w64-i686`
+  * win64: `sudo apt-get install g++-mingw-w64-x86-64`
+  * arm: `sudo apt-get install g++-arm-linux-gnueabi`
+  * armhf: `sudo apt-get install g++-arm-linux-gnueabihf`
+
+Unfortunately, cross-compiling for Mac OS X is not currently possible; you must compile within OS X.
+
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
