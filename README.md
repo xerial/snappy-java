@@ -31,7 +31,7 @@ If you are a Maven user, see [#Using_with_Maven]
 ## Usage 
 First, import `org.xerial.snapy.Snappy` in your Java code:
 
-       import org.xerial.snappy.Snappy;
+     import org.xerial.snappy.Snappy;
 
 
 Then use `Snappy.compress(byte[])` and `Snappy.uncompress(byte[])`:
@@ -106,7 +106,8 @@ Of course, you must first have the necessary cross-compilers and development lib
 
 Unfortunately, cross-compiling for Mac OS X is not currently possible; you must compile within OS X.
 
-If you are using openjdk7 (or higher), use the following option:
+If you are using Mac and openjdk7 (or higher), use the following option:
+
     $ make native LIBNAME=libsnappyjava.dylib
 
 ## Miscellaneous Notes
