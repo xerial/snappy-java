@@ -82,7 +82,11 @@ test: $(NATIVE_DLL)
 	$(MVN) test
 
 win32: 
-	$(MAKE) native CXX=mingw32-g++ OS_NAME=Windows OS_ARCH=x86  
+	$(MAKE) native CROSS_PREFIX=i686-w64-mingw32- OS_NAME=Windows OS_ARCH=x86
+
+# for cross-compilation on Ubuntu, install the g++-mingw-w64-x86-64 package
+win64:
+	$(MAKE) native CROSS_PREFIX=x86_64-w64-mingw32- OS_NAME=Windows OS_ARCH=amd64
 
 mac32: 
 	$(MAKE) native OS_NAME=Mac OS_ARCH=i386
