@@ -105,15 +105,15 @@ Mac-x86_64_LINKFLAGS := -dynamiclib -static-libgcc
 Mac-x86_64_LIBNAME   := libsnappyjava.jnilib 
 Mac-x86_64_SNAPPY_FLAGS  := 
 
-Windows-x86_CXX          := mingw32-g++
-Windows-x86_STRIP        := strip
+Windows-x86_CXX          := $(CROSS_PREFIX)g++
+Windows-x86_STRIP        := $(CROSS_PREFIX)strip
 Windows-x86_CXXFLAGS     := -Ilib/inc_win -O2 
 Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_LIBNAME      := snappyjava.dll
 Windows-x86_SNAPPY_FLAGS := 
 
-Windows-amd64_CXX          := x86_64-w64-mingw32-g++
-Windows-amd64_STRIP        := x86_64-w64-mingw32-strip
+Windows-amd64_CXX          := $(CROSS_PREFIX)g++
+Windows-amd64_STRIP        := $(CROSS_PREFIX)strip
 Windows-amd64_CXXFLAGS     := -Ilib/inc_win -O2 
 Windows-amd64_LINKFLAGS    := -Wl,--kill-at -shared -static 
 Windows-amd64_LIBNAME      := snappyjava.dll
