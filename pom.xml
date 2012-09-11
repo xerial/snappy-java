@@ -141,15 +141,6 @@
           <show>public</show>
           <stylesheetfile>stylesheet.css</stylesheetfile>
         </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
