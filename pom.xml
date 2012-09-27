@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.xerial.snappy</groupId>
   <artifactId>snappy-java</artifactId>
-  <version>1.0.5-SNAPSHOT</version>
+  <version>1.0.5-M1</version>
   <name>Snappy for Java</name>
   <description>snappy-java: A fast compression/decompression library</description>
   <packaging>bundle</packaging>
@@ -141,15 +141,6 @@
           <show>public</show>
           <stylesheetfile>stylesheet.css</stylesheetfile>
         </configuration>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
