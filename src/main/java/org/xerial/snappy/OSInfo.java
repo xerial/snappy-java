@@ -77,7 +77,10 @@ public class OSInfo
             catch (InterruptedException e) {
                 // ignored: fall back to "arm" arch (soft-float ABI)
             }
-        }
+        } 
+	else if(getOSName().equals("Mac") && osArch.equals("universal")) {
+	    return "x86_64"; // Fix for openjdk7 
+	}
         return translateArchNameToFolderName(osArch);
     }
 
