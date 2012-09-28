@@ -77,13 +77,6 @@ test:
 	ssh $(AMD_SERVER) "source .zprofile && cd $(WORK) && $(TEST_CMD)"
 
 release:
-	mvn release:prepare
-	mvn release:perform
-
-release-xerial:
-	mvn release:perform -Dtag=snappy-java-$(VERSION)
-
-release-sourceforge:
-	mvn release:perform -Darguments="-P sourceforge" -Dtag=snappy-java-$(VERSION)
+	mvn deploy -DperformRelease=true
 
 
