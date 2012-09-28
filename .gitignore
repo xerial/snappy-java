@@ -5,6 +5,7 @@
 # IntelliJ
 .idea
 .idea_modules
+*.iml
 
 # sbt specific
 bin/.lib
