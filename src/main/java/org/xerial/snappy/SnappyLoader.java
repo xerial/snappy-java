@@ -24,13 +24,7 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -411,13 +405,10 @@ public class SnappyLoader
     static File findNativeLibrary() {
 
         boolean useSystemLib = Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_USE_SYSTEMLIB, "false"));
-        if (useSystemLib)
-            return null;
-
         boolean disabledBundledLibs = Boolean
                 .parseBoolean(System.getProperty(KEY_SNAPPY_DISABLE_BUNDLED_LIBS, "false"));
-        if (disabledBundledLibs)
-            return null;
+        if (useSystemLib || disabledBundledLibs)
+            return null; // Use a pre-installed libsnappyjava
 
         // Try to load the library in org.xerial.snappy.lib.path  */
         String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
@@ -433,22 +424,42 @@ public class SnappyLoader
                 return nativeLib;
         }
 
-        {
-            // Load an OS-dependent native library inside a jar file
-            snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
 
-            if (SnappyLoader.class.getResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName) != null) {
-                // Temporary library folder. Use the value of org.xerial.snappy.tempdir or java.io.tmpdir
-                String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR,
-                        System.getProperty("java.io.tmpdir"))).getAbsolutePath();
-
-                // Extract and load a native library inside the jar file
-                return extractLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder);
+        // Load an OS-dependent native library inside a jar file
+        snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
+        boolean hasNativeLib = hasResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName);
+        if(!hasNativeLib) {
+            if(OSInfo.getOSName().equals("Mac")) {
+                // Fix for openjdk7 for Mac
+                String altName = "libsnappyjava.jnilib";
+                if(hasResource(snappyNativeLibraryPath + "/" + altName)) {
+                    snappyNativeLibraryName = altName;
+                    hasNativeLib = true;
+                }
             }
         }
 
-        return null; // Use a pre-installed libsnappyjava
+        if(!hasNativeLib) {
+            String errorMessage = String.format("no native library is found for os.name=%s and os.arch=%s", OSInfo.getOSName(), OSInfo.getArchName());
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, errorMessage);
+        }
+
+        // Temporary library folder. Use the value of org.xerial.snappy.tempdir or java.io.tmpdir
+        String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR,
+                System.getProperty("java.io.tmpdir"))).getAbsolutePath();
+
+        // Extract and load a native library inside the jar file
+        return extractLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder);
     }
+
+
+    private static boolean hasResource(String path) {
+        return SnappyLoader.class.getResource(path) != null;
+    }
+
+
+
+
 
     /**
      * Get the snappy-java version by reading pom.properties embedded in jar.
