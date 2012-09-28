@@ -2,6 +2,9 @@
   * `SnappyIndexer` for parallel compression/decompression
   * CUI commands (snap/unsnap)
 
+## snappy-java-1.0.5-M2 (27 September 2012)
+  * Upgrade release for snappy-1.0.5
+
 ## snappy-java-1.0.4.1 (5 September 2011) 
   * Fixes issue 33: Fixes a problem when reading incomplete input stream
 
