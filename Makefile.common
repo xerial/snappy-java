@@ -41,7 +41,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-i386 Linux-amd64 Linux-arm Linux-armhf Mac-i386 Mac-x86_64 Windows-x86 Windows-amd64
+known_os_archs := Linux-i386 Linux-amd64 Linux-arm Linux-armhf Mac-i386 Mac-x86_64 FreeBSD-amd64 Windows-x86 Windows-amd64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 
 ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
