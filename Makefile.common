@@ -105,6 +105,13 @@ Mac-x86_64_LINKFLAGS := -dynamiclib -static-libgcc
 Mac-x86_64_LIBNAME   := libsnappyjava.jnilib 
 Mac-x86_64_SNAPPY_FLAGS  := 
 
+FreeBSD-amd64_CXX          := $(CROSS_PREFIX)g++
+FreeBSD-amd64_STRIP        := $(CROSS_PREFIX)strip
+FreeBSD-amd64_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
+FreeBSD-amd64_LINKFLAGS    := -shared -static-libgcc
+FreeBSD-amd64_LIBNAME      := libsnappyjava.so
+FreeBSD-amd64_SNAPPY_FLAGS := 
+
 Windows-x86_CXX          := $(CROSS_PREFIX)g++
 Windows-x86_STRIP        := $(CROSS_PREFIX)strip
 Windows-x86_CXXFLAGS     := -Ilib/inc_win -O2 
