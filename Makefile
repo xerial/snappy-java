@@ -94,6 +94,9 @@ mac32:
 linux32:
 	$(MAKE) native OS_NAME=Linux OS_ARCH=i386
 
+freebsd64:
+	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=amd64
+
 # for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabi package
 linux-arm:
 	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm
