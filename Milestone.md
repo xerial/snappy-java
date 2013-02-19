@@ -2,8 +2,8 @@
   * `SnappyIndexer` for parallel compression/decompression
   * CUI commands (snap/unsnap)
 
-## snappy-java-1.1.0-M2 (28 March 2013)
-  * Fix linux amd64 build
+## snappy-java-1.1.0-M3 (28 March 2013)
+  * Fix linux amd64 build (embed libstdc++)
   * Fixes #26
 
 ## snappy-java-1.1.0-M1 (27 March 2013)

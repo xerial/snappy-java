@@ -26,9 +26,11 @@ $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
-
-$(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/SnappyNative.java
+$(TARGET)/classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/classes
+	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/classes -sourcepath $(SRC) $< 
+
+$(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/classes/org/xerial/snappy/SnappyNative.class
 	$(JAVAH) -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
 
 bytecode: src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode
@@ -86,16 +88,16 @@ win32:
 
 # for cross-compilation on Ubuntu, install the g++-mingw-w64-x86-64 package
 win64:
-	$(MAKE) native CROSS_PREFIX=x86_64-w64-mingw32- OS_NAME=Windows OS_ARCH=amd64
+	$(MAKE) native CROSS_PREFIX=x86_64-w64-mingw32- OS_NAME=Windows OS_ARCH=x86_64
 
 mac32: 
-	$(MAKE) native OS_NAME=Mac OS_ARCH=i386
+	$(MAKE) native OS_NAME=Mac OS_ARCH=x86
 
 linux32:
-	$(MAKE) native OS_NAME=Linux OS_ARCH=i386
+	$(MAKE) native OS_NAME=Linux OS_ARCH=x86
 
 freebsd64:
-	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=amd64
+	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
 
 # for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabi package
 linux-arm:
@@ -106,7 +108,7 @@ linux-armhf:
 	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armhf
 
 clean-native-linux32:
-	$(MAKE) clean-native OS_NAME=Linux OS_ARCH=i386
+	$(MAKE) clean-native OS_NAME=Linux OS_ARCH=x86
 
 clean-native-win32:
 	$(MAKE) clean-native OS_NAME=Windows OS_ARCH=x86

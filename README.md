@@ -31,19 +31,21 @@ If you are a Maven user, see [pom.xml example](#using-with-maven).
 ## Usage 
 First, import `org.xerial.snapy.Snappy` in your Java code:
 
-     import org.xerial.snappy.Snappy;
-
+```java
+import org.xerial.snappy.Snappy;
+```
 
 Then use `Snappy.compress(byte[])` and `Snappy.uncompress(byte[])`:
 
-     String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper of "
+```java
+String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper of "
      + "Snappy, a fast compresser/decompresser.";
-     byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
-     byte[] uncompressed = Snappy.uncompress(compressed);
+byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
+byte[] uncompressed = Snappy.uncompress(compressed);
      
-     String result = new String(uncompressed, "UTF-8");
-     System.out.println(result);
-
+String result = new String(uncompressed, "UTF-8");
+System.out.println(result);
+```
 
 In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. See also 
 [Snappy.java](https://github.com/xerial/snappy-java/blob/master/src/main/java/org/xerial/snappy/Snappy.java)
@@ -51,7 +53,7 @@ In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(flo
 ### Stream-based API
 Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets.
 
- * [Javadoc API](https://oss.sonatype.org/service/local/repositories/snapshots/archive/org/xerial/snappy/snappy-java/1.0.5-M5-SNAPSHOT/snappy-java-1.0.5-M5-20130319.150524-2-javadoc.jar/!/index.html)
+ * [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0-M3/snappy-java-1.1.0-M3-javadoc.jar/!/index.html)
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
@@ -91,6 +93,14 @@ See the [installation instruction](https://github.com/xerial/snappy-java/blob/de
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
+## Building linux amd64 binary
+
+snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++ compiled with the following options:
+
+	$ ./configure --prefix=$HOME/local --with-gmp=$HOME/local --with-mpfr=$HOME/local --with-mpc=$HOME/local --with-ppl=$HOME/local --with-cloog=$HOME/local CXXFLAGS=-fPIC CFLAGS=-fPIC 
+
+This g++ build enables static linking of libstdc++. For more infomation on building GCC, see GCC's home page.
+
 ## Cross-compiling for other platforms
 The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:
 
@@ -115,7 +125,7 @@ If you are using Mac and openjdk7 (or higher), use the following option:
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
-Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders in the same JVM by using native code injection to the parent class loader (Issue 21). 
+Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders. 
 
 ----
 Snappy-java is developed by [Taro L. Saito](http://www.xerial.org/leo). Twitter  [@taroleo](http://twitter.com/#!/taroleo)

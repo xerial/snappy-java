@@ -24,11 +24,11 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import java.util.jar.Manifest;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+
+import java.util.jar.Manifest;
 
 /**
  * OSGi bundle entry point
@@ -56,5 +56,6 @@ public class SnappyBundleActivator implements BundleActivator
     public void stop(BundleContext context) throws Exception
     {
     	SnappyLoader.setApi(null);
+        Snappy.cleanUp();
     }
 }

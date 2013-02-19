@@ -24,14 +24,20 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
 
@@ -44,6 +50,9 @@ import org.xerial.util.log.Logger;
 public class CalgaryTest
 {
     private static Logger _logger = Logger.getLogger(CalgaryTest.class);
+    
+    @Rule
+    public final TemporaryFolder tempFolder = new TemporaryFolder();
 
     static byte[] readFile(String file) throws IOException {
         InputStream in = FileResource.find(CalgaryTest.class, file).openStream();
@@ -92,6 +101,83 @@ public class CalgaryTest
     }
 
     @Test
+    public void streamFramed() throws Exception {
+        for (String f : files) {
+            byte[] orig = readFile("testdata/calgary/" + f);
+
+            ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
+            SnappyFramedOutputStream out = new SnappyFramedOutputStream(compressedBuf);
+            out.write(orig);
+            out.close();
+
+            SnappyFramedInputStream in = new SnappyFramedInputStream(new ByteArrayInputStream(compressedBuf.toByteArray()));
+            
+            byte[] uncompressed = new byte[orig.length];
+            int readBytes = readBytes(in, uncompressed, 0, orig.length);
+            
+            assertEquals(orig.length, readBytes);
+            assertArrayEquals(orig, uncompressed);
+        }
+    }
+
+    @Test
+    public void streamFramedToFile() throws Exception {
+        for (String f : files) {
+            byte[] orig = readFile("testdata/calgary/" + f);
+
+            final File tempFile = tempFolder.newFile(f);
+            final FileOutputStream compressedFOS = new FileOutputStream(tempFile);
+            try
+            {
+                SnappyFramedOutputStream out = new SnappyFramedOutputStream(compressedFOS);
+                out.write(orig);
+                out.close();
+            }
+            finally
+            {
+                compressedFOS.close();
+            }
+            
+            byte[] uncompressed = new byte[orig.length];
+
+            final FileInputStream compressedFIS = new FileInputStream(tempFile);
+            try
+            {
+                SnappyFramedInputStream in = new SnappyFramedInputStream(compressedFIS.getChannel());
+                int readBytes = readBytes(in, uncompressed, 0, orig.length);
+                
+                assertEquals(orig.length, readBytes);
+            }
+            finally
+            {
+                compressedFIS.close();
+            }
+            
+            assertArrayEquals(orig, uncompressed);
+        }
+    }
+
+    @Test
+    public void streamFramedNoCRCVerify() throws Exception {
+        for (String f : files) {
+            byte[] orig = readFile("testdata/calgary/" + f);
+
+            ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
+            SnappyFramedOutputStream out = new SnappyFramedOutputStream(compressedBuf);
+            out.write(orig);
+            out.close();
+
+            SnappyFramedInputStream in = new SnappyFramedInputStream(new ByteArrayInputStream(compressedBuf.toByteArray()), false);
+            
+            byte[] uncompressed = new byte[orig.length];
+            int readBytes = readBytes(in, uncompressed, 0, orig.length);
+            
+            assertEquals(orig.length, readBytes);
+            assertArrayEquals(orig, uncompressed);
+        }
+    }
+
+    @Test
     public void byteWiseRead() throws Exception {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
@@ -115,4 +201,28 @@ public class CalgaryTest
         }
     }
 
+    static final int readBytes(InputStream source, byte[] dest, int offset, int length) throws IOException
+    {        
+        // how many bytes were read.
+        int lastRead = source.read(dest, offset, length);
+
+        int totalRead = lastRead;
+
+        // if we did not read as many bytes as we had hoped, try reading again.
+        if (lastRead < length)
+        {
+            // as long the buffer is not full (remaining() == 0) and we have not reached EOF (lastRead == -1) keep reading.
+            while (totalRead < length && lastRead != -1)
+            {
+                lastRead = source.read(dest, offset + totalRead, length - totalRead);
+
+                // if we got EOF, do not add to total read.
+                if (lastRead != -1)
+                {
+                    totalRead += lastRead;
+                }
+            }
+        }
+        return totalRead;
+    }
 }
