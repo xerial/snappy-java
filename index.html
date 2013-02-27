@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="snappy-java : Snappy compressor/decompressor for Java" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>snappy-java</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/xerial/snappy-java">View on GitHub</a>
+
+          <h1 id="project_title">snappy-java</h1>
+          <h2 id="project_tagline">Snappy compressor/decompressor for Java</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/xerial/snappy-java/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/xerial/snappy-java/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>The snappy-java is a Java port of the snappy
+<a href="http://code.google.com/p/snappy/">http://code.google.com/p/snappy/</a>, a fast C++ compresser/decompresser developed by Google.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>
+<a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License Version 2.0</a>. Free for both commercial and non-commercial use.</li>
+<li>Fast compression/decompression tailored to 64-bit CPU architecture. </li>
+<li>JNI-based implementation to achieve comparable performance to the native C++ version.<br><ul>
+<li>Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). </li>
+</ul>
+</li>
+<li>Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (32/64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, <code>os.name</code> and <code>os.arch</code>). </li>
+<li>Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in org.xerial.snappy.Snappy. </li>
+</ul><h2>Performance</h2>
+
+<ul>
+<li><p>Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as <code>LZF</code> (ranging 20%-100% according to the dataset).</p></li>
+<li>
+<p>Here are some <a href="https://github.com/ning/jvm-compressor-benchmark/wiki">benchmark results</a>, comparing
+snappy-java and the other compressors
+<code>LZO-java</code>/<code>LZF</code>/<code>QuickLZ</code>/<code>Gzip</code>/<code>Bzip2</code>. Thanks <a href="http://twitter.com/#!/cowtowncoder">Tatu Saloranta @cotowncoder</a> for providing the benchmark suite. </p>
+
+<ul>
+<li>The benchmark result indicates snappy-java is the fastest compreesor/decompressor in Java:</li>
+<li><a href="http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html">http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html</a></li>
+<li>The decompression speed is twice as fast as the others:</li>
+<li><a href="http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html">http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html</a></li>
+</ul>
+</li>
+</ul><h2>Download</h2>
+
+<p>The current stable version is available from here:</p>
+
+<ul>
+<li>Release version: <a href="http://code.google.com/p/snappy-java/downloads/list">http://code.google.com/p/snappy-java/downloads/list</a>
+
+<ul>
+<li>
+<a href="https://github.com/xerial/snappy-java/blob/develop/Milestone.md">Release plans</a> </li>
+</ul>
+</li>
+<li>Snapshot version (the latest beta version): <a href="https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/">https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/</a>
+If you are a Maven user, see <a href="#using-with-maven">pom.xml example</a>.</li>
+</ul><h2>Usage</h2>
+
+<p>First, import <code>org.xerial.snapy.Snappy</code> in your Java code:</p>
+
+<pre><code> import org.xerial.snappy.Snappy;
+</code></pre>
+
+<p>Then use <code>Snappy.compress(byte[])</code> and <code>Snappy.uncompress(byte[])</code>:</p>
+
+<pre><code> String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper of "
+ + "Snappy, a fast compresser/decompresser.";
+ byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
+ byte[] uncompressed = Snappy.uncompress(compressed);
+
+ String result = new String(uncompressed, "UTF-8");
+ System.out.println(result);
+</code></pre>
+
+<p>In addition, high-level methods (<code>Snappy.compress(String)</code>, <code>Snappy.compress(float[] ..)</code> etc. ) and low-level ones (e.g. <code>Snappy.rawCompress(.. )</code>,  <code>Snappy.rawUncompress(..)</code>, etc.), which minimize memory copies, can be used. See also 
+<a href="https://github.com/xerial/snappy-java/blob/master/src/main/java/org/xerial/snappy/Snappy.java">Snappy.java</a></p>
+
+<h3>Stream-based API</h3>
+
+<p>Stream-based compressor/decompressor <code>SnappyOutputStream</code>/<code>SnappyInputStream</code> are also available for reading/writing large data sets.</p>
+
+<h3>Setting classpath</h3>
+
+<p>If you have snappy-java-(VERSION).jar in the current directory, use <code>-classpath</code> option as follows:</p>
+
+<pre><code>$ javac -classpath ".;snappy-java-(VERSION).jar" Sample.java  # in Windows
+or 
+$ javac -classpath ".:snappy-java-(VERSION).jar" Sample.java  # in Mac or Linux
+</code></pre>
+
+<h3>Using with Maven</h3>
+
+<ul>
+<li>Snappy-java is available from Maven's central repository:  <a href="http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java">http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java</a>
+</li>
+</ul><p>Add the following dependency to your pom.xml:</p>
+
+<pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.xerial.snappy&lt;/groupId&gt;
+  &lt;artifactId&gt;snappy-java&lt;/artifactId&gt;
+  &lt;version&gt;(version)&lt;/version&gt;
+  &lt;type&gt;jar&lt;/type&gt;
+  &lt;scope&gt;compile&lt;/scope&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<h2>Public discussion group</h2>
+
+<p>Post bug reports or feature request to the Issue Tracker: <a href="https://github.com/xerial/snappy-java/issues">https://github.com/xerial/snappy-java/issues</a></p>
+
+<p>Public discussion forum is here: </p>
+
+<h2>Building from the source code</h2>
+
+<p>See the <a href="https://github.com/xerial/snappy-java/blob/develop/INSTALL">installation instruction</a>. Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.</p>
+
+<pre><code>$ git clone https://github.com/xerial/snappy-java.git
+$ cd snappy-java
+$ make
+</code></pre>
+
+<p>A file <code>target/snappy-java-$(version).jar</code> is the product additionally containing the native library built for your platform.</p>
+
+<h2>Cross-compiling for other platforms</h2>
+
+<p>The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:</p>
+
+<pre><code>$ make linux32 win32 win64 linux-arm linux-armhf
+</code></pre>
+
+<p>If you append <code>snappy</code> to the line above, it will also build the native library for the current platform and then build the snappy-java JAR (containing all native libraries built so far).</p>
+
+<p>Of course, you must first have the necessary cross-compilers and development libraries installed for each target CPU and OS. For example, on Ubuntu 12.04 for x86-64, install the following packages for each target:</p>
+
+<ul>
+<li>linux32: <code>sudo apt-get install g++-multilib libc6-dev-i386 lib32stdc++6</code>
+</li>
+<li>win32: <code>sudo apt-get install g++-mingw-w64-i686</code>
+</li>
+<li>win64: <code>sudo apt-get install g++-mingw-w64-x86-64</code>
+</li>
+<li>arm: <code>sudo apt-get install g++-arm-linux-gnueabi</code>
+</li>
+<li>armhf: <code>sudo apt-get install g++-arm-linux-gnueabihf</code>
+</li>
+</ul><p>Unfortunately, cross-compiling for Mac OS X is not currently possible; you must compile within OS X.</p>
+
+<p>If you are using Mac and openjdk7 (or higher), use the following option:</p>
+
+<pre><code>$ make native LIBNAME=libsnappyjava.dylib
+</code></pre>
+
+<h2>Miscellaneous Notes</h2>
+
+<h3>Using snappy-java with Tomcat 6 (or higher) Web Server</h3>
+
+<p>Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders in the same JVM by using native code injection to the parent class loader (Issue 21). </p>
+
+<hr><p>Snappy-java is developed by <a href="http://www.xerial.org/leo">Taro L. Saito</a>. Twitter  <a href="http://twitter.com/#!/taroleo">@taroleo</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">snappy-java maintained by <a href="https://github.com/xerial">xerial</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-59666-9");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
