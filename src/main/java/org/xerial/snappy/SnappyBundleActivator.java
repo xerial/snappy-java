@@ -24,6 +24,9 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.util.jar.Manifest;
+
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -35,12 +38,23 @@ import org.osgi.framework.BundleContext;
  */
 public class SnappyBundleActivator implements BundleActivator
 {
-    public void start(BundleContext context) throws Exception {
-
+	/**
+	 * Name of the Snappy native library
+	 */
+	public static final String LIBRARY_NAME = "snappyjava";
+	
+    /** 
+     * Make a call to {@link System#loadLibrary(String)} to load the native library which assumes
+     * that the library is available on the path based on this {@link Bundle}'s {@link Manifest}.
+     */
+    public void start(BundleContext context) throws Exception 
+    {
+    	System.loadLibrary(System.mapLibraryName(LIBRARY_NAME));
+    	SnappyLoader.setApi(new SnappyNative());
     }
 
-    public void stop(BundleContext context) throws Exception {
-
+    public void stop(BundleContext context) throws Exception
+    {
+    	SnappyLoader.setApi(null);
     }
-
 }
