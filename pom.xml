@@ -181,6 +181,7 @@
                         <Bundle-Activator>org.xerial.snappy.SnappyBundleActivator</Bundle-Activator>
                         <Export-Package>org.xerial.snappy</Export-Package>
                         <Import-Package>org.osgi.framework;version="[1.5,2)"</Import-Package>
+                        <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-NativeCode>
                         	org/xerial/snappy/native/Windows/amd64/snappyjava.dll;selection-filter="(&amp;(osgi.arch=x86_64)(osgi.os=win32))",
                         	org/xerial/snappy/native/Windows/x86/snappyjava.dll;selection-filter="(&amp;(osgi.arch=x86)(osgi.os=win32))",
