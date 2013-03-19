@@ -93,8 +93,8 @@ public class SnappyLoader
     public static final String KEY_SNAPPY_USE_SYSTEMLIB        = "org.xerial.snappy.use.systemlib";
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
-    private static boolean     isLoaded                        = false;
-    private static Object      api                             = null;
+    private static volatile boolean     isLoaded                        = false;
+    private static volatile Object api                             = null;
     
     /**
      * Set the api instance.
