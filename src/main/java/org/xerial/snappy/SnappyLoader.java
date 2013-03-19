@@ -24,7 +24,13 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -87,9 +93,19 @@ public class SnappyLoader
     public static final String KEY_SNAPPY_USE_SYSTEMLIB        = "org.xerial.snappy.use.systemlib";
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
-    private static boolean     isLoaded                        = false;
-    private static Object      api                             = null;
-
+    private static volatile boolean     isLoaded                        = false;
+    private static volatile Object api                             = null;
+    
+    /**
+     * Set the api instance.
+     * 
+     * @param nativeCode
+     */
+    static synchronized void setApi(Object nativeCode)
+    {
+    	api = nativeCode;
+    }
+    
     /**
      * load system properties when configuration file of the name
      * {@link #SNAPPY_SYSTEM_PROPERTIES_FILE} is found
@@ -200,8 +216,8 @@ public class SnappyLoader
      * 
      * @return
      */
-    static synchronized Object load() {
-
+    static synchronized Object load() 
+    {
         if (api != null)
             return api;
 
@@ -216,7 +232,7 @@ public class SnappyLoader
             isLoaded = true;
             // Look up SnappyNative, injected to the root classloder, using reflection in order to avoid the initialization of SnappyNative class in this context class loader.
             Object nativeCode = Class.forName("org.xerial.snappy.SnappyNative").newInstance();
-            api = nativeCode;
+            setApi(nativeCode);
         }
         catch (Exception e) {
             e.printStackTrace();
