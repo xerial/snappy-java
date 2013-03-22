@@ -48,6 +48,9 @@ public class SnappyNative implements SnappyNativeAPI
     // ------------------------------------------------------------------------
     // Generic compression/decompression routines.
     // ------------------------------------------------------------------------
+    public native long rawCompress(long inputAddr, long inputSize, long destAddr) throws IOException;
+    public native long rawUncompress(long inputAddr, long inputSize, long destAddr) throws IOException;
+
     public native int rawCompress(ByteBuffer input, int inputOffset, int inputLength, ByteBuffer compressed,
             int outputOffset) throws IOException;
 
@@ -67,6 +70,8 @@ public class SnappyNative implements SnappyNativeAPI
     public native int uncompressedLength(ByteBuffer compressed, int offset, int len) throws IOException;
 
     public native int uncompressedLength(Object input, int offset, int len) throws IOException;
+
+    public native long uncompressedLength(long inputAddr, long len) throws IOException;
 
     public native boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len) throws IOException;
 

@@ -18,6 +18,22 @@ JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersi
 /*
  * Class:     org_xerial_snappy_SnappyNative
  * Method:    rawCompress
+ * Signature: (JJJ)J
+ */
+JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ
+  (JNIEnv *, jobject, jlong, jlong, jlong);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawUncompress
+ * Signature: (JJJ)J
+ */
+JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__JJJ
+  (JNIEnv *, jobject, jlong, jlong, jlong);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawCompress
  * Signature: (Ljava/nio/ByteBuffer;IILjava/nio/ByteBuffer;I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_nio_ByteBuffer_2IILjava_nio_ByteBuffer_2I
@@ -70,6 +86,14 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__L
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__Ljava_lang_Object_2II
   (JNIEnv *, jobject, jobject, jint, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    uncompressedLength
+ * Signature: (JJ)J
+ */
+JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__JJ
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     org_xerial_snappy_SnappyNative

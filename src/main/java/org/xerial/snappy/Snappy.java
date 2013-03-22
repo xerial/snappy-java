@@ -321,6 +321,31 @@ public class Snappy
     }
 
     /**
+     * Zero-copy compress using memory addresses.
+     * @param inputAddr input memory address
+     * @param inputSize input byte size
+     * @param destAddr destination address of the compressed data
+     * @return the compressed data size
+     * @throws IOException
+     */
+    public static long rawCompress(long inputAddr, long inputSize, long destAddr) throws IOException {
+        return ((SnappyNativeAPI) impl).rawCompress(inputAddr, inputSize, destAddr);
+    }
+
+    /**
+     * Zero-copy decompress using memory addresses.
+     * @param inputAddr input memory address
+     * @param inputSize input byte size
+     * @param destAddr destination address of the uncompressed data
+     * @return the uncompressed data size
+     * @throws IOException
+     */
+    public static long rawUncompress(long inputAddr, long inputSize, long destAddr) throws IOException {
+        return ((SnappyNativeAPI) impl).rawUncompress(inputAddr, inputSize, destAddr);
+    }
+
+
+    /**
      * Compress the input data and produce a byte array of the uncompressed data
      * 
      * @param data
@@ -547,7 +572,7 @@ public class Snappy
 
     /**
      * Get the uncompressed byte size of the given compressed input. This
-     * operation taks O(1) time.
+     * operation takes O(1) time.
      * 
      * @param compressed
      *            input data [pos() ... limit())
@@ -563,6 +588,18 @@ public class Snappy
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
 
         return ((SnappyNativeAPI) impl).uncompressedLength(compressed, compressed.position(), compressed.remaining());
+    }
+
+    /**
+     * Get the uncompressed byte size of the given compressed input. This operation takes O(1) time.
+     * @param inputAddr compressed data address
+     * @param len byte length of the input
+     * @return uncompressed byte length of the given input
+     * @throws IOException when failed to uncompress the given input. The error code is
+     *             {@link SnappyErrorCode#PARSING_ERROR}
+     */
+    public static long uncompressedLength(long inputAddr, long len) throws IOException {
+        return ((SnappyNativeAPI) impl).uncompressedLength(inputAddr, len);
     }
 
     /**
