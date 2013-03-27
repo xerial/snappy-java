@@ -2,6 +2,11 @@
   * `SnappyIndexer` for parallel compression/decompression
   * CUI commands (snap/unsnap)
 
+## snappy-java-1.1.0-M1 (27 March, 2013)
+  * Upgrade to snappy-1.1.0
+  * Add zero-copy compression (rawCompress, rawUncompress) that can be used with LArray <https://github.com/xerial/larray>
+  * Drop 32-bit Mac support
+
 ## snappy-java-1.0.5-M2 (27 September 2012)
   * Upgrade release for snappy-1.0.5
 
