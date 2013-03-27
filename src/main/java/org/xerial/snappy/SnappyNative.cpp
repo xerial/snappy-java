@@ -36,6 +36,32 @@ JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersi
 	return env->NewStringUTF("1.0.4");
 }
 
+JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ
+  (JNIEnv* env, jobject self, jlong srcAddr, jlong length, jlong destAddr) {
+     size_t compressedLength;
+     snappy::RawCompress((char*) srcAddr, (size_t) length, (char*) destAddr, &compressedLength);
+     return (jlong) compressedLength;
+  }
+
+
+
+JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__JJJ
+  (JNIEnv* env, jobject self, jlong srcAddr, jlong length, jlong destAddr) {
+
+  	size_t uncompressedLength;
+  	snappy::GetUncompressedLength((char*) srcAddr, (size_t) length, &uncompressedLength);
+  	bool ret = snappy::RawUncompress((char*) srcAddr, (size_t) length, (char*) destAddr);
+
+ 	if(!ret) {
+ 		throw_exception(env, self, 5);
+ 		return 0;
+ 	}
+
+ 	return (jlong) uncompressedLength;
+  }
+
+
+
 /*
  * Class:     org_xerial_snappy_Snappy
  * Method:    compress
@@ -189,6 +215,21 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__L
 
 	return (jint) result;
 }
+
+JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__JJ
+  (JNIEnv *env, jobject self, jlong inputAddr, jlong len) {
+
+
+	size_t result;
+	bool ret = snappy::GetUncompressedLength((char*) inputAddr, (size_t) len, &result);
+	if(!ret) {
+		throw_exception(env, self, 2);
+		return 0;
+	}
+
+	return (jint) result;
+  }
+
 
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_nio_ByteBuffer_2II
   (JNIEnv * env, jobject self, jobject compressed, jint cpos, jint clen)
