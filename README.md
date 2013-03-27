@@ -6,7 +6,7 @@ The snappy-java is a Java port of the snappy
   * Fast compression/decompression tailored to 64-bit CPU architecture. 
   * JNI-based implementation to achieve comparable performance to the native C++ version.  
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). 
-  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (32/64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
+  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in org.xerial.snappy.Snappy. 
 
 ## Performance 
