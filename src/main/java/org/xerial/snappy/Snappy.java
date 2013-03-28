@@ -151,7 +151,7 @@ public class Snappy
      * @param input
      * @return the compressed data
      */
-    public static byte[] compress(char[] input) {
+    public static byte[] compress(char[] input) throws IOException {
         return rawCompress(input, input.length * 2); // char uses 2 bytes
     }
 
@@ -161,7 +161,7 @@ public class Snappy
      * @param input
      * @return the compressed data
      */
-    public static byte[] compress(double[] input) {
+    public static byte[] compress(double[] input) throws IOException {
         return rawCompress(input, input.length * 8); // double uses 8 bytes
     }
 
@@ -171,7 +171,7 @@ public class Snappy
      * @param input
      * @return the compressed data
      */
-    public static byte[] compress(float[] input) {
+    public static byte[] compress(float[] input) throws IOException {
         return rawCompress(input, input.length * 4); // float uses 4 bytes
     }
 
@@ -181,7 +181,7 @@ public class Snappy
      * @param input
      * @return the compressed data
      */
-    public static byte[] compress(int[] input) {
+    public static byte[] compress(int[] input) throws IOException {
         return rawCompress(input, input.length * 4); // int uses 4 bytes
     }
 
@@ -191,7 +191,7 @@ public class Snappy
      * @param input
      * @return the compressed data
      */
-    public static byte[] compress(long[] input) {
+    public static byte[] compress(long[] input) throws IOException {
         return rawCompress(input, input.length * 8); // long uses 8 bytes
     }
 
@@ -201,7 +201,7 @@ public class Snappy
      * @param input
      * @return the compressed data
      */
-    public static byte[] compress(short[] input) {
+    public static byte[] compress(short[] input) throws IOException {
         return rawCompress(input, input.length * 2); // short uses 2 bytes
     }
 
@@ -354,7 +354,7 @@ public class Snappy
      *            the input byte size
      * @return compressed data
      */
-    public static byte[] rawCompress(Object data, int byteSize) {
+    public static byte[] rawCompress(Object data, int byteSize) throws IOException {
         byte[] buf = new byte[Snappy.maxCompressedLength(byteSize)];
         int compressedByteSize = ((SnappyNativeAPI) impl).rawCompress(data, 0, byteSize, buf, 0);
         byte[] result = new byte[compressedByteSize];

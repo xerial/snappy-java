@@ -51,7 +51,7 @@ public interface SnappyNativeAPI
     public int rawCompress(ByteBuffer input, int inputOffset, int inputLength, ByteBuffer compressed, int outputOffset)
             throws IOException;
 
-    public int rawCompress(Object input, int inputOffset, int inputByteLength, Object output, int outputOffset);
+    public int rawCompress(Object input, int inputOffset, int inputByteLength, Object output, int outputOffset) throws IOException;
 
     public int rawUncompress(ByteBuffer compressed, int inputOffset, int inputLength, ByteBuffer uncompressed,
             int outputOffset) throws IOException;
