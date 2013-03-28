@@ -31,19 +31,21 @@ If you are a Maven user, see [pom.xml example](#using-with-maven).
 ## Usage 
 First, import `org.xerial.snapy.Snappy` in your Java code:
 
-     import org.xerial.snappy.Snappy;
-
+```java
+import org.xerial.snappy.Snappy;
+```
 
 Then use `Snappy.compress(byte[])` and `Snappy.uncompress(byte[])`:
 
-     String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper of "
+```java
+String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper of "
      + "Snappy, a fast compresser/decompresser.";
-     byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
-     byte[] uncompressed = Snappy.uncompress(compressed);
+byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
+byte[] uncompressed = Snappy.uncompress(compressed);
      
-     String result = new String(uncompressed, "UTF-8");
-     System.out.println(result);
-
+String result = new String(uncompressed, "UTF-8");
+System.out.println(result);
+```
 
 In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. See also 
 [Snappy.java](https://github.com/xerial/snappy-java/blob/master/src/main/java/org/xerial/snappy/Snappy.java)
@@ -91,13 +93,13 @@ See the [installation instruction](https://github.com/xerial/snappy-java/blob/de
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
-## Build linux amd64 binary
+## Building linux amd64 binary
 
 snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distribuions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++ compiled with the following options:
 
 	$ ./configure --prefix=$HOME/local --with-gmp=$HOME/local --with-mpfr=$HOME/local --with-mpc=$HOME/local --with-ppl=$HOME/local --with-cloog=$HOME/local CXXFLAGS=-fPIC CFLAGS=-fPIC 
 
-This g++ build enables static linking of libstdc++. For details, see GCC's home page.
+This g++ build enables static linking of libstdc++. For more infomation on building GCC, see GCC's home page.
 
 ## Cross-compiling for other platforms
 The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:
