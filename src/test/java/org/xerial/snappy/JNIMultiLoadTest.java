@@ -33,7 +33,7 @@ public class JNIMultiLoadTest {
         ClassRealmAdapter L1 = ClassRealmAdapter.getInstance(cw.newRealm("l1", URLClassLoader.newInstance(new URL[]{classPath}, parent)));
         ClassRealmAdapter L2 = ClassRealmAdapter.getInstance(cw.newRealm("l2", URLClassLoader.newInstance(new URL[] { classPath }, parent)));
 
-        // Actually load Snappy.class in a child class loader
+        // Load different verisons of JNI implementation of SnappyNative
         File lib = new File("target/test-classes/org/xerial/snappy/libsnappyjava-1.0.4-mac.jnilib");
         File lib2 = new File("target/test-classes/org/xerial/snappy/libsnappyjava-1.1.0-mac.jnilib");
         loadSnappy(L1, lib);
@@ -45,14 +45,18 @@ public class JNIMultiLoadTest {
         ClassLoader current = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(c.getClassLoader());
+            // load JNI lib
             Class runTimeClass = c.loadClass("java.lang.ClassLoader");
             Method loadM = runTimeClass.getDeclaredMethod("loadLibrary", Class.class, String.class, Boolean.TYPE);
             loadM.setAccessible(true);
             Class loaderClass = c.loadClass("org.xerial.snappy.SnappyLoader");
-            loadM.invoke(Runtime.getRuntime(), loaderClass, nativeLib.getAbsolutePath(), true);
+            loadM.invoke(null, loaderClass, nativeLib.getAbsolutePath(), true);
 
+            // Create SnappyNative instance
             Class nativeClass = c.loadClass("org.xerial.snappy.SnappyNative");
             Object nc = nativeClass.newInstance();
+
+            // Call native API
             Method versionGetter = nativeClass.getDeclaredMethod("nativeLibraryVersion");
             versionGetter.setAccessible(true);
             System.out.println(versionGetter.invoke(nc));
