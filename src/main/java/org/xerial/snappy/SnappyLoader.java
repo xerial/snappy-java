@@ -464,7 +464,7 @@ public class SnappyLoader
         String tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR,
                 System.getProperty("java.io.tmpdir"))).getAbsolutePath();
 
-        // Extract and load a native library inside the jar file
+        // Extract a native library inside the jar file to the temporary folder
         return extractLibraryFile(snappyNativeLibraryPath, snappyNativeLibraryName, tempFolder);
     }
 

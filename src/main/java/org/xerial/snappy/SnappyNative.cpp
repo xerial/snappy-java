@@ -33,7 +33,7 @@ void throw_exception(JNIEnv *env, jobject self, int errorCode)
 JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
   (JNIEnv * env, jobject self)
 {
-	return env->NewStringUTF("1.0.4");
+	return env->NewStringUTF("1.1.0");
 }
 
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ
