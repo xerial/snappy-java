@@ -68,7 +68,7 @@ Linux-i386_SNAPPY_FLAGS:=
 Linux-amd64_CXX       := $(CROSS_PREFIX)g++ 
 Linux-amd64_STRIP     := $(CROSS_PREFIX)strip
 Linux-amd64_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64
-Linux-amd64_LINKFLAGS := -shared -static-libgcc #-static-libstdc++
+Linux-amd64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-amd64_LIBNAME   := libsnappyjava.so
 Linux-amd64_SNAPPY_FLAGS  := 
 
