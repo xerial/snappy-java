@@ -91,7 +91,7 @@ public class SnappyCodec
     public static SnappyCodec readHeader(InputStream in) throws IOException {
         DataInputStream d = new DataInputStream(in);
         byte[] magic = new byte[MAGIC_LEN];
-        d.read(magic, 0, MAGIC_LEN);
+        d.readFully(magic, 0, MAGIC_LEN);
         int version = d.readInt();
         int compatibleVersion = d.readInt();
         return new SnappyCodec(magic, version, compatibleVersion);
