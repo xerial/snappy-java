@@ -26,9 +26,11 @@ $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
-
-$(SRC)/org/xerial/snappy/SnappyNative.h: $(SRC)/org/xerial/snappy/SnappyNative.java
+$(TARGET)/classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/classes
+	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/classes -sourcepath $(SRC) $< 
+
+$(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/classes/org/xerial/snappy/SnappyNative.class
 	$(JAVAH) -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
 
 bytecode: src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode
