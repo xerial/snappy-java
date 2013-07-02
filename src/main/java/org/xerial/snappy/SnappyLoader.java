@@ -24,13 +24,7 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -356,6 +350,25 @@ public class SnappyLoader
         }
     }
 
+
+    private static boolean contentsEquals(InputStream in1, InputStream in2) throws IOException {
+        if(!(in1 instanceof  BufferedInputStream)) {
+           in1 = new BufferedInputStream(in1);
+        }
+        if(!(in2 instanceof BufferedInputStream)) {
+           in2 = new BufferedInputStream(in2);
+        }
+
+        int ch = in1.read();
+        while(ch != -1) {
+           int ch2 = in2.read();
+            if(ch != ch2)
+                return false;
+            ch = in1.read();
+        }
+        int ch2 = in2.read();
+        return ch2 == -1;
+    }
     /**
      * Extract the specified library file to the target folder
      * 
@@ -372,34 +385,46 @@ public class SnappyLoader
 
         try {
             if (extractedLibFile.exists()) {
-                // test md5sum value
-                String md5sum1 = md5sum(SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath));
-                String md5sum2 = md5sum(new FileInputStream(extractedLibFile));
-
-                if (md5sum1.equals(md5sum2)) {
-                    return new File(targetFolder, extractedLibFileName);
-                }
-                else {
-                    // remove old native library file
-                    boolean deletionSucceeded = extractedLibFile.delete();
-                    if (!deletionSucceeded) {
-                        throw new IOException("failed to remove existing native library file: "
-                                + extractedLibFile.getAbsolutePath());
+                // Compare the native library contents
+                InputStream nativeIn = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
+                InputStream extractedLibIn = new FileInputStream(extractedLibFile);
+                try {
+                    if(contentsEquals(nativeIn, extractedLibIn)) {
+                        return new File(targetFolder, extractedLibFileName);
                     }
+                    else {
+                        // remove old native library file
+                        boolean deletionSucceeded = extractedLibFile.delete();
+                        if (!deletionSucceeded) {
+                            throw new IOException("failed to remove existing native library file: "
+                                    + extractedLibFile.getAbsolutePath());
+                        }
+                    }
+                }
+                finally {
+                    if(nativeIn != null)
+                        nativeIn.close();
+                    if(extractedLibIn != null)
+                        extractedLibIn.close();
                 }
             }
 
             // Extract a native library file into the target directory
             InputStream reader = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
             FileOutputStream writer = new FileOutputStream(extractedLibFile);
-            byte[] buffer = new byte[8192];
-            int bytesRead = 0;
-            while ((bytesRead = reader.read(buffer)) != -1) {
-                writer.write(buffer, 0, bytesRead);
+            try {
+                byte[] buffer = new byte[8192];
+                int bytesRead = 0;
+                while ((bytesRead = reader.read(buffer)) != -1) {
+                    writer.write(buffer, 0, bytesRead);
+                }
             }
-
-            writer.close();
-            reader.close();
+            finally {
+                if(writer != null)
+                    writer.close();
+                if(reader != null)
+                    reader.close();
+            }
 
             // Set executable (x) flag to enable Java to load the native library
             if (!System.getProperty("os.name").contains("Windows")) {
