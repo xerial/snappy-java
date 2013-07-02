@@ -26,7 +26,6 @@ package org.xerial.snappy;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.ExceptionInInitializerError;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -35,7 +34,7 @@ import java.util.Properties;
 /**
  * Snappy API for data compression/decompression
  *
- * Note: if the native libraries cannot be loaded, then an ExceptionInInitializerError
+ * Note: if the native libraries cannot be loaded, an ExceptionInInitializerError
  * will be thrown at first use of this class.
  * 
  * @author leo
