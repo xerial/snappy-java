@@ -90,6 +90,12 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_la
 	char* out = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
 	if(in == 0 || out == 0) {
 		// out of memory
+		if(in != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+		}
+		if(out != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+		}
 		throw_exception(env, self, 4);
 		return 0;
 	}
@@ -110,6 +116,12 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 	char* out = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
 	if(in == 0 || out == 0) {
 		// out of memory
+		if(in != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+		}
+		if(out != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+		}
 		throw_exception(env, self, 4);
 		return 0;
 	}
@@ -265,6 +277,12 @@ JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
 	char* dest = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
 	if(src == 0 || dest == 0) {
 		// out of memory
+		if(src != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, src, 0);
+		}
+		if(dest != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, dest, 0);
+		}
 		throw_exception(env, self, 4);
 		return;
 	}
