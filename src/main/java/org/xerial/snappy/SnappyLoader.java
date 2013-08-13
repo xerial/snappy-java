@@ -81,14 +81,14 @@ public class SnappyLoader
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
     private static volatile boolean     isLoaded                        = false;
-    private static volatile Object api                             = null;
+    private static volatile SnappyNative api                             = null;
     
     /**
      * Set the api instance.
      * 
      * @param nativeCode
      */
-    static synchronized void setApi(Object nativeCode)
+    static synchronized void setApi(SnappyNative nativeCode)
     {
     	api = nativeCode;
     }
@@ -129,7 +129,7 @@ public class SnappyLoader
         loadSnappySystemProperties();
     }
 
-    static synchronized Object load()
+    static synchronized SnappyNative load()
     {
         if (api != null)
             return api;
@@ -137,10 +137,8 @@ public class SnappyLoader
         try {
             loadNativeLibrary();
 
+            setApi(new SnappyNative());
             isLoaded = true;
-            // Look up SnappyNative, injected to the root classloder, using reflection in order to avoid the initialization of SnappyNative class in this context class loader.
-            Object nativeCode = Class.forName("org.xerial.snappy.SnappyNative").newInstance();
-            setApi(nativeCode);
         }
         catch (Exception e) {
             e.printStackTrace();
