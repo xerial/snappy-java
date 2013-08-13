@@ -82,7 +82,14 @@ public class SnappyLoader
 
     private static volatile boolean     isLoaded                        = false;
     private static volatile SnappyNative api                             = null;
-    
+
+    private static File nativeLibFile = null;
+
+    static void cleanUpExtractedNativeLib() {
+        if(nativeLibFile != null && nativeLibFile.exists())
+            nativeLibFile.delete();
+    }
+
     /**
      * Set the api instance.
      * 
@@ -153,10 +160,10 @@ public class SnappyLoader
      */
     private static void loadNativeLibrary() {
 
-        File nativeLib = findNativeLibrary();
-        if (nativeLib != null) {
+        nativeLibFile = findNativeLibrary();
+        if (nativeLibFile != null) {
             // Load extracted or specified snappyjava native library.
-            System.load(nativeLib.getAbsolutePath());
+            System.load(nativeLibFile.getAbsolutePath());
         }
         else {
             // Load preinstalled snappyjava (in the path -Djava.library.path)
