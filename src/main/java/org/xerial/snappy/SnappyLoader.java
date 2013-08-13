@@ -26,9 +26,6 @@ package org.xerial.snappy;
 
 import java.io.*;
 import java.net.URL;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.UUID;
@@ -166,36 +163,6 @@ public class SnappyLoader
         else {
             // Load preinstalled snappyjava (in the path -Djava.library.path)
             System.loadLibrary("snappyjava");
-        }
-    }
-
-
-
-    /**
-     * Computes the MD5 value of the input stream
-     * 
-     * @param input
-     * @return
-     * @throws IOException
-     * @throws NoSuchAlgorithmException
-     */
-    static String md5sum(InputStream input) throws IOException {
-        BufferedInputStream in = new BufferedInputStream(input);
-        try {
-            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
-            DigestInputStream digestInputStream = new DigestInputStream(in, digest);
-            for (; digestInputStream.read() >= 0;) {
-
-            }
-            ByteArrayOutputStream md5out = new ByteArrayOutputStream();
-            md5out.write(digest.digest());
-            return md5out.toString();
-        }
-        catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("MD5 algorithm is not available: " + e);
-        }
-        finally {
-            in.close();
         }
     }
 
