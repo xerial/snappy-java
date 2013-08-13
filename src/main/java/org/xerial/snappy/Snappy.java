@@ -66,6 +66,7 @@ public class Snappy
      */
     static void cleanUp() {
         SnappyLoader.cleanUpExtractedNativeLib();
+        SnappyLoader.setApi(null);
     }
 
 
