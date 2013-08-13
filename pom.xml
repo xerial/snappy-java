@@ -182,14 +182,6 @@
                         <Import-Package>org.osgi.framework;version="[1.5,2)"</Import-Package>
                         <Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
                         <Bundle-NativeCode>
-<<<<<<< HEAD
-                        	org/xerial/snappy/native/Windows/amd64/snappyjava.dll;osname=win32;processor=x86-64,
-                        	org/xerial/snappy/native/Windows/x86/snappyjava.dll;osname=win32;processor=x86,
-                        	org/xerial/snappy/native/Mac/x86_64/libsnappyjava.jnilib;osname=macosx;processor=x86-64,
-                        	org/xerial/snappy/native/Linux/amd64/libsnappyjava.so;osname=linux;processor=x86-64,
-                        	org/xerial/snappy/native/Linux/i386/libsnappyjava.so;osname=linux;processor=x86,
-                        	org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm
-=======
                         	org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;selection-filter="(&amp;(osgi.arch=x86_64)(osgi.os=win32))",
                         	org/xerial/snappy/native/Windows/x86/snappyjava.dll;selection-filter="(&amp;(osgi.arch=x86)(osgi.os=win32))",
                         	org/xerial/snappy/native/Mac/x86/libsnappyjava.jnilib;selection-filter="(&amp;(osgi.arch=x86)(osgi.os=macosx))",
@@ -197,7 +189,6 @@
                         	org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;selection-filter="(&amp;(osgi.arch=x86_64)(osgi.os=linux))",
                         	org/xerial/snappy/native/Linux/x86/libsnappyjava.so;selection-filter="(&amp;(osgi.arch=x86)(osgi.os=linux))",
                         	org/xerial/snappy/native/Linux/arm/libsnappyjava.so;selection-filter="(&amp;(osgi.arch=arm)(osgi.os=linux))"
->>>>>>> feature/lib-loader
                         </Bundle-NativeCode>
                         <!-- TODO: unsure about ARMHF -->
                     </instructions>
