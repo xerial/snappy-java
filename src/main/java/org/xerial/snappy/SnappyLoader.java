@@ -207,8 +207,8 @@ public class SnappyLoader
         File extractedLibFile = new File(targetFolder, extractedLibFileName);
         // Delete extracted lib file on exit.
         extractedLibFile.deleteOnExit();
-        try {
 
+        try {
             // Extract a native library file into the target directory
             InputStream reader = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
             FileOutputStream writer = new FileOutputStream(extractedLibFile);
@@ -231,11 +231,17 @@ public class SnappyLoader
                 try {
                     Runtime.getRuntime().exec(new String[] { "chmod", "755", extractedLibFile.getAbsolutePath() })
                             .waitFor();
+
+                    // Use following methods added since Java6 (If discarding Java5 is acceptable)
+                    //extractedLibFile.setReadable(true);
+                    //extractedLibFile.setWritable(true, true);
+                    //extractedLibFile.setExecutable(true);
                 }
                 catch (Throwable e) {}
             }
 
-            // Check the contents
+
+            // Check whether the contents are properly copied from the resource folder
             {
                 InputStream nativeIn = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
                 InputStream extractedLibIn = new FileInputStream(extractedLibFile);
