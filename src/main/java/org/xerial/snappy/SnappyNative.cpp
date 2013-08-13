@@ -270,6 +270,19 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressed
 	return ret;
 }
 
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__JJJ
+  (JNIEnv * env, jobject self, jlong inputAddr, jlong offset, jlong length)
+{
+	if(inputAddr == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return 0;
+	}
+	bool ret = snappy::IsValidCompressedBuffer((char*) (inputAddr + offset), (size_t) length);
+	return ret;
+}
+
+
 JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
   (JNIEnv * env, jobject self, jobject input, jint offset, jint length, jobject output, jint output_offset)
 {

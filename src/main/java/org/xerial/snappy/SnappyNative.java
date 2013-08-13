@@ -76,6 +76,8 @@ public class SnappyNative
 
     public native boolean isValidCompressedBuffer(Object input, int offset, int len) throws IOException;
 
+    public native boolean isValidCompressedBuffer(long inputAddr, long offset, long len) throws IOException;
+
     public native void arrayCopy(Object src, int offset, int byteLength, Object dest, int dOffset) throws IOException;
 
     public void throw_error(int errorCode) throws IOException {
