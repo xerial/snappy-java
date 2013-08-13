@@ -16,12 +16,18 @@ SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 
 CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR)
 
+ifeq ($(OS_NAME),SunOS)
+	TAR:= gtar
+else
+	TAR:= tar
+endif
+
 $(SNAPPY_ARCHIVE):
 	@mkdir -p $(@D)
 	curl -o$@ http://snappy.googlecode.com/files/snappy-$(VERSION).tar.gz
 
 $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
-	tar xvfz $< -C $(TARGET)	
+	$(TAR) xvfz $< -C $(TARGET)	
 	touch $@
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h

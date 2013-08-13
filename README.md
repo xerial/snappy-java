@@ -91,6 +91,9 @@ See the [installation instruction](https://github.com/xerial/snappy-java/blob/de
     $ cd snappy-java
     $ make
     
+When building on Solaris use
+    
+    $ gmake
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
