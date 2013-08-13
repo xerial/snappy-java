@@ -321,6 +321,17 @@ public class Snappy
     }
 
     /**
+     * Returns true iff the contents of compressed buffer [offset,
+     * offset+length) can be uncompressed successfully. Does not return the
+     * uncompressed data. Takes time proportional to the input length, but is
+     * usually at least a factor of four faster than actual decompression.
+     */
+    public static boolean isValidCompressedBuffer(long inputAddr, long offset, long length) throws IOException {
+        return impl.isValidCompressedBuffer(inputAddr, offset, length);
+    }
+
+
+    /**
      * Get the maximum byte size needed for compressing data of the given byte
      * size.
      * 
