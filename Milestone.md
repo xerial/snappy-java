@@ -2,6 +2,18 @@
   * `SnappyIndexer` for parallel compression/decompression
   * CUI commands (snap/unsnap)
 
+## snappy-java-1.1.0  (TBD)
+  * Add FreeBSD support
+
+## snappy-java-1.1.0-M4 (20 August 2013)
+  * New JNI native code loading mechanism, which does not rely on native code injection.
+  * Add OpenBSD support
+  * Add Framed format support
+  * Recovered 32-bit Mac support
+  * Fixes several issues
+  * Target to Java6 (Java5 will be no longer supported)
+  * Add zero-copy compression, decompression and isValidCompressedData for LArray <https://github.com/xerial/larray>
+
 ## snappy-java-1.1.0-M3 (28 March 2013)
   * Fix linux amd64 build (embed libstdc++)
   * Fixes #26
