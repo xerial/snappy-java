@@ -56,6 +56,6 @@ public class SnappyBundleActivator implements BundleActivator
     public void stop(BundleContext context) throws Exception
     {
     	SnappyLoader.setApi(null);
-        Snappy.cleanUp();
+        SnappyLoader.cleanUpExtractedNativeLib();
     }
 }
