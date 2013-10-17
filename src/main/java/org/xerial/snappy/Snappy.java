@@ -64,7 +64,7 @@ public class Snappy
      * This method is useful when using a J2EE container, which will restart servlet containers multiple times without
      * restarting JVM.
      */
-    static void cleanUp() {
+    public static void cleanUp() {
         SnappyLoader.cleanUpExtractedNativeLib();
         SnappyLoader.setApi(null);
     }
