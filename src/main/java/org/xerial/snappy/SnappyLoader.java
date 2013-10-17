@@ -205,8 +205,6 @@ public class SnappyLoader
         String uuid = UUID.randomUUID().toString();
         String extractedLibFileName = String.format("snappy-%s-%s-%s", getVersion(), uuid, libraryFileName);
         File extractedLibFile = new File(targetFolder, extractedLibFileName);
-        // Delete extracted lib file on exit.
-        extractedLibFile.deleteOnExit();
 
         try {
             // Extract a native library file into the target directory
@@ -220,6 +218,9 @@ public class SnappyLoader
                 }
             }
             finally {
+                // Delete the extracted lib file on JVM exit.
+                extractedLibFile.deleteOnExit();
+
                 if(writer != null)
                     writer.close();
                 if(reader != null)
