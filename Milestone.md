@@ -2,8 +2,11 @@
   * `SnappyIndexer` for parallel compression/decompression
   * CUI commands (snap/unsnap)
 
-## snappy-java-1.1.0  (TBD)
-  * Add FreeBSD support
+## snappy-java-1.1.0  (17 October 2013)
+  * Add Snappy framed format support (SnappyFramedInputStream, SnappyFramedOutputStream)
+  * Add SunOS support
+  * Dropped OpenBSD support
+  * OSGi support
 
 ## snappy-java-1.1.0-M4 (20 August 2013)
   * New JNI native code loading mechanism, which does not rely on native code injection.

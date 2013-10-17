@@ -25,7 +25,7 @@ The snappy-java is a Java port of the snappy
 ## Download 
 The current stable version is available from here:
   * Release version: http://code.google.com/p/snappy-java/downloads/list
-     * [Release plans](https://github.com/xerial/snappy-java/blob/develop/Milestone.md) 
+     * [Release plans](Milestone.md) 
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
 If you are a Maven user, see [pom.xml example](#using-with-maven).
 
@@ -54,7 +54,7 @@ In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(flo
 ### Stream-based API
 Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets.
 
- * [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0-M4/snappy-java-1.1.0-M4-javadoc.jar/!/index.html)
+ * [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0/snappy-java-1.1.0-javadoc.jar/!/index.html)
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
