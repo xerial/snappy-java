@@ -23,12 +23,14 @@ The snappy-java is a Java port of the snappy
 
 
 ## Download 
+
+ * [Release Notes](Milestone.md) 
+
 The current stable version is available from here:
   * Release version: http://code.google.com/p/snappy-java/downloads/list
-     * [Release plans](Milestone.md) 
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
 
-If you are a Maven user, see [pom.xml example](#using-with-maven).
+For Maven user, see [pom.xml example](#using-with-maven).
 
 ## Usage 
 First, import `org.xerial.snapy.Snappy` in your Java code:
