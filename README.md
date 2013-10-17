@@ -8,6 +8,7 @@ The snappy-java is a Java port of the snappy
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). 
   * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in org.xerial.snappy.Snappy. 
+  * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0-SNAPSHOT version)
 
 ## Performance 
   * Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset).
@@ -24,7 +25,7 @@ The snappy-java is a Java port of the snappy
 ## Download 
 The current stable version is available from here:
   * Release version: http://code.google.com/p/snappy-java/downloads/list
-     * [Release plans](https://github.com/xerial/snappy-java/blob/develop/Milestone.md) 
+     * [Release plans](Milestone.md) 
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
 If you are a Maven user, see [pom.xml example](#using-with-maven).
 
@@ -53,7 +54,7 @@ In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(flo
 ### Stream-based API
 Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets.
 
- * [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0-M3/snappy-java-1.1.0-M3-javadoc.jar/!/index.html)
+ * [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0/snappy-java-1.1.0-javadoc.jar/!/index.html)
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
@@ -90,6 +91,9 @@ See the [installation instruction](https://github.com/xerial/snappy-java/blob/de
     $ cd snappy-java
     $ make
     
+When building on Solaris use
+    
+    $ gmake
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
@@ -125,7 +129,7 @@ If you are using Mac and openjdk7 (or higher), use the following option:
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
-Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders in the same JVM by using native code injection to the parent class loader (Issue 21). 
+Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders. 
 
 ----
 Snappy-java is developed by [Taro L. Saito](http://www.xerial.org/leo). Twitter  [@taroleo](http://twitter.com/#!/taroleo)

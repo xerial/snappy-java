@@ -33,7 +33,7 @@ void throw_exception(JNIEnv *env, jobject self, int errorCode)
 JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
   (JNIEnv * env, jobject self)
 {
-	return env->NewStringUTF("1.0.4");
+	return env->NewStringUTF("1.1.0");
 }
 
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ
@@ -90,6 +90,12 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_la
 	char* out = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
 	if(in == 0 || out == 0) {
 		// out of memory
+		if(in != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+		}
+		if(out != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+		}
 		throw_exception(env, self, 4);
 		return 0;
 	}
@@ -110,6 +116,12 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 	char* out = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
 	if(in == 0 || out == 0) {
 		// out of memory
+		if(in != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+		}
+		if(out != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+		}
 		throw_exception(env, self, 4);
 		return 0;
 	}
@@ -258,6 +270,19 @@ JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressed
 	return ret;
 }
 
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__JJJ
+  (JNIEnv * env, jobject self, jlong inputAddr, jlong offset, jlong length)
+{
+	if(inputAddr == 0) {
+		// out of memory
+		throw_exception(env, self, 4);
+		return 0;
+	}
+	bool ret = snappy::IsValidCompressedBuffer((char*) (inputAddr + offset), (size_t) length);
+	return ret;
+}
+
+
 JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
   (JNIEnv * env, jobject self, jobject input, jint offset, jint length, jobject output, jint output_offset)
 {
@@ -265,6 +290,12 @@ JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
 	char* dest = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
 	if(src == 0 || dest == 0) {
 		// out of memory
+		if(src != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, src, 0);
+		}
+		if(dest != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, dest, 0);
+		}
 		throw_exception(env, self, 4);
 		return;
 	}

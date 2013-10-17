@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
- * <b>Internal only - Do not use this class.</b> JNI interface of the
- * {@link SnappyNativeAPI} implementation. The native method in this class is
+ * JNI interface of the {@link Snappy} implementation. The native method in this class is
  * defined in SnappyNative.h (genereted by javah) and SnappyNative.cpp
  * 
  * <p>
@@ -40,7 +39,7 @@ import java.nio.ByteBuffer;
  * @author leo
  * 
  */
-public class SnappyNative implements SnappyNativeAPI
+public class SnappyNative
 {
 
     public native String nativeLibraryVersion();
@@ -76,6 +75,8 @@ public class SnappyNative implements SnappyNativeAPI
     public native boolean isValidCompressedBuffer(ByteBuffer compressed, int offset, int len) throws IOException;
 
     public native boolean isValidCompressedBuffer(Object input, int offset, int len) throws IOException;
+
+    public native boolean isValidCompressedBuffer(long inputAddr, long offset, long len) throws IOException;
 
     public native void arrayCopy(Object src, int offset, int byteLength, Object dest, int dOffset) throws IOException;
 
