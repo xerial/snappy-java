@@ -69,7 +69,7 @@ public class OSInfo
 
         // PowerPC mappings
         archMapping.put(PPC, PPC);
-        archMapping.put("pwoer", PPC);
+        archMapping.put("power", PPC);
         archMapping.put("powerpc", PPC);
         archMapping.put("power_pc", PPC);
         archMapping.put("power_rs", PPC);
