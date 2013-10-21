@@ -2,13 +2,13 @@ The snappy-java is a Java port of the snappy
 <http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
 
 ## Features 
-  * [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). Free for both commercial and non-commercial use.
   * Fast compression/decompression tailored to 64-bit CPU architecture. 
   * JNI-based implementation to achieve comparable performance to the native C++ version.  
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). 
-  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
-  * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in org.xerial.snappy.Snappy. 
-  * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0-SNAPSHOT version)
+  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
+  * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`. 
+  * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0 version)
+  * [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). Free for both commercial and non-commercial use.
 
 ## Performance 
   * Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset).
