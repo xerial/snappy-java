@@ -4,6 +4,9 @@
 
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.1
+  * Upgrade native snappy version
+
 ## snappy-java-1.1.0  (17 October 2013)
   * Add Snappy framed format support (SnappyFramedInputStream, SnappyFramedOutputStream)
   * Add SunOS support
