@@ -86,6 +86,7 @@ SunOS-sparc_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 SunOS-sparc_LIBNAME   := libsnappyjava.so
 SunOS-sparc_SNAPPY_FLAGS  := 
 
+
 # '-include lib/inc_linux/jni_md.h' is used to force the use of our version,
 # which defines JNIEXPORT differently; otherwise, since OpenJDK includes
 # jni_md.h in same directory as jni.h, the include path is ignored when
