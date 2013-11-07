@@ -41,7 +41,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 
 ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
@@ -86,6 +86,12 @@ SunOS-sparc_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 SunOS-sparc_LIBNAME   := libsnappyjava.so
 SunOS-sparc_SNAPPY_FLAGS  := 
 
+SunOS-x86_64_CXX       := g++
+SunOS-x86_64_STRIP     := strip
+SunOS-x86_64_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64
+SunOS-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+SunOS-x86_64_LIBNAME   := libsnappyjava.so
+SunOS-x86_64_SNAPPY_FLAGS  :=
 
 # '-include lib/inc_linux/jni_md.h' is used to force the use of our version,
 # which defines JNIEXPORT differently; otherwise, since OpenJDK includes
