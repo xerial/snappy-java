@@ -9,11 +9,13 @@ import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.maskedCrc32c;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 /**
@@ -186,7 +188,24 @@ public final class SnappyFramedOutputStream extends OutputStream implements
             throw new IOException("Stream is closed");
         }
 
-        write(ByteBuffer.wrap(input, offset, length));
+        if (input == null) {
+            throw new NullPointerException();
+        } else if ((offset < 0) || (offset > input.length) || (length < 0)
+                || ((offset + length) > input.length)
+                || ((offset + length) < 0)) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        while (length > 0) {
+            if (buffer.remaining() <= 0) {
+                flushBuffer();
+            }
+
+            final int toPut = Math.min(length, buffer.remaining());
+            buffer.put(input, offset, toPut);
+            offset += toPut;
+            length -= toPut;
+        }
     }
 
     /**
@@ -227,6 +246,87 @@ public final class SnappyFramedOutputStream extends OutputStream implements
         buffer.put(src);
 
         return srcLength;
+    }
+
+    /**
+     * Transfers all the content from <i>is</i> to this {@link OutputStream}.
+     * This potentially limits the amount of buffering required to compress
+     * content.
+     * 
+     * @param is
+     *            The source of data to compress.
+     * @return The number of bytes read from <i>is</i>.
+     * @throws IOException
+     * @since 1.2
+     */
+    public long transferFrom(InputStream is) throws IOException {
+        if (closed) {
+            throw new ClosedChannelException();
+        }
+
+        if (is == null) {
+            throw new NullPointerException();
+        }
+
+        if (buffer.remaining() == 0) {
+            flushBuffer();
+        }
+
+        assert buffer.hasArray();
+        final byte[] bytes = buffer.array();
+
+        final int arrayOffset = buffer.arrayOffset();
+        long totTransfered = 0;
+        int read;
+        while ((read = is.read(bytes, arrayOffset + buffer.position(),
+                buffer.remaining())) != -1) {
+            buffer.position(buffer.position() + read);
+
+            if (buffer.remaining() == 0) {
+                flushBuffer();
+            }
+
+            totTransfered += read;
+        }
+
+        return totTransfered;
+    }
+
+    /**
+     * Transfers all the content from <i>rbc</i> to this
+     * {@link WritableByteChannel}. This potentially limits the amount of
+     * buffering required to compress content.
+     * 
+     * @param rbc
+     *            The source of data to compress.
+     * @return The number of bytes read from <i>rbc</i>.
+     * @throws IOException
+     * @since 1.2
+     */
+    public long transferFrom(ReadableByteChannel rbc) throws IOException {
+        if (closed) {
+            throw new ClosedChannelException();
+        }
+
+        if (rbc == null) {
+            throw new NullPointerException();
+        }
+
+        if (buffer.remaining() == 0) {
+            flushBuffer();
+        }
+
+        long totTransfered = 0;
+        int read;
+        while ((read = rbc.read(buffer)) != -1) {
+            if (buffer.remaining() == 0) {
+                flushBuffer();
+            }
+
+            totTransfered += read;
+        }
+
+        return totTransfered;
     }
 
     @Override

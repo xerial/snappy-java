@@ -4,16 +4,22 @@
 package org.xerial.snappy;
 
 import static java.lang.Math.min;
-import static org.xerial.snappy.SnappyFramed.*;
-import static org.xerial.snappy.SnappyFramedOutputStream.*;
+import static org.xerial.snappy.SnappyFramed.COMPRESSED_DATA_FLAG;
+import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
+import static org.xerial.snappy.SnappyFramed.STREAM_IDENTIFIER_FLAG;
+import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
+import static org.xerial.snappy.SnappyFramed.readBytes;
+import static org.xerial.snappy.SnappyFramedOutputStream.MAX_BLOCK_SIZE;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
 
 /**
@@ -234,6 +240,91 @@ public final class SnappyFramedInputStream extends InputStream implements
         dst.put(buffer, position, size);
         position += size;
         return size;
+    }
+
+    /**
+     * Transfers the entire content of this {@link InputStream} to <i>os</i>.
+     * This potentially limits the amount of buffering required to decompress
+     * content.
+     * <p>
+     * Unlike {@link #read(byte[], int, int)}, this method does not need to be
+     * called multiple times. A single call will transfer all available content.
+     * Any calls after the source has been exhausted will result in a return
+     * value of {@code 0}.
+     * </p>
+     * 
+     * @param os
+     *            The destination to write decompressed content to.
+     * @return The number of bytes transferred.
+     * @throws IOException
+     * @since 1.2
+     */
+    public long transferTo(OutputStream os) throws IOException {
+        if (os == null) {
+            throw new IllegalArgumentException("os is null");
+        }
+
+        if (closed) {
+            throw new ClosedChannelException();
+        }
+
+        long totTransfered = 0;
+
+        while (ensureBuffer()) {
+            final int available = available();
+            os.write(buffer, position, available);
+            position += available;
+            totTransfered += available;
+        }
+
+        return totTransfered;
+    }
+
+    /**
+     * Transfers the entire content of this {@link ReadableByteChannel} to
+     * <i>wbc</i>. This potentially limits the amount of buffering required to
+     * decompress content.
+     * 
+     * <p>
+     * Unlike {@link #read(ByteBuffer)}, this method does not need to be called
+     * multiple times. A single call will transfer all available content. Any
+     * calls after the source has been exhausted will result in a return value
+     * of {@code 0}.
+     * </p>
+     * 
+     * @param wbc
+     *            The destination to write decompressed content to.
+     * @return The number of bytes transferred.
+     * @throws IOException
+     * @since 1.2
+     */
+    public long transferTo(WritableByteChannel wbc) throws IOException {
+        if (wbc == null) {
+            throw new IllegalArgumentException("wbc is null");
+        }
+
+        if (closed) {
+            throw new ClosedChannelException();
+        }
+
+        final ByteBuffer bb = ByteBuffer.wrap(buffer);
+
+        long totTransfered = 0;
+
+        while (ensureBuffer()) {
+            bb.clear();
+            bb.position(position);
+            bb.limit(position + available());
+
+            wbc.write(bb);
+
+            final int written = bb.position() - position;
+            position += written;
+
+            totTransfered += written;
+        }
+
+        return totTransfered;
     }
 
     @Override
