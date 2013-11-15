@@ -17,10 +17,10 @@ The snappy-java is a Java port of the snappy
   * Here are some [benchmark results](https://github.com/ning/jvm-compressor-benchmark/wiki), comparing
  snappy-java and the other compressors
  `LZO-java`/`LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [Tatu Saloranta @cotowncoder](http://twitter.com/#!/cowtowncoder) for providing the benchmark suite. 
- * The benchmark result indicates snappy-java is the fastest compreesor/decompressor in Java:
-    * http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html
+ * The benchmark result indicates snappy-java is the fastest compreesor/decompressor in Java
+    * <http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html>
  * The decompression speed is twice as fast as the others:
-    * http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html
+    * <http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html>
 
 
 ## Download 
