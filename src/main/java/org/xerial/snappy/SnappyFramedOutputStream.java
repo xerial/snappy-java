@@ -104,6 +104,7 @@ public final class SnappyFramedOutputStream extends OutputStream implements
      * @param out
      *            The underlying {@link WritableByteChannel} to write to. Must
      *            not be {@code null}.
+     * @since 1.1.1
      * @throws IOException
      */
     public SnappyFramedOutputStream(WritableByteChannel out) throws IOException {
@@ -123,6 +124,7 @@ public final class SnappyFramedOutputStream extends OutputStream implements
      *            Defines the minimum compression ratio (
      *            {@code compressedLength / rawLength}) that must be achieved to
      *            write the compressed data. This must be in (0, 1.0].
+     * @since 1.1.1
      * @throws IOException
      */
     public SnappyFramedOutputStream(WritableByteChannel out, int blockSize,
@@ -257,7 +259,7 @@ public final class SnappyFramedOutputStream extends OutputStream implements
      *            The source of data to compress.
      * @return The number of bytes read from <i>is</i>.
      * @throws IOException
-     * @since 1.2
+     * @since 1.1.1
      */
     public long transferFrom(InputStream is) throws IOException {
         if (closed) {
@@ -301,7 +303,7 @@ public final class SnappyFramedOutputStream extends OutputStream implements
      *            The source of data to compress.
      * @return The number of bytes read from <i>rbc</i>.
      * @throws IOException
-     * @since 1.2
+     * @since 1.1.1
      */
     public long transferFrom(ReadableByteChannel rbc) throws IOException {
         if (closed) {

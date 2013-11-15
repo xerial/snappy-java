@@ -257,7 +257,7 @@ public final class SnappyFramedInputStream extends InputStream implements
      *            The destination to write decompressed content to.
      * @return The number of bytes transferred.
      * @throws IOException
-     * @since 1.2
+     * @since 1.1.1
      */
     public long transferTo(OutputStream os) throws IOException {
         if (os == null) {
@@ -296,7 +296,7 @@ public final class SnappyFramedInputStream extends InputStream implements
      *            The destination to write decompressed content to.
      * @return The number of bytes transferred.
      * @throws IOException
-     * @since 1.2
+     * @since 1.1.1
      */
     public long transferTo(WritableByteChannel wbc) throws IOException {
         if (wbc == null) {
