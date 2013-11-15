@@ -228,18 +228,9 @@ public class SnappyLoader
             }
 
             // Set executable (x) flag to enable Java to load the native library
-            if (!System.getProperty("os.name").contains("Windows")) {
-                try {
-                    Runtime.getRuntime().exec(new String[] { "chmod", "755", extractedLibFile.getAbsolutePath() })
-                            .waitFor();
-
-                    // Use following methods added since Java6 (If discarding Java5 is acceptable)
-                    //extractedLibFile.setReadable(true);
-                    //extractedLibFile.setWritable(true, true);
-                    //extractedLibFile.setExecutable(true);
-                }
-                catch (Throwable e) {}
-            }
+            extractedLibFile.setReadable(true);
+            extractedLibFile.setWritable(true, true);
+            extractedLibFile.setExecutable(true);
 
 
             // Check whether the contents are properly copied from the resource folder

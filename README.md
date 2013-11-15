@@ -2,13 +2,14 @@ The snappy-java is a Java port of the snappy
 <http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
 
 ## Features 
-  * [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). Free for both commercial and non-commercial use.
   * Fast compression/decompression tailored to 64-bit CPU architecture. 
   * JNI-based implementation to achieve comparable performance to the native C++ version.  
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). 
-  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). At runtime, snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
-  * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in org.xerial.snappy.Snappy. 
-  * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0-SNAPSHOT version)
+  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
+  * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`. 
+  * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0 version)
+  * OSGi support
+  * [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). Free for both commercial and non-commercial use.
 
 ## Performance 
   * Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset).
@@ -23,11 +24,14 @@ The snappy-java is a Java port of the snappy
 
 
 ## Download 
+
+ * [Release Notes](Milestone.md) 
+
 The current stable version is available from here:
   * Release version: http://code.google.com/p/snappy-java/downloads/list
-     * [Release plans](Milestone.md) 
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
-If you are a Maven user, see [pom.xml example](#using-with-maven).
+
+For Maven user, see [pom.xml example](#using-with-maven).
 
 ## Usage 
 First, import `org.xerial.snapy.Snappy` in your Java code:
@@ -48,13 +52,12 @@ String result = new String(uncompressed, "UTF-8");
 System.out.println(result);
 ```
 
-In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. See also 
-[Snappy.java](https://github.com/xerial/snappy-java/blob/master/src/main/java/org/xerial/snappy/Snappy.java)
+In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. 
 
 ### Stream-based API
-Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets.
+Stream-based compressor/decompressor `SnappyFramedOutputStream`/`SnappyFramedInputStream` are also available for reading/writing large data sets.
 
- * [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0/snappy-java-1.1.0-javadoc.jar/!/index.html)
+ * See also [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0/snappy-java-1.1.0-javadoc.jar/!/index.html)
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
