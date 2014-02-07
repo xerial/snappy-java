@@ -7,6 +7,7 @@ import static org.xerial.snappy.SnappyFramed.COMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
 import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.maskedCrc32c;
+import static org.xerial.snappy.SnappyFramed.releaseDirectByteBuffer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -349,6 +350,9 @@ public final class SnappyFramedOutputStream extends OutputStream implements
             out.close();
         } finally {
             closed = true;
+            
+            releaseDirectByteBuffer(directInputBuffer);
+            releaseDirectByteBuffer(outputBuffer);
         }
     }
 

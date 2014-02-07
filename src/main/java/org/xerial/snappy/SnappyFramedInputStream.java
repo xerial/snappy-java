@@ -9,6 +9,7 @@ import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
 import static org.xerial.snappy.SnappyFramed.STREAM_IDENTIFIER_FLAG;
 import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.readBytes;
+import static org.xerial.snappy.SnappyFramed.releaseDirectByteBuffer;
 import static org.xerial.snappy.SnappyFramedOutputStream.MAX_BLOCK_SIZE;
 
 import java.io.EOFException;
@@ -136,9 +137,7 @@ public final class SnappyFramedInputStream extends InputStream implements
         final byte[] actualHeader = new byte[expectedHeader.length];
         final ByteBuffer actualBuffer = ByteBuffer.wrap(actualHeader);
 
-        // assume that if the input cannot read 4 bytes that something is
-        // wrong.
-        final int read = in.read(actualBuffer);
+        final int read = SnappyFramed.readBytes(in, actualBuffer);
         if (read < expectedHeader.length) {
             throw new EOFException(
                     "encountered EOF while reading stream header");
@@ -153,6 +152,14 @@ public final class SnappyFramedInputStream extends InputStream implements
      */
     private void allocateBuffersBasedOnSize(int size) {
 
+        if (input != null) {
+            releaseDirectByteBuffer(input);
+        }
+        
+        if (uncompressedDirect != null) {
+            releaseDirectByteBuffer(uncompressedDirect);
+        }
+        
         input = ByteBuffer.allocateDirect(size);
         final int maxCompressedLength = Snappy.maxCompressedLength(size);
         uncompressedDirect = ByteBuffer.allocateDirect(maxCompressedLength);
@@ -334,6 +341,14 @@ public final class SnappyFramedInputStream extends InputStream implements
         } finally {
             if (!closed) {
                 closed = true;
+            }
+
+            if (input != null) {
+                releaseDirectByteBuffer(input);
+            }
+            
+            if (uncompressedDirect != null) {
+                releaseDirectByteBuffer(uncompressedDirect);
             }
         }
     }
