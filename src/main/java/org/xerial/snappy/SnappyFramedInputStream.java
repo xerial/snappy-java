@@ -136,9 +136,7 @@ public final class SnappyFramedInputStream extends InputStream implements
         final byte[] actualHeader = new byte[expectedHeader.length];
         final ByteBuffer actualBuffer = ByteBuffer.wrap(actualHeader);
 
-        // assume that if the input cannot read 4 bytes that something is
-        // wrong.
-        final int read = in.read(actualBuffer);
+        final int read = SnappyFramed.readBytes(in, actualBuffer);
         if (read < expectedHeader.length) {
             throw new EOFException(
                     "encountered EOF while reading stream header");
