@@ -9,6 +9,7 @@ import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
 import static org.xerial.snappy.SnappyFramed.STREAM_IDENTIFIER_FLAG;
 import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.readBytes;
+import static org.xerial.snappy.SnappyFramed.releaseDirectByteBuffer;
 import static org.xerial.snappy.SnappyFramedOutputStream.MAX_BLOCK_SIZE;
 
 import java.io.EOFException;
@@ -151,6 +152,14 @@ public final class SnappyFramedInputStream extends InputStream implements
      */
     private void allocateBuffersBasedOnSize(int size) {
 
+        if (input != null) {
+            releaseDirectByteBuffer(input);
+        }
+        
+        if (uncompressedDirect != null) {
+            releaseDirectByteBuffer(uncompressedDirect);
+        }
+        
         input = ByteBuffer.allocateDirect(size);
         final int maxCompressedLength = Snappy.maxCompressedLength(size);
         uncompressedDirect = ByteBuffer.allocateDirect(maxCompressedLength);
@@ -332,6 +341,14 @@ public final class SnappyFramedInputStream extends InputStream implements
         } finally {
             if (!closed) {
                 closed = true;
+            }
+
+            if (input != null) {
+                releaseDirectByteBuffer(input);
+            }
+            
+            if (uncompressedDirect != null) {
+                releaseDirectByteBuffer(uncompressedDirect);
             }
         }
     }
