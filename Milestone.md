@@ -4,8 +4,14 @@
 
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
-## snappy-java-1.1.1
+## snappy-java-1.1.1 (not yet)
   * Upgrade native snappy version
+
+# snappy-java-1.1.1-M2 (12 June 2014)
+   * Bug fixes and some optimization of SnappyFramedFormat 
+   * Added a native library for ppc64le 
+   * Preview build (without libstdc++ embedded for Linux/x86_64)
+   
 
 ## snappy-java-1.1.1-M1
   * Preview build (without libstdc++ embedded for Linux/x86_64)
