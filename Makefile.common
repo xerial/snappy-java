@@ -41,7 +41,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc64 Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 
 ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
@@ -71,6 +71,13 @@ Linux-x86_64_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include
 Linux-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_64_LIBNAME   := libsnappyjava.so
 Linux-x86_64_SNAPPY_FLAGS  := 
+
+Linux-ppc64_CXX       := g++
+Linux-ppc64_STRIP     := strip
+Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2 -fPIC
+Linux-ppc64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-ppc64_LIBNAME   := libsnappyjava.so
+Linux-ppc64_SNAPPY_FLAGS  :=
 
 SunOS-x86_CXX       := g++ 
 SunOS-x86_STRIP     := strip

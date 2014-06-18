@@ -29,6 +29,7 @@ $(SNAPPY_ARCHIVE):
 $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 	$(TAR) xvfz $< -C $(TARGET)	
 	touch $@
+	cd  $(SNAPPY_SRC_DIR) && ./configure
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
