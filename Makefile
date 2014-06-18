@@ -13,6 +13,16 @@ SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
 
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
+SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
+
+ifdef USE_GIT
+  ifndef GIT_REPO_URL
+    $(warning GIT_REPO_URL is not set when using git)
+  endif
+  ifndef GIT_SNAPPY_BRANCH
+    $(warning GIT_SNAPPY_BRANCH is not set when using git)
+  endif
+endif
 
 CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR)
 
@@ -28,6 +38,13 @@ $(SNAPPY_ARCHIVE):
 
 $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 	$(TAR) xvfz $< -C $(TARGET)	
+	touch $@
+	cd  $(SNAPPY_SRC_DIR) && ./configure
+
+$(SNAPPY_GIT_UNPACKED):
+	@mkdir -p $(SNAPPY_SRC_DIR)
+	git clone $(GIT_REPO_URL) $(SNAPPY_SRC_DIR)
+	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(GIT_SNAPPY_BRANCH) $(GIT_SNAPPY_BRANCH)
 	touch $@
 	cd  $(SNAPPY_SRC_DIR) && ./configure
 
@@ -47,7 +64,11 @@ src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode: src/main/resou
 	$(JAVAC) -source 1.5 -target 1.5 -d $(TARGET)/temp $<
 	cp $(TARGET)/temp/org/xerial/snappy/SnappyNativeLoader.class $@
 
-$(SNAPPY_SRC): $(SNAPPY_UNPACKED)
+ifndef USE_GIT
+  $(SNAPPY_SRC): $(SNAPPY_UNPACKED)
+else
+  $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
+endif
 
 $(SNAPPY_OUT)/%.o : $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
@@ -74,7 +95,11 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 snappy-jar-version:=snappy-java-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
 
-native: $(SNAPPY_UNPACKED) $(NATIVE_DLL) 
+ifndef USE_GIT
+  native: $(SNAPPY_UNPACKED) $(NATIVE_DLL)
+else
+  native: $(SNAPPY_GIT_UNPACKED) $(NATIVE_DLL)
+endif
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) 
