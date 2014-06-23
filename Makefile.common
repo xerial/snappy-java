@@ -22,6 +22,7 @@ OSINFO_PROG := lib/org/xerial/snappy/OSInfo.class
 OS_NAME := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --os)
 OS_ARCH := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --arch)
 LIB_FOLDER := $(shell $(JAVA) -cp lib $(OSINFO_CLASS))
+IBM_JDK_LIB := lib/inc_ibm
 
 # Windows uses different path separators
 ifeq ($(OS_NAME),Windows)
@@ -41,11 +42,22 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc64 Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64
 os_arch := $(OS_NAME)-$(OS_ARCH)
+IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
 ifeq (,$(findstring $(strip $(os_arch)),$(known_os_archs)))
   os_arch := Default
+endif
+
+ifneq ($(IBM_JDK_7),)
+  $(shell mkdir -p $(IBM_JDK_LIB))
+  $(shell cp $(JAVA_HOME)/include/jniport.h $(IBM_JDK_LIB))
+  $(shell sed -i "s|#define JNIEXPORT *$$|#define JNIEXPORT  __attribute__((__visibility__(\"default\")))|" $(IBM_JDK_LIB)/jniport.h)
+  $(shell sed -i "s|typedef long long jlong;.*|/*typedef long long jlong;*/|" $(IBM_JDK_LIB)/jniport.h)
+  $(shell cp $(JAVA_HOME)/include/linux/jni_md.h $(IBM_JDK_LIB))
+  $(shell sed -i "s|#define JNIEXPORT|#define JNIEXPORT  __attribute__((__visibility__(\"default\")))|" $(IBM_JDK_LIB)/jni_md.h)
+  $(shell sed -i "s|typedef long long jlong;.*|/*typedef long long jlong;*/|" $(IBM_JDK_LIB)/jni_md.h)
 endif
 
 # cross-compilation toolchain prefix (e.g. "arm-linux-gnueabi-")
@@ -60,17 +72,36 @@ Default_SNAPPY_FLAGS :=
 
 Linux-x86_CXX       := $(CROSS_PREFIX)g++
 Linux-x86_STRIP     := $(CROSS_PREFIX)strip
-Linux-x86_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
+ifeq ($(IBM_JDK_7),)
+  Linux-x86_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
+else
+  Linux-x86_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
+endif
 Linux-x86_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_LIBNAME   := libsnappyjava.so
 Linux-x86_SNAPPY_FLAGS:= 
 
 Linux-x86_64_CXX       := $(CROSS_PREFIX)g++ 
 Linux-x86_64_STRIP     := $(CROSS_PREFIX)strip
-Linux-x86_64_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64
+ifeq ($(IBM_JDK_7),)
+  Linux-x86_64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
+else
+  Linux-x86_64_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
+endif
 Linux-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_64_LIBNAME   := libsnappyjava.so
 Linux-x86_64_SNAPPY_FLAGS  := 
+
+Linux-ppc64_CXX       := g++
+Linux-ppc64_STRIP     := strip
+ifeq ($(IBM_JDK_7),)
+  Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
+else
+  Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2 -fPIC
+endif
+Linux-ppc64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-ppc64_LIBNAME   := libsnappyjava.so
+Linux-ppc64_SNAPPY_FLAGS  :=
 
 SunOS-x86_CXX       := g++ 
 SunOS-x86_STRIP     := strip
