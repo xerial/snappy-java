@@ -2,6 +2,7 @@
 include Makefile.common
 
 MVN:=mvn
+SBT:=./sbt
 
 all: snappy
 
@@ -93,7 +94,7 @@ NATIVE_DIR:=src/main/resources/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_TARGET_DIR:=$(TARGET)/classes/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
-snappy-jar-version:=snappy-java-$(shell $(JAVA) -jar lib/silk-weaver.jar find 'project(artifactId, version)' pom.xml | grep snappy-java | awk '{ print $$2; }')
+snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s+\"(.*)\"/\1/" version.sbt | sed -e "/^$$/d")
 
 ifndef USE_GIT
   native: $(SNAPPY_UNPACKED) $(NATIVE_DLL)
@@ -109,11 +110,11 @@ $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
 
 
-$(TARGET)/$(snappy-jar-version).jar: native $(NATIVE_DLL)
-	$(MVN) package -Dmaven.test.skip=true
+$(TARGET)/$(snappy-jar-version).jar: 
+	$(SBT) package 
 
 test: $(NATIVE_DLL)
-	$(MVN) test
+	$(SBT) test
 
 win32: 
 	$(MAKE) native CROSS_PREFIX=i686-w64-mingw32- OS_NAME=Windows OS_ARCH=x86
@@ -146,8 +147,10 @@ clean-native-win32:
 	$(MAKE) clean-native OS_NAME=Windows OS_ARCH=x86
 
 javadoc:
-	$(MVN) javadoc:javadoc -DreportOutputDirectory=wiki/apidocs
+	$(SBT) doc
 
+install-m2:
+	$(SBT) publishM2
 
 googlecode-upload: googlecode-lib-upload googlecode-src-upload
 

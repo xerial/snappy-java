@@ -81,6 +81,12 @@ Add the following dependency to your pom.xml:
       <scope>compile</scope>
     </dependency>
 
+### Using with sbt
+
+```
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "(version)"
+```
+
 
 ## Public discussion group
 Post bug reports or feature request to the Issue Tracker: <https://github.com/xerial/snappy-java/issues>

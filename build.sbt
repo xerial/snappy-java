@@ -12,8 +12,6 @@ description  := "snappy-java: A fast compression/decompression library"
 
 profileName := "org.xerial" 
 
-version := "1.1.1-M3" 
-
 pomExtra := {
    <url>https://github.comm/xerial/snappy-java</url>
    <licenses>
