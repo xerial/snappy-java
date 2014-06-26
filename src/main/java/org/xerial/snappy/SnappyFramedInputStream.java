@@ -55,12 +55,12 @@ public final class SnappyFramedInputStream extends InputStream implements
     private boolean closed;
 
     /**
-     * Indicates if we have reached the EOF on {@link #in}.
+     * Indicates if we have reached the EOF on {@link #input}.
      */
     private boolean eof;
 
     /**
-     * The position in {@link buffer} to read to.
+     * The position in {@link #input} buffer to read to.
      */
     private int valid;
 

@@ -153,7 +153,7 @@ Mac-x86_SNAPPY_FLAGS  :=
 Mac-x86_64_CXX       := g++ -arch $(OS_ARCH) 
 Mac-x86_64_STRIP     := strip -x
 Mac-x86_64_CXXFLAGS  := -Ilib/inc_mac -I$(JAVA_HOME)/include -O2 -fPIC -mmacosx-version-min=10.5 -fvisibility=hidden
-Mac-x86_64_LINKFLAGS := -dynamiclib -static-libgcc 
+Mac-x86_64_LINKFLAGS := -dynamiclib 
 Mac-x86_64_LIBNAME   := libsnappyjava.jnilib 
 Mac-x86_64_SNAPPY_FLAGS  := 
 

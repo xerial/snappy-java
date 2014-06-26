@@ -37,7 +37,7 @@ import java.util.Properties;
  * Note: if the native libraries cannot be loaded, an ExceptionInInitializerError
  * will be thrown at first use of this class.
  * 
- * @author leo
+ * @author Taro L. Saito
  * 
  */
 public class Snappy

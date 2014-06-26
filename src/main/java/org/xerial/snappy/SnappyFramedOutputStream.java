@@ -371,17 +371,13 @@ public final class SnappyFramedOutputStream extends OutputStream implements
     }
 
     /**
-     * {@link #calculateCRC32C(byte[], int, int) Calculates} the crc, compresses
+     * {@link SnappyFramed#maskedCrc32c(byte[], int, int)} the crc, compresses
      * the data, determines if the compression ratio is acceptable and calls
-     * {@link #writeBlock(OutputStream, byte[], int, int, boolean, int)} to
+     * {@link #writeBlock(java.nio.channels.WritableByteChannel, java.nio.ByteBuffer, boolean, int)} to
      * actually write the frame.
      * 
-     * @param input
-     *            The byte[] containing the raw data to be compressed.
-     * @param offset
-     *            The offset into <i>input</i> where the data starts.
-     * @param length
-     *            The amount of data in <i>input</i>.
+     * @param buffer
+
      * @throws IOException
      */
     private void writeCompressed(ByteBuffer buffer) throws IOException {
@@ -419,10 +415,6 @@ public final class SnappyFramedOutputStream extends OutputStream implements
      *            The {@link OutputStream} to write to.
      * @param data
      *            The data to write.
-     * @param offset
-     *            The offset in <i>data</i> to start at.
-     * @param length
-     *            The length of <i>data</i> to use.
      * @param compressed
      *            Indicates if <i>data</i> is the compressed or raw content.
      *            This is based on whether the compression ratio desired is
