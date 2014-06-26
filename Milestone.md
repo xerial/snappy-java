@@ -7,6 +7,10 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 ## snappy-java-1.1.1 (not yet)
   * Upgrade native snappy version
 
+# snappy-java-1.1.1-M3 (26 June 2014)
+  * Add PowerPC support (ppc64, ppc64le)
+  * Building with sbt
+
 # snappy-java-1.0.5.2 (25 June 2014)
   * Maintanance release
   * Add PowerPC support ppc64le, ppc64 (big-endian)

@@ -35,17 +35,10 @@ pomExtra := {
             <timezone>+9</timezone>
         </developer>
     </developers>
-    <organization>
-        <name>xerial.org</name>
-        <url>http://xerial.org/</url>
-    </organization>
     <issueManagement>
-        <email>leo@xerial.org</email>
         <system>GitHub</system>
-        <organization>Xerial Project</organization>
         <url>http://github.com/xerial/snappy-java/issues/list</url>
     </issueManagement>
-    <role>Architect</role>
     <inceptionYear>2011</inceptionYear>
     <scm>
         <connection>scm:git@github.com:xerial/snappy-java.git</connection>
