@@ -58,6 +58,10 @@ pomExtra := {
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
 
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
+
+//concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
+
 autoScalaLibrary := false
 
 crossPaths := false
@@ -93,7 +97,7 @@ OsgiKeys.additionalHeaders := Map(
 "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.jnilib;osname=macosx;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
-"org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm"
+"org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
 "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64",
 "org/xerial/snappy/native/Linux/ppc64le/libsnappyjava.so;osname=linux;processor=ppc64le",
 "org/xerial/snappy/native/SunOS/x86/libsnappyjava.so;osname=sunos;processor=x86",
