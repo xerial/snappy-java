@@ -51,19 +51,12 @@ $(SNAPPY_GIT_UNPACKED):
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
-$(TARGET)/classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/snappy/SnappyNative.java
-	@mkdir -p $(TARGET)/classes
-	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/classes -sourcepath $(SRC) $< 
+$(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/snappy/SnappyNative.java
+	@mkdir -p $(TARGET)/jni-classes
+	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
-$(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/classes/org/xerial/snappy/SnappyNative.class
-	$(JAVAH) -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
-
-bytecode: src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode
-
-src/main/resources/org/xerial/snappy/SnappyNativeLoader.bytecode: src/main/resources/org/xerial/snappy/SnappyNativeLoader.java
-	@mkdir -p $(TARGET)/temp
-	$(JAVAC) -source 1.5 -target 1.5 -d $(TARGET)/temp $<
-	cp $(TARGET)/temp/org/xerial/snappy/SnappyNativeLoader.class $@
+$(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
+	$(JAVAH) -force -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
 
 ifndef USE_GIT
   $(SNAPPY_SRC): $(SNAPPY_UNPACKED)
@@ -109,6 +102,8 @@ $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(NATIVE_TARGET_DIR)
 	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
 
+
+package: $(TARGET)/$(snappy-jar-version).jar
 
 $(TARGET)/$(snappy-jar-version).jar: 
 	$(SBT) package 

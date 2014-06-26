@@ -136,6 +136,10 @@ If you are using Mac and openjdk7 (or higher), use the following option:
 
     $ make native LIBNAME=libsnappyjava.dylib
 
+## Running tests
+
+    $ make test
+
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
