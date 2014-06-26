@@ -95,7 +95,7 @@ Public discussion forum is here: <http://groups.google.com/group/xerial?hl=en Xe
 
 
 ## Building from the source code 
-See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.
+See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), g++ compiler (mingw in Windows) etc.
 
     $ git clone https://github.com/xerial/snappy-java.git
     $ cd snappy-java
@@ -136,9 +136,17 @@ If you are using Mac and openjdk7 (or higher), use the following option:
 
     $ make native LIBNAME=libsnappyjava.dylib
 
-## Running tests
+## For developers
 
-    $ make test
+snappy-java uses sbt (simple build tool for Scala) as a build tool. Here is a simple usage
+
+    $ ./sbt            # enter sbt console
+    > ~test            # run tests upon source code change
+    > ~test-only *     # run tests that matches a given name pattern  
+    > publishM2        # publish jar to $HOME/.m2/repository
+    > package          # create jar file
+    
+For the details of sbt usage, see my blog post: [Building Java Projects with sbt](http://xerial.org/blog/2014/03/24/sbt/)
 
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
