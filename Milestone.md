@@ -8,7 +8,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
   * Upgrade native snappy version
 
 # snappy-java-1.1.1-M4 (4 July 2014)
-  * Add libstdc++ embedded linux-x86 native library
+  * Add libstdc++ embedded linux-x86_64 native library
   * IBM AIX 6.1 support 
   * A fix for loading in OSGi in Mac OS X (#76)
 
