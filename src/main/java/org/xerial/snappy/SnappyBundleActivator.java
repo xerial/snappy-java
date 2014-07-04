@@ -49,7 +49,13 @@ public class SnappyBundleActivator implements BundleActivator
      */
     public void start(BundleContext context) throws Exception 
     {
-    	System.loadLibrary(System.mapLibraryName(LIBRARY_NAME));
+    	String library = System.mapLibraryName(LIBRARY_NAME);
+    	if (library.toLowerCase().endsWith(".dylib")) 
+    	{
+    		// some MacOS JDK7+ vendors map to dylib instead of jnilib
+    		library = library.replace(".dylib", ".jnilib");
+    	}
+    	System.loadLibrary(library);
     	SnappyLoader.setApi(new SnappyNative());
     }
 
