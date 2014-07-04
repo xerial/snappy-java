@@ -107,11 +107,23 @@ When building on Solaris use
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
-## Building linux amd64 binary
+## Building linux x86_64 binary
 
-snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++ compiled with the following options:
+snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++, compiled as follows:
 
-	$ ./configure --prefix=$HOME/local --with-gmp=$HOME/local --with-mpfr=$HOME/local --with-mpc=$HOME/local --with-ppl=$HOME/local --with-cloog=$HOME/local CXXFLAGS=-fPIC CFLAGS=-fPIC 
+```
+$ cd work
+$ wget (gcc-4.8.3 source)
+$ tar xvfz (gcc-4.8.3.tar.gz)
+$ cd gcc-4.8.3
+$ ./contrib/download_prerequisites
+$ cd ..
+$ mkdir objdir
+$ cd objdir
+$ ../gcc-4.8.3/configure --prefix=$HOME/local/gcc-4.8.3 CXXFLAGS=-fPIC CFLAGS=-fPIC --enable-languages=c,c++
+$ make
+$ make install
+```
 
 This g++ build enables static linking of libstdc++. For more infomation on building GCC, see GCC's home page.
 
