@@ -56,7 +56,7 @@ $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/s
 	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
-	$(JAVAH) -force -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
+	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.SnappyNative
 
 ifndef USE_GIT
   $(SNAPPY_SRC): $(SNAPPY_UNPACKED)
