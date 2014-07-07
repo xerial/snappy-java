@@ -140,7 +140,12 @@ public class OSInfo
         else if (osName.contains("Linux")) {
             return "Linux";
         }
-        else {
+       
+
+	else if ( osName.contains("AIX")) {
+	    return "AIX";
+	}
+	else {
             return osName.replaceAll("\\W", "");
         }
     }
