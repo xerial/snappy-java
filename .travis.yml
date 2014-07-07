@@ -1,7 +1,15 @@
-language: java
-
-install: mvn install -DskipTests=true -Dgpg.skip=true
-
+language: scala
+scala:
+   - 2.11.1
 jdk:
-  - oraclejdk7
+  - openjdk6
   - openjdk7
+  - oraclejdk7
+
+branches:
+  only:
+    - master
+    - develop
+
+script: ./sbt test
+

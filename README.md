@@ -81,6 +81,12 @@ Add the following dependency to your pom.xml:
       <scope>compile</scope>
     </dependency>
 
+### Using with sbt
+
+```
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "(version)"
+```
+
 
 ## Public discussion group
 Post bug reports or feature request to the Issue Tracker: <https://github.com/xerial/snappy-java/issues>
@@ -89,7 +95,7 @@ Public discussion forum is here: <http://groups.google.com/group/xerial?hl=en Xe
 
 
 ## Building from the source code 
-See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), Maven (3.x or higher is required), g++ compiler (mingw in Windows) etc.
+See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), g++ compiler (mingw in Windows) etc.
 
     $ git clone https://github.com/xerial/snappy-java.git
     $ cd snappy-java
@@ -101,11 +107,23 @@ When building on Solaris use
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
-## Building linux amd64 binary
+## Building linux x86_64 binary
 
-snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++ compiled with the following options:
+snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++, compiled as follows:
 
-	$ ./configure --prefix=$HOME/local --with-gmp=$HOME/local --with-mpfr=$HOME/local --with-mpc=$HOME/local --with-ppl=$HOME/local --with-cloog=$HOME/local CXXFLAGS=-fPIC CFLAGS=-fPIC 
+```
+$ cd work
+$ wget (gcc-4.8.3 source)
+$ tar xvfz (gcc-4.8.3.tar.gz)
+$ cd gcc-4.8.3
+$ ./contrib/download_prerequisites
+$ cd ..
+$ mkdir objdir
+$ cd objdir
+$ ../gcc-4.8.3/configure --prefix=$HOME/local/gcc-4.8.3 CXXFLAGS=-fPIC CFLAGS=-fPIC --enable-languages=c,c++
+$ make
+$ make install
+```
 
 This g++ build enables static linking of libstdc++. For more infomation on building GCC, see GCC's home page.
 
@@ -129,6 +147,18 @@ Unfortunately, cross-compiling for Mac OS X is not currently possible; you must 
 If you are using Mac and openjdk7 (or higher), use the following option:
 
     $ make native LIBNAME=libsnappyjava.dylib
+
+## For developers
+
+snappy-java uses sbt (simple build tool for Scala) as a build tool. Here is a simple usage
+
+    $ ./sbt            # enter sbt console
+    > ~test            # run tests upon source code change
+    > ~test-only *     # run tests that matches a given name pattern  
+    > publishM2        # publish jar to $HOME/.m2/repository
+    > package          # create jar file
+    
+For the details of sbt usage, see my blog post: [Building Java Projects with sbt](http://xerial.org/blog/2014/03/24/sbt/)
 
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server

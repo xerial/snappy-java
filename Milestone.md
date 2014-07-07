@@ -4,8 +4,18 @@
 
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
-## snappy-java-1.1.1 (not yet)
-  * Upgrade native snappy version
+## snappy-java-1.1.1 (4 July 2014)
+  * Added Snappy framing format support: SnappyFramedInput/OutputStream
+  * Added native libraries for PowerPC, IBM-AIX 6.4, SunOS.
+
+# snappy-java-1.1.1-M4 (4 July 2014)
+  * Add linux-x86_64 native library, embedding libstdc++ 
+  * IBM AIX 6.1 support 
+  * A fix for loading in OSGi in Mac OS X (#76)
+
+# snappy-java-1.1.1-M3 (26 June 2014)
+  * Add PowerPC support (ppc64, ppc64le)
+  * Building with sbt
 
 # snappy-java-1.0.5.2 (25 June 2014)
   * Maintanance release
