@@ -43,6 +43,7 @@ public class OSInfo
     public static final String IA64_32 = "ia64_32";
     public static final String IA64 = "ia64";
     public static final String PPC = "ppc";
+    public static final String PPC64 = "ppc64";
 
     static {
         // x86 mappings
@@ -75,6 +76,11 @@ public class OSInfo
         archMapping.put("power_rs", PPC);
 
         // TODO: PowerPC 64bit mappings
+	archMapping.put(PPC64, PPC64);
+	archMapping.put("power64", PPC64);
+	archMapping.put("powerpc64", PPC64);
+	archMapping.put("power_pc64", PPC64);
+	archMapping.put("power_rs64", PPC64);
     }
 
 
@@ -140,11 +146,10 @@ public class OSInfo
         else if (osName.contains("Linux")) {
             return "Linux";
         }
-       
-
-	else if ( osName.contains("AIX")) {
+	else if (osName.contains("AIX")) {
 	    return "AIX";
 	}
+
 	else {
             return osName.replaceAll("\\W", "");
         }
