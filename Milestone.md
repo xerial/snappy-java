@@ -4,6 +4,9 @@
 
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.1.3 (19 July 2014)
+ * Improved the performance of SnappyOutputStream
+
 ## snappy-java-1.1.1 (4 July 2014)
   * Added Snappy framing format support: SnappyFramedInput/OutputStream
   * Added native libraries for PowerPC, IBM-AIX 6.4, SunOS.
