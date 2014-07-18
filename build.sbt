@@ -47,11 +47,13 @@ pomExtra := {
     </scm>
 }
 
+scalaVersion := "2.11.1"
+
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 
-//concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
+concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
 
 autoScalaLibrary := false
 
@@ -64,7 +66,9 @@ incOptions := incOptions.value.withNameHashing(true)
 libraryDependencies ++= Seq(
    "junit" % "junit" % "4.8.2" % "test",
    "org.codehaus.plexus" % "plexus-classworlds" % "2.4" % "test",
-   "org.xerial" % "xerial-core" % "1.0.21" % "test",
+   "org.xerial.java" % "xerial-core" % "2.1" % "test",
+   "org.xerial" % "xerial-core" % "3.2.3" % "test",
+   "org.scalatest" % "scalatest_2.11" % "2.2.0" % "test",
    "org.osgi" % "org.osgi.core" % "4.3.0" % "provided",
    "com.novocode" % "junit-interface" % "0.10" % "test"
 )
