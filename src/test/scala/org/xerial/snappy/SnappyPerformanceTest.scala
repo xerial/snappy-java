@@ -13,7 +13,7 @@ import scala.util.Random
 class SnappyPerformanceTest extends SnappySpec {
 
   lazy val data = {
-    val a = new Array[Byte](32 * 1024 * 1024)
+    val a = new Array[Byte](128 * 1024 * 1024)
 
     for (i <- (0 until a.length).par) {
       a(i) = Math.sin(i * 0.01).toByte
@@ -29,10 +29,12 @@ class SnappyPerformanceTest extends SnappySpec {
       val input = data
 
       time("compression", repeat=100, logLevel = LogLevel.INFO) {
+        // 0.037 sec. => 0.026
         block("default") {
           val out = new ByteArrayOutputStream()
           val sout = new SnappyOutputStream(out)
           sout.write(input)
+          sout.close()
           out.close()
         }
 

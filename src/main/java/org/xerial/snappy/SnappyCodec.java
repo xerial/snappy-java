@@ -50,7 +50,8 @@ import java.util.Arrays;
 public class SnappyCodec
 {
     public static final byte[] MAGIC_HEADER               = new byte[] { -126, 'S', 'N', 'A', 'P', 'P', 'Y', 0 };
-    public static final int    MAGIC_LEN                  = 8;
+    public static final int    MAGIC_LEN                  = MAGIC_HEADER.length;
+    public static final int    HEADER_SIZE                = MAGIC_LEN + 8;
 
     public static final int    DEFAULT_VERSION            = 1;
     public static final int    MINIMUM_COMPATIBLE_VERSION = 1;
@@ -58,11 +59,25 @@ public class SnappyCodec
     public final byte[]        magic;
     public final int           version;
     public final int           compatibleVersion;
+    private final byte[] headerArray;
 
     private SnappyCodec(byte[] magic, int version, int compatibleVersion) {
         this.magic = magic;
         this.version = version;
         this.compatibleVersion = compatibleVersion;
+
+        ByteArrayOutputStream header = new ByteArrayOutputStream(HEADER_SIZE);
+        DataOutputStream d = new DataOutputStream(header);
+        try {
+            d.write(magic, 0, MAGIC_LEN);
+            d.writeInt(version);
+            d.writeInt(compatibleVersion);
+            d.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        headerArray = header.toByteArray();
     }
 
     @Override
@@ -71,17 +86,17 @@ public class SnappyCodec
     }
 
     public static int headerSize() {
-        return MAGIC_LEN + 4 * 2;
+        return HEADER_SIZE;
     }
 
-    public void writeHeader(OutputStream out) throws IOException {
-        ByteArrayOutputStream header = new ByteArrayOutputStream();
-        DataOutputStream d = new DataOutputStream(header);
-        d.write(magic, 0, MAGIC_LEN);
-        d.writeInt(version);
-        d.writeInt(compatibleVersion);
-        d.close();
-        out.write(header.toByteArray(), 0, header.size());
+    public int writeHeader(byte[] dst, int dstOffset) {
+        System.arraycopy(headerArray, 0, dst, dstOffset, headerArray.length);
+        return headerArray.length;
+    }
+
+    public int writeHeader(OutputStream out) throws IOException {
+        out.write(headerArray, 0, headerArray.length);
+        return headerArray.length;
     }
 
     public boolean isValidMagicHeader() {
@@ -97,8 +112,6 @@ public class SnappyCodec
         return new SnappyCodec(magic, version, compatibleVersion);
     }
 
-    public static SnappyCodec currentHeader() {
-        return new SnappyCodec(MAGIC_HEADER, DEFAULT_VERSION, MINIMUM_COMPATIBLE_VERSION);
-    }
+    public static SnappyCodec currentHeader = new SnappyCodec(MAGIC_HEADER, DEFAULT_VERSION, MINIMUM_COMPATIBLE_VERSION);
 
 }
