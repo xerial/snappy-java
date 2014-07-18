@@ -80,7 +80,7 @@ public class SnappyOutputStreamTest
     @Test
     public void bufferSize() throws Exception {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        SnappyOutputStream os = new SnappyOutputStream(b, 500);
+        SnappyOutputStream os = new SnappyOutputStream(b, 1500);
         final int bytesToWrite = 5000;
         byte[] orig = new byte[bytesToWrite];
         for (int i = 0; i < 5000; ++i) {
@@ -93,6 +93,29 @@ public class SnappyOutputStreamTest
         byte[] buf = new byte[bytesToWrite / 101];
         while (is.read(buf) != -1) {}
         is.close();
+    }
+
+    @Test
+    public void smallWrites() throws Exception {
+
+        byte[] orig = CalgaryTest.readFile("alice29.txt");
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream out = new SnappyOutputStream(b);
+
+        for(byte c : orig) {
+            out.write(c);
+        }
+        out.close();
+
+        SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        byte[] decompressed = new byte[orig.length];
+        int cursor = 0;
+        int readLen = 0;
+        for(int i=0; i < decompressed.length && (readLen = is.read(decompressed, i, decompressed.length-i)) != -1; ) {
+            i += readLen;
+        }
+        is.close();
+        assertArrayEquals(orig, decompressed);
     }
 
     @Test

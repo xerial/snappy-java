@@ -74,8 +74,8 @@ public class SnappyOutputStream extends OutputStream {
     public SnappyOutputStream(OutputStream out, int blockSize) {
         this.out = out;
         this.blockSize = Math.max(MIN_BLOCK_SIZE, blockSize);
-        uncompressed = new byte[blockSize];
-        outputBuffer = new byte[SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(blockSize)];
+        uncompressed = new byte[this.blockSize];
+        outputBuffer = new byte[SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(this.blockSize)];
         outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
     }
 
@@ -261,11 +261,10 @@ public class SnappyOutputStream extends OutputStream {
     }
 
     static void writeInt(byte[] dst, int offset, int v) {
-        int p = offset;
-        dst[offset++] = (byte) ((v >> 24) & 0xFF);
-        dst[offset++] = (byte) ((v >> 16) & 0xFF);
-        dst[offset++] = (byte) ((v >> 8) & 0xFF);
-        dst[offset++] = (byte) ((v >> 0) & 0xFF);
+        dst[offset] = (byte) ((v >> 24) & 0xFF);
+        dst[offset+1] = (byte) ((v >> 16) & 0xFF);
+        dst[offset+2] = (byte) ((v >> 8) & 0xFF);
+        dst[offset+3] = (byte) ((v >> 0) & 0xFF);
     }
 
     static int readInt(byte[] buffer, int pos) {

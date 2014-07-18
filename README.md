@@ -2,9 +2,10 @@ The snappy-java is a Java port of the snappy
 <http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
 
 ## Features 
-  * Fast compression/decompression tailored to 64-bit CPU architecture. 
+  * Fast compression/decompression tailored to 64-bit CPU architecture.
   * JNI-based implementation to achieve comparable performance to the native C++ version.  
-     * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.). 
+     * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.).
+  * Supporting compression/decompression of Java primitive arrays (`float[]`, `double[]`, `int[]`, `short[]`, `long[]`, etc.)
   * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`. 
   * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0 version)
