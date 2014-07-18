@@ -56,11 +56,13 @@ public class SnappyOutputStream extends OutputStream {
     static final int DEFAULT_BLOCK_SIZE = 32 * 1024; // Use 32kb for the default block size
 
     protected final OutputStream out;
+
+    private final BufferRecycler recycler;
     private final int blockSize;
+    protected final byte[] inputBuffer;
+    protected final byte[] outputBuffer;
     private int inputCursor = 0;
-    protected byte[] uncompressed;
     private int outputCursor = 0;
-    protected byte[] outputBuffer;
 
     public SnappyOutputStream(OutputStream out) {
         this(out, DEFAULT_BLOCK_SIZE);
@@ -73,9 +75,10 @@ public class SnappyOutputStream extends OutputStream {
      */
     public SnappyOutputStream(OutputStream out, int blockSize) {
         this.out = out;
+        this.recycler = BufferRecycler.instance();
         this.blockSize = Math.max(MIN_BLOCK_SIZE, blockSize);
-        uncompressed = new byte[this.blockSize];
-        outputBuffer = new byte[SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(this.blockSize)];
+        inputBuffer = recycler.allocInputBuffer(this.blockSize);
+        outputBuffer = recycler.allocOutputBuffer(SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(this.blockSize));
         outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
     }
 
@@ -214,7 +217,7 @@ public class SnappyOutputStream extends OutputStream {
 
         if(inputCursor + byteLength < MIN_BLOCK_SIZE) {
             // copy the input data to uncompressed buffer
-            Snappy.arrayCopy(array, byteOffset, byteLength, uncompressed, inputCursor);
+            Snappy.arrayCopy(array, byteOffset, byteLength, inputBuffer, inputCursor);
             inputCursor += byteLength;
             return;
         }
@@ -244,10 +247,10 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void write(int b) throws IOException {
-        if(inputCursor >= uncompressed.length) {
+        if(inputCursor >= inputBuffer.length) {
             compressInput();
         }
-        uncompressed[inputCursor++] = (byte) b;
+        inputBuffer[inputCursor++] = (byte) b;
     }
 
     /* (non-Javadoc)
@@ -291,7 +294,7 @@ public class SnappyOutputStream extends OutputStream {
         if(!hasSufficientOutputBufferFor(inputCursor)) {
             dumpOutput();
         }
-        int compressedSize = Snappy.compress(uncompressed, 0, inputCursor, outputBuffer, outputCursor + 4);
+        int compressedSize = Snappy.compress(inputBuffer, 0, inputCursor, outputBuffer, outputCursor + 4);
         // Write compressed data size
         writeInt(outputBuffer, outputCursor, compressedSize);
         outputCursor += 4 + compressedSize;
@@ -306,8 +309,14 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
-        flush();
-        out.close();
+        try {
+            flush();
+            out.close();
+        }
+        finally {
+            recycler.releaseInputBuffer(inputBuffer);
+            recycler.releaseOutputBuffer(outputBuffer);
+        }
     }
 
 }
