@@ -38,10 +38,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * <b>Internal only - Do not use this class.</b> This class loads a native
@@ -366,8 +363,10 @@ public class SnappyLoader
      */
     private static File extractLibraryFile(String libFolderForCurrentOS, String libraryFileName, String targetFolder) {
         String nativeLibraryFilePath = libFolderForCurrentOS + "/" + libraryFileName;
-        final String prefix = "snappy-" + getVersion() + "-";
-        String extractedLibFileName = prefix + libraryFileName;
+
+        // Attach UUID to the native library file to ensure multiple class loaders can read the libsnappy-java multiple times.
+        String uuid = UUID.randomUUID().toString();
+        String extractedLibFileName = String.format("snappy-%s-%s-%s", getVersion(), uuid, libraryFileName);
         File extractedLibFile = new File(targetFolder, extractedLibFileName);
 
         try {
