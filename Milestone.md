@@ -4,6 +4,9 @@
 
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.0.5.4 (12 September 2014)
+ * Embedded libstdc++ for Linux/amd64 native library (hotfix to 1.0.5.x series)
+
 ## snappy-java-1.1.1.3 (19 July 2014)
  * Improved the performance of SnappyOutputStream
 
