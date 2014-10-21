@@ -24,6 +24,10 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import org.xerial.snappy.buffer.BufferAllocatorFactory;
+import org.xerial.snappy.buffer.BufferAllocator;
+import org.xerial.snappy.buffer.CachedBufferAllocator;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -56,9 +60,11 @@ public class SnappyOutputStream extends OutputStream {
     static final int DEFAULT_BLOCK_SIZE = 32 * 1024; // Use 32kb for the default block size
 
     protected final OutputStream out;
-
-    private final BufferRecycler recycler;
     private final int blockSize;
+
+    private final BufferAllocator inputBufferAllocator;
+    private final BufferAllocator outputBufferAllocator;
+
     protected final byte[] inputBuffer;
     protected final byte[] outputBuffer;
     private int inputCursor = 0;
@@ -74,13 +80,24 @@ public class SnappyOutputStream extends OutputStream {
      * @throws IOException
      */
     public SnappyOutputStream(OutputStream out, int blockSize) {
+        this(out, blockSize, CachedBufferAllocator.factory);
+    }
+
+    public SnappyOutputStream(OutputStream out, int blockSize, BufferAllocatorFactory bufferAllocatorFactory) {
         this.out = out;
-        this.recycler = BufferRecycler.instance();
         this.blockSize = Math.max(MIN_BLOCK_SIZE, blockSize);
-        inputBuffer = recycler.allocInputBuffer(this.blockSize);
-        outputBuffer = recycler.allocOutputBuffer(SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(this.blockSize));
+        int inputSize = blockSize;
+        int outputSize = SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(blockSize);
+
+        this.inputBufferAllocator = bufferAllocatorFactory.getBufferAllocator(inputSize);
+        this.outputBufferAllocator = bufferAllocatorFactory.getBufferAllocator(outputSize);
+
+        inputBuffer = inputBufferAllocator.allocate(inputSize);
+        outputBuffer = inputBufferAllocator.allocate(outputSize);
+
         outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
     }
+
 
     /* (non-Javadoc)
      * @see java.io.OutputStream#write(byte[], int, int)
@@ -265,9 +282,9 @@ public class SnappyOutputStream extends OutputStream {
 
     static void writeInt(byte[] dst, int offset, int v) {
         dst[offset] = (byte) ((v >> 24) & 0xFF);
-        dst[offset+1] = (byte) ((v >> 16) & 0xFF);
-        dst[offset+2] = (byte) ((v >> 8) & 0xFF);
-        dst[offset+3] = (byte) ((v >> 0) & 0xFF);
+        dst[offset + 1] = (byte) ((v >> 16) & 0xFF);
+        dst[offset + 2] = (byte) ((v >> 8) & 0xFF);
+        dst[offset + 3] = (byte) ((v >> 0) & 0xFF);
     }
 
     static int readInt(byte[] buffer, int pos) {
@@ -312,10 +329,9 @@ public class SnappyOutputStream extends OutputStream {
         try {
             flush();
             out.close();
-        }
-        finally {
-            recycler.releaseInputBuffer(inputBuffer);
-            recycler.releaseOutputBuffer(outputBuffer);
+        } finally {
+            inputBufferAllocator.release(inputBuffer);
+            outputBufferAllocator.release(outputBuffer);
         }
     }
 
