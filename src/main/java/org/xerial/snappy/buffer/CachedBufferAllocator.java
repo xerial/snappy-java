@@ -29,10 +29,16 @@ public class CachedBufferAllocator implements BufferAllocator {
     }
 
     public static synchronized CachedBufferAllocator getAllocator(int bufferSize) {
-        if(!queueTable.containsKey(bufferSize)) {
-            queueTable.put(bufferSize, new SoftReference<CachedBufferAllocator>(new CachedBufferAllocator(bufferSize)));
+        CachedBufferAllocator result = null;
+
+        if (queueTable.containsKey(bufferSize)) {
+            result = queueTable.get(bufferSize).get();
         }
-        return queueTable.get(bufferSize).get();
+        if (result == null) {
+            result = new CachedBufferAllocator(bufferSize);
+            queueTable.put(bufferSize, new SoftReference<CachedBufferAllocator>(result));
+        }
+        return result;
     }
 
     @Override
