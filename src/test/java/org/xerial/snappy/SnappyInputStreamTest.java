@@ -135,11 +135,11 @@ public class SnappyInputStreamTest
             SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(new byte[0]));
             byte[] uncompressed = readFully(in);
             assertEquals(0, uncompressed.length);
-        }
-        catch(Exception e) {
             fail("should not reach here");
         }
-
+        catch(SnappyIOException e) {
+            assertEquals(SnappyErrorCode.EMPTY_INPUT, e.getErrorCode());
+        }
     }
 
 }

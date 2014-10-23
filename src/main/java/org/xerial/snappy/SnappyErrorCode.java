@@ -38,7 +38,11 @@ public enum SnappyErrorCode {
     PARSING_ERROR(2),
     NOT_A_DIRECT_BUFFER(3),
     OUT_OF_MEMORY(4),
-    FAILED_TO_UNCOMPRESS(5);
+    FAILED_TO_UNCOMPRESS(5),
+    EMPTY_INPUT(6),
+    INCOMPATIBLE_VERSION(7),
+    INVALID_CHUNK_SIZE(8)
+    ;
 
     public final int id;
 
