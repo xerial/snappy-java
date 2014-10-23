@@ -62,7 +62,7 @@ public class SnappyInputStreamTest
         }
     }
 
-    public static byte[] biteWiseReadFully(InputStream input) throws IOException {
+    public static byte[] byteWiseReadFully(InputStream input) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[4096];
         for (int readData = 0; (readData = input.read()) != -1;) {
@@ -108,7 +108,7 @@ public class SnappyInputStreamTest
         byte[] compressed = Snappy.compress(orig);
 
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
-        byte[] uncompressed = biteWiseReadFully(in);
+        byte[] uncompressed = byteWiseReadFully(in);
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
@@ -127,6 +127,19 @@ public class SnappyInputStreamTest
         }
         assertTrue(in.available() == 0);
         in.close();
+    }
+
+    @Test
+    public void emptyStream() throws Exception {
+        try {
+            SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(new byte[0]));
+            byte[] uncompressed = readFully(in);
+            assertEquals(0, uncompressed.length);
+        }
+        catch(Exception e) {
+            fail("should not reach here");
+        }
+
     }
 
 }

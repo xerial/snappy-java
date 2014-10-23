@@ -82,7 +82,7 @@ public class SnappyInputStream extends InputStream
             readBytes += ret;
         }
 
-        // Quick test of the header 
+        // Quick test of the header
         if (readBytes < header.length || header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
             readFully(header, readBytes);
@@ -106,7 +106,11 @@ public class SnappyInputStream extends InputStream
     }
 
     protected void readFully(byte[] fragment, int fragmentLength) throws IOException {
-        // read the entire input data to the buffer 
+        if(fragmentLength == 0) {
+            finishedReading = true;
+            return;
+        }
+        // read the entire input data to the buffer
         compressed = new byte[Math.max(8 * 1024, fragmentLength)]; // 8K
         System.arraycopy(fragment, 0, compressed, 0, fragmentLength);
         int cursor = fragmentLength;
