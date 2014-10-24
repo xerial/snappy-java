@@ -76,7 +76,7 @@ libraryDependencies ++= Seq(
 osgiSettings
 
 
-OsgiKeys.exportPackage := Seq("org.xerial.snappy")
+OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer")
 
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
 
