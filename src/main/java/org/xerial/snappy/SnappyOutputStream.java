@@ -93,7 +93,7 @@ public class SnappyOutputStream extends OutputStream {
         this.outputBufferAllocator = bufferAllocatorFactory.getBufferAllocator(outputSize);
 
         inputBuffer = inputBufferAllocator.allocate(inputSize);
-        outputBuffer = inputBufferAllocator.allocate(outputSize);
+        outputBuffer = outputBufferAllocator.allocate(outputSize);
 
         outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
     }
