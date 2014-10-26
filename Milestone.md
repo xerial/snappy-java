@@ -5,7 +5,7 @@
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
 ## snappy-java-1.1.1.6 (26 Oct 2014)
- * Fixes #88, #89 and #90
+ * Fixes #88, #89, #90 and #91
  * Fixed the broken build of 1.1.1.4 and memory leak bug 1.1.1.5 (so never use these versions)
 
 ## snappy-java-1.0.5.4 (12 September 2014)
