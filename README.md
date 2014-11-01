@@ -74,7 +74,7 @@ In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(flo
 ### Stream-based API
 Stream-based compressor/decompressor `SnappyFramedOutputStream`/`SnappyFramedInputStream` are also available for reading/writing large data sets.
 
- * See also [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.0/snappy-java-1.1.0-javadoc.jar/!/index.html)
+ * See also [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.1.6/snappy-java-1.1.1.6-javadoc.jar/!/index.html)
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
