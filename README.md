@@ -32,7 +32,25 @@ The current stable version is available from here:
   * Release version: http://central.maven.org/maven2/org/xerial/snappy/snappy-java/
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
 
-For Maven user, see [pom.xml example](#using-with-maven).
+### Using with Maven
+  * Snappy-java is available from Maven's central repository:  <http://central.maven.org/maven2/org/xerial/snappy/snappy-java>
+
+Add the following dependency to your pom.xml:
+
+    <dependency>
+      <groupId>org.xerial.snappy</groupId>
+      <artifactId>snappy-java</artifactId>
+      <version>1.1.1.6</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+
+### Using with sbt
+
+```
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.1.6"
+```
+
 
 ## Usage 
 First, import `org.xerial.snapy.Snappy` in your Java code:
@@ -68,24 +86,6 @@ If you have snappy-java-(VERSION).jar in the current directory, use `-classpath`
     $ javac -classpath ".:snappy-java-(VERSION).jar" Sample.java  # in Mac or Linux
 
 
-### Using with Maven
-  * Snappy-java is available from Maven's central repository:  <http://repo1.maven.org/maven2/org/xerial/snappy/snappy-java>
-
-Add the following dependency to your pom.xml:
-
-    <dependency>
-      <groupId>org.xerial.snappy</groupId>
-      <artifactId>snappy-java</artifactId>
-      <version>(version)</version>
-      <type>jar</type>
-      <scope>compile</scope>
-    </dependency>
-
-### Using with sbt
-
-```
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "(version)"
-```
 
 
 ## Public discussion group
