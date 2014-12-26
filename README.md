@@ -2,10 +2,11 @@ The snappy-java is a Java port of the snappy
 <http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
 
 ## Features 
-  * Fast compression/decompression tailored to 64-bit CPU architecture.
+  * Fast compression/decompression around 200~400MB/sec.
+  * Less memory usage. SnappyOutputStream uses only 32KB+ in default. 
   * JNI-based implementation to achieve comparable performance to the native C++ version.  
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.).
-  * Supporting compression/decompression of Java primitive arrays (`float[]`, `double[]`, `int[]`, `short[]`, `long[]`, etc.)
+  * Compression/decompression of Java primitive arrays (`float[]`, `double[]`, `int[]`, `short[]`, `long[]`, etc.)
   * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`. 
   * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0 version)
@@ -72,9 +73,18 @@ System.out.println(result);
 In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. 
 
 ### Stream-based API
-Stream-based compressor/decompressor `SnappyFramedOutputStream`/`SnappyFramedInputStream` are also available for reading/writing large data sets.
+Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets. `SnappyFramedOutputStream`/`SnappyFramedInputStream` can be used for the [framing format](https://code.google.com/p/snappy/source/browse/trunk/framing_format.txt). 
 
  * See also [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.1.6/snappy-java-1.1.1.6-javadoc.jar/!/index.html)
+
+#### Compatibility Notes
+ * `SnappyOutputStream` and `SnappyInputStream` use `(block size:int32)(compressed data)` format. You can read the result of `Snappy.compress` with `SnappyInputStream`, but you cannot read the compressed data from `SnappyOutputStream` with `Snappy.uncompress`. Here is the compatibility matrix of data foramt:
+
+| Write\Read      | `Snappy.uncompress`   | `SnappyInputStream`  | `SnappyFramedInputStream` |
+| --------------- |:-------------------:|:------------------:|:-----------------------:|
+| `Snappy.compress` | ok | ok | x | 
+| `SnappyOutputStream`  | x | ok | x |
+| `SnappyFramedOutputStream` | x | x | ok |
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
