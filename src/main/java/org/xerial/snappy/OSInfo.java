@@ -44,6 +44,8 @@ public class OSInfo
     public static final String IA64 = "ia64";
     public static final String PPC = "ppc";
     public static final String PPC64 = "ppc64";
+    public static final String IBMZ = "s390";
+    public static final String IBMZ_64 = "s390x";
 
     static {
         // x86 mappings
@@ -76,11 +78,17 @@ public class OSInfo
         archMapping.put("power_rs", PPC);
 
         // TODO: PowerPC 64bit mappings
-	archMapping.put(PPC64, PPC64);
-	archMapping.put("power64", PPC64);
-	archMapping.put("powerpc64", PPC64);
-	archMapping.put("power_pc64", PPC64);
-	archMapping.put("power_rs64", PPC64);
+        archMapping.put(PPC64, PPC64);
+        archMapping.put("power64", PPC64);
+        archMapping.put("powerpc64", PPC64);
+        archMapping.put("power_pc64", PPC64);
+        archMapping.put("power_rs64", PPC64);
+
+        // IBM z mappings
+        archMapping.put(IBMZ, IBMZ);
+
+        // IBM z 64-bit mappings
+        archMapping.put(IBMZ_64, IBMZ_64);
     }
 
 
@@ -146,11 +154,10 @@ public class OSInfo
         else if (osName.contains("Linux")) {
             return "Linux";
         }
-	else if (osName.contains("AIX")) {
-	    return "AIX";
-	}
-
-	else {
+        else if (osName.contains("AIX")) {
+            return "AIX";
+        }
+        else {
             return osName.replaceAll("\\W", "");
         }
     }
