@@ -152,7 +152,7 @@ public class SnappyOutputStreamTest
         int[] chunkSizes = new int[] { 1, 100, 1023, 1024, 10000};
         for (int chunkSize : chunkSizes) {
             byte[] compressedData = compressAsChunks(orig, chunkSize);
-            assertEquals(expectedCompressedData.length, compressedData.length);
+            assertEquals(String.format("when chunk size = %,d", chunkSize), expectedCompressedData.length, compressedData.length);
             assertArrayEquals(expectedCompressedData, compressedData);
         }
     }
