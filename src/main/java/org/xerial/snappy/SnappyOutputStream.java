@@ -231,25 +231,19 @@ public class SnappyOutputStream extends OutputStream {
      * @throws IOException
      */
     public void rawWrite(Object array, int byteOffset, int byteLength) throws IOException {
-
-        if(inputCursor + byteLength < MIN_BLOCK_SIZE) {
+        int cursor = 0;
+        while(cursor < byteLength) {
+            int readLen = Math.min(byteLength - cursor, blockSize - inputCursor);
             // copy the input data to uncompressed buffer
-            Snappy.arrayCopy(array, byteOffset, byteLength, inputBuffer, inputCursor);
-            inputCursor += byteLength;
-            return;
-        }
-
-        compressInput();
-
-        for(int readBytes = 0; readBytes < byteLength; ) {
-            int inputLen = Math.min(blockSize, byteLength - readBytes);
-            if(!hasSufficientOutputBufferFor(inputLen)) {
-                dumpOutput();
+            if(readLen > 0) {
+                Snappy.arrayCopy(array, byteOffset + cursor, readLen, inputBuffer, inputCursor);
+                inputCursor += readLen;
             }
-            int compressedSize = Snappy.rawCompress(array, byteOffset + readBytes, inputLen, outputBuffer, outputCursor + 4);
-            writeInt(outputBuffer, outputCursor, compressedSize);
-            outputCursor += 4 + compressedSize;
-            readBytes += inputLen;
+            if(inputCursor < blockSize)
+                return;
+
+            compressInput();
+            cursor += readLen;
         }
     }
 

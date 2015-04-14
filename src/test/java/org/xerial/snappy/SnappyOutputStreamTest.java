@@ -118,6 +118,45 @@ public class SnappyOutputStreamTest
         assertArrayEquals(orig, decompressed);
     }
 
+    /**
+     * Compress the input array by passing it chunk-by-chunk to a SnappyOutputStream.
+     * @param orig the data to compress
+     * @param maxChunkSize the maximum chunk size, in bytes.
+     * @return the compressed bytes
+     */
+    private static byte[] compressAsChunks(byte[] orig, int maxChunkSize) throws Exception {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream out = new SnappyOutputStream(b);
+
+        int remaining = orig.length;
+        for (int start = 0; start < orig.length; start += maxChunkSize) {
+            out.write(orig, start, remaining < maxChunkSize ? remaining : maxChunkSize);
+            remaining -= maxChunkSize;
+        }
+        out.close();
+        return b.toByteArray();
+    }
+
+    @Test
+    public void batchingOfWritesShouldNotAffectCompressedDataSize() throws Exception {
+        // Regression test for issue #100, a bug where the size of compressed data could be affected
+        // by the batching of writes to the SnappyOutputStream rather than the total amount of data
+        // written to the stream.
+        byte[] orig = CalgaryTest.readFile("alice29.txt");
+        // Compress the data once so that we know the expected size:
+        byte[] expectedCompressedData = compressAsChunks(orig, Integer.MAX_VALUE);
+        // Hardcoding an expected compressed size here will catch regressions that lower the
+        // compression quality:
+        assertEquals(91013, expectedCompressedData.length);
+        // The chunk size should not affect the size of the compressed output:
+        int[] chunkSizes = new int[] { 1, 100, 1023, 1024, 10000};
+        for (int chunkSize : chunkSizes) {
+            byte[] compressedData = compressAsChunks(orig, chunkSize);
+            assertEquals(String.format("when chunk size = %,d", chunkSize), expectedCompressedData.length, compressedData.length);
+            assertArrayEquals(expectedCompressedData, compressedData);
+        }
+    }
+
     @Test
     public void longArrayCompress() throws Exception {
         long[] l = new long[10];
