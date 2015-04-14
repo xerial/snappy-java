@@ -39,7 +39,7 @@ Add the following dependency to your pom.xml:
     <dependency>
       <groupId>org.xerial.snappy</groupId>
       <artifactId>snappy-java</artifactId>
-      <version>1.1.1.6</version>
+      <version>1.1.1.7</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -47,7 +47,7 @@ Add the following dependency to your pom.xml:
 ### Using with sbt
 
 ```
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.1.6"
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.1.7"
 ```
 
 

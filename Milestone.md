@@ -1,8 +1,7 @@
-## Features under consideration 
-  * `SnappyIndexer` for parallel compression/decompression
-  * CUI commands (snap/unsnap)
-
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
+
+## snappy-java-1.1.1.7 (14 Apr 2014)
+ * Fixes #100
 
 ## snappy-java-1.1.1.6 (26 Oct 2014)
  * Fixes #88, #89, #90 and #91
