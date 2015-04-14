@@ -51,6 +51,14 @@ scalaVersion := "2.11.1"
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
 
+javacOptions in doc := {
+ val opts = Seq("-source", "1.6")
+ if (scala.util.Properties.isJavaAtLeast("1.8"))
+   opts ++ Seq("-Xdoclint:none")
+ else
+   opts
+}
+
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 
 concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
