@@ -232,7 +232,7 @@ public class SnappyOutputStream extends OutputStream {
      */
     public void rawWrite(Object array, int byteOffset, int byteLength) throws IOException {
 
-        if(inputCursor + byteLength < MIN_BLOCK_SIZE) {
+        if(inputCursor + byteLength < blockSize) {
             // copy the input data to uncompressed buffer
             Snappy.arrayCopy(array, byteOffset, byteLength, inputBuffer, inputCursor);
             inputCursor += byteLength;
