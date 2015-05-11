@@ -52,6 +52,13 @@ public class SnappyCodec
     public static final byte[] MAGIC_HEADER               = new byte[] { -126, 'S', 'N', 'A', 'P', 'P', 'Y', 0 };
     public static final int    MAGIC_LEN                  = MAGIC_HEADER.length;
     public static final int    HEADER_SIZE                = MAGIC_LEN + 8;
+    public static final int    MAGIC_HEADER_HEAD         = SnappyOutputStream.readInt(MAGIC_HEADER, 0);
+    public static final int    MAGIC_HEADER_TAIL         = SnappyOutputStream.readInt(MAGIC_HEADER, 4);
+
+    static {
+        assert(MAGIC_HEADER_HEAD < 0);
+    }
+
 
     public static final int    DEFAULT_VERSION            = 1;
     public static final int    MINIMUM_COMPATIBLE_VERSION = 1;
