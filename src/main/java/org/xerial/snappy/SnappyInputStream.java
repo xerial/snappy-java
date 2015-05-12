@@ -330,8 +330,9 @@ public class SnappyInputStream extends InputStream
     }
 
     /**
-     *
+     * Read next len bytes
      * @param dest
+     * @param offset
      * @param len
      * @return read bytes
      */
