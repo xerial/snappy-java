@@ -45,7 +45,7 @@ public class SnappyInputStream extends InputStream
     private int                 uncompressedCursor = 0;
     private int                 uncompressedLimit  = 0;
 
-    private byte[]              chunkSizeBuf       = new byte[4];
+    private byte[]              header             = new byte[SnappyCodec.headerSize()];
 
     /**
      * Create a filter for reading compressed data as a uncompressed stream
@@ -73,7 +73,6 @@ public class SnappyInputStream extends InputStream
     }
 
     protected void readHeader() throws IOException {
-        byte[] header = new byte[SnappyCodec.headerSize()];
         int readBytes = 0;
         while (readBytes < header.length) {
             int ret = in.read(header, readBytes, header.length - readBytes);
@@ -82,31 +81,45 @@ public class SnappyInputStream extends InputStream
             readBytes += ret;
         }
 
-        // Quick test of the header 
+        // Quick test of the header
+        if(readBytes == 0) {
+            // Snappy produces at least 1-byte result. So the empty input is not a valid input
+            throw new SnappyIOException(SnappyErrorCode.EMPTY_INPUT, "Cannot decompress empty stream");
+        }
         if (readBytes < header.length || header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
             readFully(header, readBytes);
             return;
         }
 
-        SnappyCodec codec = SnappyCodec.readHeader(new ByteArrayInputStream(header));
-        if (codec.isValidMagicHeader()) {
-            // The input data is compressed by SnappyOutputStream
-            if (codec.version < SnappyCodec.MINIMUM_COMPATIBLE_VERSION) {
-                throw new IOException(String.format(
-                        "compressed with imcompatible codec version %d. At least version %d is required",
-                        codec.version, SnappyCodec.MINIMUM_COMPATIBLE_VERSION));
-            }
-        }
-        else {
+        if(!isValidHeader(header)) {
             // (probably) compressed by Snappy.compress(byte[])
             readFully(header, readBytes);
             return;
         }
     }
 
+    private static boolean isValidHeader(byte[] header) throws IOException {
+        SnappyCodec codec = SnappyCodec.readHeader(new ByteArrayInputStream(header));
+        if (codec.isValidMagicHeader()) {
+            // The input data is compressed by SnappyOutputStream
+            if(codec.version < SnappyCodec.MINIMUM_COMPATIBLE_VERSION) {
+                throw new SnappyIOException(SnappyErrorCode.INCOMPATIBLE_VERSION, String.format(
+                    "Compressed with an incompatible codec version %d. At least version %d is required",
+                    codec.version, SnappyCodec.MINIMUM_COMPATIBLE_VERSION));
+            }
+            return true;
+        }
+        else
+            return false;
+    }
+
     protected void readFully(byte[] fragment, int fragmentLength) throws IOException {
-        // read the entire input data to the buffer 
+        if(fragmentLength == 0) {
+            finishedReading = true;
+            return;
+        }
+        // read the entire input data to the buffer
         compressed = new byte[Math.max(8 * 1024, fragmentLength)]; // 8K
         System.arraycopy(fragment, 0, compressed, 0, fragmentLength);
         int cursor = fragmentLength;
@@ -316,6 +329,26 @@ public class SnappyInputStream extends InputStream
         return read(d, 0, d.length);
     }
 
+    /**
+     * Read next len bytes
+     * @param dest
+     * @param offset
+     * @param len
+     * @return read bytes
+     */
+    private int readNext(byte[] dest, int offset, int len) throws IOException {
+        int readBytes = 0;
+        while (readBytes < len) {
+            int ret = in.read(dest, readBytes + offset, len - readBytes);
+            if (ret == -1) {
+                finishedReading = true;
+                return readBytes;
+            }
+            readBytes += ret;
+        }
+        return readBytes;
+    }
+
     protected boolean hasNextChunk() throws IOException {
         if (finishedReading)
             return false;
@@ -323,16 +356,24 @@ public class SnappyInputStream extends InputStream
         uncompressedCursor = 0;
         uncompressedLimit = 0;
 
-        int readBytes = 0;
-        while (readBytes < 4) {
-            int ret = in.read(chunkSizeBuf, readBytes, 4 - readBytes);
-            if (ret == -1) {
-                finishedReading = true;
+        int readBytes = readNext(header, 0, 4);
+        if(readBytes < 4)
+            return false;
+
+        int chunkSize = SnappyOutputStream.readInt(header, 0);
+        if(chunkSize == SnappyCodec.MAGIC_HEADER_HEAD) {
+            // Concatenated data
+            int remainingHeaderSize = SnappyCodec.headerSize() - 4;
+            readBytes = readNext(header, 4, remainingHeaderSize);
+            if(readBytes < remainingHeaderSize)
                 return false;
-            }
-            readBytes += ret;
+
+            if(isValidHeader(header))
+                return hasNextChunk();
+            else
+                return false;
         }
-        int chunkSize = SnappyOutputStream.readInt(chunkSizeBuf, 0);
+
         // extend the compressed data buffer size
         if (compressed == null || chunkSize > compressed.length) {
             compressed = new byte[chunkSize];
@@ -347,20 +388,15 @@ public class SnappyInputStream extends InputStream
         if (readBytes < chunkSize) {
             throw new IOException("failed to read chunk");
         }
-        try {
-            int uncompressedLength = Snappy.uncompressedLength(compressed, 0, chunkSize);
-            if (uncompressed == null || uncompressedLength > uncompressed.length) {
-                uncompressed = new byte[uncompressedLength];
-            }
-            int actualUncompressedLength = Snappy.uncompress(compressed, 0, chunkSize, uncompressed, 0);
-            if (uncompressedLength != actualUncompressedLength) {
-                throw new IOException("invalid uncompressed byte size");
-            }
-            uncompressedLimit = actualUncompressedLength;
+        int uncompressedLength = Snappy.uncompressedLength(compressed, 0, chunkSize);
+        if (uncompressed == null || uncompressedLength > uncompressed.length) {
+            uncompressed = new byte[uncompressedLength];
         }
-        catch (IOException e) {
-            throw new IOException("failed to uncompress the chunk: " + e.getMessage());
+        int actualUncompressedLength = Snappy.uncompress(compressed, 0, chunkSize, uncompressed, 0);
+        if (uncompressedLength != actualUncompressedLength) {
+            throw new SnappyIOException(SnappyErrorCode.INVALID_CHUNK_SIZE, String.format("expected %,d bytes, but decompressed chunk has %,d bytes", uncompressedLength, actualUncompressedLength));
         }
+        uncompressedLimit = actualUncompressedLength;
 
         return true;
     }

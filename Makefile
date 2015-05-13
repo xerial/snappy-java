@@ -56,7 +56,7 @@ $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/s
 	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
-	$(JAVAH) -force -classpath $(TARGET)/classes -o $@ org.xerial.snappy.SnappyNative
+	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.SnappyNative
 
 ifndef USE_GIT
   $(SNAPPY_SRC): $(SNAPPY_UNPACKED)
@@ -134,6 +134,10 @@ linux-arm:
 # for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabihf package
 linux-armhf:
 	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armhf
+
+# for cross-compilation on Ubuntu, install the g++-aarch64-linux-gnu
+linux-aarch64:
+	$(MAKE) native CROSS_PREFIX=aarch64-linux-gnu- OS_NAME=Linux OS_ARCH=aarch64
 
 clean-native-linux32:
 	$(MAKE) clean-native OS_NAME=Linux OS_ARCH=x86

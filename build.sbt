@@ -1,6 +1,3 @@
-import SonatypeKeys._
-
-sonatypeSettings
 
 name := "snappy-java"
 
@@ -10,7 +7,7 @@ organizationName := "xerial.org"
 
 description  := "snappy-java: A fast compression/decompression library"
 
-profileName := "org.xerial" 
+sonatypeProfileName := "org.xerial" 
 
 pomExtra := {
    <url>https://github.comm/xerial/snappy-java</url>
@@ -47,11 +44,21 @@ pomExtra := {
     </scm>
 }
 
+scalaVersion := "2.11.6"
+
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
+
+javacOptions in doc := {
+ val opts = Seq("-source", "1.6")
+ if (scala.util.Properties.isJavaAtLeast("1.8"))
+   opts ++ Seq("-Xdoclint:none")
+ else
+   opts
+}
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 
-//concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
+concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
 
 autoScalaLibrary := false
 
@@ -64,7 +71,9 @@ incOptions := incOptions.value.withNameHashing(true)
 libraryDependencies ++= Seq(
    "junit" % "junit" % "4.8.2" % "test",
    "org.codehaus.plexus" % "plexus-classworlds" % "2.4" % "test",
-   "org.xerial" % "xerial-core" % "1.0.21" % "test",
+   "org.xerial.java" % "xerial-core" % "2.1" % "test",
+   "org.xerial" % "xerial-core" % "3.2.3" % "test",
+   "org.scalatest" % "scalatest_2.11" % "2.2.0" % "test",
    "org.osgi" % "org.osgi.core" % "4.3.0" % "provided",
    "com.novocode" % "junit-interface" % "0.10" % "test"
 )
@@ -72,7 +81,7 @@ libraryDependencies ++= Seq(
 osgiSettings
 
 
-OsgiKeys.exportPackage := Seq("org.xerial.snappy")
+OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer")
 
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
 
@@ -88,9 +97,11 @@ OsgiKeys.additionalHeaders := Map(
 "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.jnilib;osname=macosx;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
+"org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
 "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
 "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64",
 "org/xerial/snappy/native/Linux/ppc64le/libsnappyjava.so;osname=linux;processor=ppc64le",
+"org/xerial/snappy/native/AIX/ppc64/libsnappyjava.a;osname=aix;processor=ppc64",
 "org/xerial/snappy/native/SunOS/x86/libsnappyjava.so;osname=sunos;processor=x86",
 "org/xerial/snappy/native/SunOS/x86_64/libsnappyjava.so;osname=sunos;processor=x86-64",
 "org/xerial/snappy/native/SunOS/sparc/libsnappyjava.so;osname=sunos;processor=sparc"
@@ -99,4 +110,24 @@ OsgiKeys.additionalHeaders := Map(
  "Bundle-License" -> "http://www.apache.org/licenses/LICENSE-2.0.txt",
  "Bundle-ActivationPolicy" -> "lazy",
  "Bundle-Name" -> "snappy-java: A fast compression/decompression library"
+)
+
+import ReleaseTransformations._
+import sbtrelease._
+
+releaseTagName := { (version in ThisBuild).value }
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  ReleaseStep(action = Command.process("publishSigned", _)),
+  setNextVersion,
+  commitNextVersion,
+  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  pushChanges
 )

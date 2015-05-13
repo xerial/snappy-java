@@ -35,6 +35,7 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
+import scala.Array;
 
 public class SnappyInputStreamTest
 {
@@ -62,7 +63,7 @@ public class SnappyInputStreamTest
         }
     }
 
-    public static byte[] biteWiseReadFully(InputStream input) throws IOException {
+    public static byte[] byteWiseReadFully(InputStream input) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[4096];
         for (int readData = 0; (readData = input.read()) != -1;) {
@@ -108,7 +109,7 @@ public class SnappyInputStreamTest
         byte[] compressed = Snappy.compress(orig);
 
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
-        byte[] uncompressed = biteWiseReadFully(in);
+        byte[] uncompressed = byteWiseReadFully(in);
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
@@ -127,6 +128,52 @@ public class SnappyInputStreamTest
         }
         assertTrue(in.available() == 0);
         in.close();
+    }
+
+    @Test
+    public void emptyStream() throws Exception {
+        try {
+            SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(new byte[0]));
+            byte[] uncompressed = readFully(in);
+            assertEquals(0, uncompressed.length);
+            fail("should not reach here");
+        }
+        catch(SnappyIOException e) {
+            assertEquals(SnappyErrorCode.EMPTY_INPUT, e.getErrorCode());
+        }
+    }
+
+    public static byte[] compressResource(String resourcePath) throws Exception {
+        ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
+        SnappyOutputStream snappyOut = new SnappyOutputStream(compressedBuf);
+        byte[] orig = readResourceFile(resourcePath);
+        snappyOut.write(orig);
+        snappyOut.close();
+        return compressedBuf.toByteArray();
+    }
+
+    @Test
+    public void chunkRead() throws Exception {
+        byte[] chunk1 = compressResource("alice29.txt");
+        byte[] chunk2 = compressResource("testdata/calgary/paper6");
+
+        byte[] concatenated = new byte[chunk1.length + chunk2.length];
+        System.arraycopy(chunk1, 0, concatenated, 0, chunk1.length);
+        System.arraycopy(chunk2, 0, concatenated, chunk1.length, chunk2.length);
+
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(concatenated));
+        byte[] uncompressed = readFully(in);
+
+        byte[] orig1 = readResourceFile("alice29.txt");
+        byte[] orig2 = readResourceFile("testdata/calgary/paper6");
+        assertEquals(orig1.length + orig2.length, uncompressed.length);
+        byte[] uncompressed1 = new byte[orig1.length];
+        byte[] uncompressed2 = new byte[orig2.length];
+        System.arraycopy(uncompressed, 0, uncompressed1, 0, orig1.length);
+        System.arraycopy(uncompressed, orig1.length, uncompressed2, 0, orig2.length);
+
+        assertArrayEquals(orig1, uncompressed1);
+        assertArrayEquals(orig2, uncompressed2);
     }
 
 }
