@@ -113,6 +113,9 @@ OsgiKeys.additionalHeaders := Map(
 )
 
 import ReleaseTransformations._
+import sbtrelease._
+
+releaseTagName := { (version in ThisBuild).value }
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
