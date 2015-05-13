@@ -1,6 +1,3 @@
-import SonatypeKeys._
-
-sonatypeSettings
 
 name := "snappy-java"
 
@@ -10,7 +7,7 @@ organizationName := "xerial.org"
 
 description  := "snappy-java: A fast compression/decompression library"
 
-profileName := "org.xerial" 
+sonatypeProfileName := "org.xerial" 
 
 pomExtra := {
    <url>https://github.comm/xerial/snappy-java</url>
@@ -47,7 +44,7 @@ pomExtra := {
     </scm>
 }
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.6"
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
 
@@ -113,4 +110,21 @@ OsgiKeys.additionalHeaders := Map(
  "Bundle-License" -> "http://www.apache.org/licenses/LICENSE-2.0.txt",
  "Bundle-ActivationPolicy" -> "lazy",
  "Bundle-Name" -> "snappy-java: A fast compression/decompression library"
+)
+
+import ReleaseTransformations._
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  ReleaseStep(action = Command.process("publishSigned", _)),
+  setNextVersion,
+  commitNextVersion,
+  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  pushChanges
 )

@@ -1,6 +1,6 @@
 TARGET:=target
 SRC:=src/main/java
-include $(SRC)/org/xerial/snappy/VERSION
+include src/main/resources/org/xerial/snappy/VERSION
 
 ifndef JAVA_HOME
 $(error Set JAVA_HOME environment variable)
