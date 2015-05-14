@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.junit.Test;
 import org.xerial.snappy.buffer.BufferAllocatorFactory;
@@ -191,6 +192,37 @@ public class SnappyOutputStreamTest
         SnappyInputStream in3 = new SnappyInputStream(new ByteArrayInputStream(ba3.toByteArray()));
         assertEquals(3, in3.read());
         in3.close();
+    }
+
+    @Test
+    public void writingToClosedStreamShouldThrowIOException() throws IOException {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+        os.close();
+        try {
+            os.write(4);
+            fail("Expected write() to throw IOException");
+        } catch (IOException e) {
+            // Expected exception
+        }
+        try {
+            os.write(new int[] { 1, 2, 3, 4});
+            fail("Expected write() to throw IOException");
+        } catch (IOException e) {
+            // Expected exception
+        }
+    }
+
+    @Test
+    public void flushingClosedStreamShouldThrowIOException() throws IOException {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b);
+        os.close();
+        try {
+            os.flush();
+        } catch (IOException e) {
+            // Expected exception
+        }
     }
 
     @Test

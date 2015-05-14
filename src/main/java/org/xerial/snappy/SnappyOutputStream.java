@@ -232,6 +232,9 @@ public class SnappyOutputStream extends OutputStream {
      * @throws IOException
      */
     public void rawWrite(Object array, int byteOffset, int byteLength) throws IOException {
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
         int cursor = 0;
         while(cursor < byteLength) {
             int readLen = Math.min(byteLength - cursor, blockSize - inputCursor);
@@ -259,6 +262,9 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void write(int b) throws IOException {
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
         if(inputCursor >= inputBuffer.length) {
             compressInput();
         }
@@ -270,6 +276,9 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void flush() throws IOException {
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
         compressInput();
         dumpOutput();
         out.flush();
