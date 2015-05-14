@@ -187,8 +187,10 @@ public class SnappyOutputStreamTest
         os3.close();
         SnappyInputStream in2 = new SnappyInputStream(new ByteArrayInputStream(ba2.toByteArray()));
         assertEquals(2, in2.read());
+        in2.close();
         SnappyInputStream in3 = new SnappyInputStream(new ByteArrayInputStream(ba3.toByteArray()));
         assertEquals(3, in3.read());
+        in3.close();
     }
 
     @Test

@@ -69,6 +69,7 @@ public class SnappyOutputStream extends OutputStream {
     protected final byte[] outputBuffer;
     private int inputCursor = 0;
     private int outputCursor = 0;
+    private boolean closed;
 
     public SnappyOutputStream(OutputStream out) {
         this(out, DEFAULT_BLOCK_SIZE);
@@ -320,10 +321,14 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
+        if (closed) {
+            return;
+        }
         try {
             flush();
             out.close();
         } finally {
+            closed = true;
             inputBufferAllocator.release(inputBuffer);
             outputBufferAllocator.release(outputBuffer);
         }
