@@ -65,8 +65,9 @@ public class SnappyOutputStream extends OutputStream {
     private final BufferAllocator inputBufferAllocator;
     private final BufferAllocator outputBufferAllocator;
 
-    protected final byte[] inputBuffer;
-    protected final byte[] outputBuffer;
+    // The input and output buffer fields are set to null when closing this stream:
+    protected byte[] inputBuffer;
+    protected byte[] outputBuffer;
     private int inputCursor = 0;
     private int outputCursor = 0;
     private boolean closed;
@@ -340,6 +341,8 @@ public class SnappyOutputStream extends OutputStream {
             closed = true;
             inputBufferAllocator.release(inputBuffer);
             outputBufferAllocator.release(outputBuffer);
+            inputBuffer = null;
+            outputBuffer = null;
         }
     }
 

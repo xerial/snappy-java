@@ -30,10 +30,12 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import org.junit.Test;
 import org.xerial.snappy.buffer.BufferAllocatorFactory;
 import org.xerial.snappy.buffer.CachedBufferAllocator;
+import org.xerial.snappy.buffer.DefaultBufferAllocator;
 import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
 
@@ -223,6 +225,18 @@ public class SnappyOutputStreamTest
         } catch (IOException e) {
             // Expected exception
         }
+    }
+
+    @Test
+    public void closingStreamShouldMakeBuffersEligibleForGarbageCollection() throws IOException {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        SnappyOutputStream os = new SnappyOutputStream(b, 4095, DefaultBufferAllocator.factory);
+        WeakReference<byte[]> inputBuffer = new WeakReference<byte[]>(os.inputBuffer);
+        WeakReference<byte[]> outputBuffer = new WeakReference<byte[]>(os.inputBuffer);
+        os.close();
+        System.gc();
+        assertNull(inputBuffer.get());
+        assertNull(outputBuffer.get());
     }
 
     @Test
