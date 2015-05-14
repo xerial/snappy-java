@@ -65,10 +65,12 @@ public class SnappyOutputStream extends OutputStream {
     private final BufferAllocator inputBufferAllocator;
     private final BufferAllocator outputBufferAllocator;
 
-    protected final byte[] inputBuffer;
-    protected final byte[] outputBuffer;
+    // The input and output buffer fields are set to null when closing this stream:
+    protected byte[] inputBuffer;
+    protected byte[] outputBuffer;
     private int inputCursor = 0;
     private int outputCursor = 0;
+    private boolean closed;
 
     public SnappyOutputStream(OutputStream out) {
         this(out, DEFAULT_BLOCK_SIZE);
@@ -231,6 +233,9 @@ public class SnappyOutputStream extends OutputStream {
      * @throws IOException
      */
     public void rawWrite(Object array, int byteOffset, int byteLength) throws IOException {
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
         int cursor = 0;
         while(cursor < byteLength) {
             int readLen = Math.min(byteLength - cursor, blockSize - inputCursor);
@@ -258,6 +263,9 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void write(int b) throws IOException {
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
         if(inputCursor >= inputBuffer.length) {
             compressInput();
         }
@@ -269,6 +277,9 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void flush() throws IOException {
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
         compressInput();
         dumpOutput();
         out.flush();
@@ -320,12 +331,18 @@ public class SnappyOutputStream extends OutputStream {
      */
     @Override
     public void close() throws IOException {
+        if (closed) {
+            return;
+        }
         try {
             flush();
             out.close();
         } finally {
+            closed = true;
             inputBufferAllocator.release(inputBuffer);
             outputBufferAllocator.release(outputBuffer);
+            inputBuffer = null;
+            outputBuffer = null;
         }
     }
 
