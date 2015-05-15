@@ -181,7 +181,7 @@ public class SnappyOutputStreamTest
         // Regression test for issue #107, a bug where close() was non-idempotent and would release
         // its buffers to the allocator multiple times, which could cause scenarios where two open
         // SnappyOutputStreams could share the same buffers, leading to stream corruption issues.
-        final BufferAllocatorFactory bufferAllocatorFactory = CachedBufferAllocator.factory;
+        final BufferAllocatorFactory bufferAllocatorFactory = CachedBufferAllocator.getBufferAllocatorFactory();
         final int BLOCK_SIZE = 4096;
         // Create a stream, use it, then close it once:
         ByteArrayOutputStream ba1 = new ByteArrayOutputStream();

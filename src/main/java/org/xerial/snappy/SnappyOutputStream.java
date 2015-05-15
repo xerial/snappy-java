@@ -86,7 +86,7 @@ public class SnappyOutputStream
      */
     public SnappyOutputStream(OutputStream out, int blockSize)
     {
-        this(out, blockSize, CachedBufferAllocator.factory);
+        this(out, blockSize, CachedBufferAllocator.getBufferAllocatorFactory());
     }
 
     public SnappyOutputStream(OutputStream out, int blockSize, BufferAllocatorFactory bufferAllocatorFactory)

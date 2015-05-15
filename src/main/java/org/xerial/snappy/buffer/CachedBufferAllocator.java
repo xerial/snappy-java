@@ -9,8 +9,7 @@ import java.util.*;
 public class CachedBufferAllocator
         implements BufferAllocator
 {
-
-    public static BufferAllocatorFactory factory = new BufferAllocatorFactory()
+    private static BufferAllocatorFactory factory = new BufferAllocatorFactory()
     {
         @Override
         public BufferAllocator getBufferAllocator(int bufferSize)
@@ -19,10 +18,21 @@ public class CachedBufferAllocator
         }
     };
 
+    public static void setBufferAllocatorFactory(BufferAllocatorFactory factory)
+    {
+        assert (factory != null);
+        CachedBufferAllocator.factory = factory;
+    }
+
+    public static BufferAllocatorFactory getBufferAllocatorFactory()
+    {
+        return factory;
+    }
+
     /**
      * Use SoftReference so that having this queueTable does not prevent the GC of CachedBufferAllocator instances
      */
-    public static Map<Integer, SoftReference<CachedBufferAllocator>> queueTable = new HashMap<Integer, SoftReference<CachedBufferAllocator>>();
+    private static final Map<Integer, SoftReference<CachedBufferAllocator>> queueTable = new HashMap<Integer, SoftReference<CachedBufferAllocator>>();
 
     private final int bufferSize;
     private final Deque<byte[]> bufferQueue;

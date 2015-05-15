@@ -48,7 +48,7 @@ import java.util.Arrays;
  */
 public class SnappyCodec
 {
-    public static final byte[] MAGIC_HEADER = new byte[] {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0};
+    static final byte[] MAGIC_HEADER = new byte[] {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0};
     public static final int MAGIC_LEN = MAGIC_HEADER.length;
     public static final int HEADER_SIZE = MAGIC_LEN + 8;
     public static final int MAGIC_HEADER_HEAD = SnappyOutputStream.readInt(MAGIC_HEADER, 0);
@@ -59,6 +59,7 @@ public class SnappyCodec
 
     public static final int DEFAULT_VERSION = 1;
     public static final int MINIMUM_COMPATIBLE_VERSION = 1;
+    public static final SnappyCodec currentHeader = new SnappyCodec(MAGIC_HEADER, DEFAULT_VERSION, MINIMUM_COMPATIBLE_VERSION);
 
     public final byte[] magic;
     public final int version;
@@ -83,6 +84,11 @@ public class SnappyCodec
             throw new RuntimeException(e);
         }
         headerArray = header.toByteArray();
+    }
+
+    public static byte[] getMagicHeader()
+    {
+        return MAGIC_HEADER.clone();
     }
 
     @Override
@@ -124,7 +130,5 @@ public class SnappyCodec
         int compatibleVersion = d.readInt();
         return new SnappyCodec(magic, version, compatibleVersion);
     }
-
-    public static SnappyCodec currentHeader = new SnappyCodec(MAGIC_HEADER, DEFAULT_VERSION, MINIMUM_COMPATIBLE_VERSION);
 }
 
