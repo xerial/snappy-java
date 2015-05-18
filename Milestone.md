@@ -1,5 +1,8 @@
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.2-RC2 (18 May 2015)
+ * Fix #107: SnappyOutputStream.close() is not idempotent
+
 ## snappy-java-1.1.2-RC1 (13 May 2015)
  * SnappyInputStream now supports reading concatenated compressed results of SnappyOutputStream
  * There has been no compressed format change since 1.0.5.x. So You can read the compressed results interchangeablly between these versions.
