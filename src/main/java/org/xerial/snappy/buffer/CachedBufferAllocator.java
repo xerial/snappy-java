@@ -6,11 +6,15 @@ import java.util.*;
 /**
  * Cached buffer
  */
-public class CachedBufferAllocator implements BufferAllocator {
+public class CachedBufferAllocator
+        implements BufferAllocator
+{
 
-    public static BufferAllocatorFactory factory = new BufferAllocatorFactory() {
+    public static BufferAllocatorFactory factory = new BufferAllocatorFactory()
+    {
         @Override
-        public BufferAllocator getBufferAllocator(int bufferSize) {
+        public BufferAllocator getBufferAllocator(int bufferSize)
+        {
             return CachedBufferAllocator.getAllocator(bufferSize);
         }
     };
@@ -23,12 +27,14 @@ public class CachedBufferAllocator implements BufferAllocator {
     private final int bufferSize;
     private final Deque<byte[]> bufferQueue;
 
-    public CachedBufferAllocator(int bufferSize) {
+    public CachedBufferAllocator(int bufferSize)
+    {
         this.bufferSize = bufferSize;
         this.bufferQueue = new ArrayDeque<byte[]>();
     }
 
-    public static synchronized CachedBufferAllocator getAllocator(int bufferSize) {
+    public static synchronized CachedBufferAllocator getAllocator(int bufferSize)
+    {
         CachedBufferAllocator result = null;
 
         if (queueTable.containsKey(bufferSize)) {
@@ -42,9 +48,10 @@ public class CachedBufferAllocator implements BufferAllocator {
     }
 
     @Override
-    public byte[] allocate(int size) {
-        synchronized(this) {
-            if(bufferQueue.isEmpty()) {
+    public byte[] allocate(int size)
+    {
+        synchronized (this) {
+            if (bufferQueue.isEmpty()) {
                 return new byte[size];
             }
             else {
@@ -52,9 +59,11 @@ public class CachedBufferAllocator implements BufferAllocator {
             }
         }
     }
+
     @Override
-    public void release(byte[] buffer) {
-        synchronized(this) {
+    public void release(byte[] buffer)
+    {
+        synchronized (this) {
             bufferQueue.addLast(buffer);
         }
     }

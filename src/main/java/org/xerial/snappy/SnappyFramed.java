@@ -12,19 +12,20 @@ import java.util.logging.Logger;
 
 /**
  * Constants and utilities for implementing x-snappy-framed.
- * 
+ *
  * @author Brett Okken
  * @since 1.1.0
  */
-final class SnappyFramed {
+final class SnappyFramed
+{
     public static final int COMPRESSED_DATA_FLAG = 0x00;
 
     public static final int UNCOMPRESSED_DATA_FLAG = 0x01;
 
     public static final int STREAM_IDENTIFIER_FLAG = 0xff;
-    
+
     private static final int MASK_DELTA = 0xa282ead8;
-    
+
     /**
      * Sun specific mechanisms to clean up resources associated with direct byte buffers.
      */
@@ -32,20 +33,20 @@ final class SnappyFramed {
     private static final Class<? extends ByteBuffer> SUN_DIRECT_BUFFER = (Class<? extends ByteBuffer>) lookupClassQuietly("sun.nio.ch.DirectBuffer");
     private static final Method SUN_BUFFER_CLEANER;
     private static final Method SUN_CLEANER_CLEAN;
-    
-    static
-    {
+
+    static {
         Method bufferCleaner = null;
         Method cleanerClean = null;
         try {
             //operate under the assumption that if the sun direct buffer class exists,
             //all of the sun classes exist
             if (SUN_DIRECT_BUFFER != null) {
-                bufferCleaner = SUN_DIRECT_BUFFER.getMethod("cleaner", (Class[])null);
+                bufferCleaner = SUN_DIRECT_BUFFER.getMethod("cleaner", (Class[]) null);
                 Class<?> cleanClazz = lookupClassQuietly("sun.misc.Cleaner");
-                cleanerClean = cleanClazz.getMethod("clean", (Class[])null);
+                cleanerClean = cleanClazz.getMethod("clean", (Class[]) null);
             }
-        } catch(Throwable t) {
+        }
+        catch (Throwable t) {
             Logger.getLogger(SnappyFramed.class.getName()).log(Level.FINE, "Exception occurred attempting to lookup Sun specific DirectByteBuffer cleaner classes.", t);
         }
         SUN_BUFFER_CLEANER = bufferCleaner;
@@ -58,7 +59,7 @@ final class SnappyFramed {
      */
     public static final byte[] HEADER_BYTES = new byte[] {
             (byte) STREAM_IDENTIFIER_FLAG, 0x06, 0x00, 0x00, 0x73, 0x4e, 0x61,
-            0x50, 0x70, 0x59 };
+            0x50, 0x70, 0x59};
 
     public static int maskedCrc32c(byte[] data)
     {
@@ -78,10 +79,10 @@ final class SnappyFramed {
      * in Apache Hadoop: Rotate the checksum by 15 bits, then add the constant
      * 0xa282ead8 (using wraparound as normal for unsigned integers). This is
      * equivalent to the following C code:
-     * 
+     * <p/>
      * <pre>
      * uint32_t mask_checksum(uint32_t x) {
-     *     return ((x >> 15) | (x << 17)) + 0xa282ead8; 
+     *     return ((x >> 15) | (x << 17)) + 0xa282ead8;
      * }
      * </pre>
      */
@@ -90,9 +91,9 @@ final class SnappyFramed {
         // Rotate right by 15 bits and add a constant.
         return ((crc >>> 15) | (crc << 17)) + MASK_DELTA;
     }
-    
 
-    static final int readBytes(ReadableByteChannel source, ByteBuffer dest) throws IOException
+    static final int readBytes(ReadableByteChannel source, ByteBuffer dest)
+            throws IOException
     {
         // tells how many bytes to read.
         final int expectedLength = dest.remaining();
@@ -105,47 +106,43 @@ final class SnappyFramed {
         totalRead = lastRead;
 
         // if we did not read as many bytes as we had hoped, try reading again.
-        if (lastRead < expectedLength)
-        {
+        if (lastRead < expectedLength) {
             // as long the buffer is not full (remaining() == 0) and we have not reached EOF (lastRead == -1) keep reading.
-            while (dest.remaining() != 0 && lastRead != -1)
-            {
+            while (dest.remaining() != 0 && lastRead != -1) {
                 lastRead = source.read(dest);
 
                 // if we got EOF, do not add to total read.
-                if (lastRead != -1)
-                {
+                if (lastRead != -1) {
                     totalRead += lastRead;
                 }
             }
         }
 
-        if (totalRead > 0)
-        {
+        if (totalRead > 0) {
             dest.limit(dest.position());
         }
-        else
-        {
+        else {
             dest.position(dest.limit());
         }
 
         return totalRead;
     }
-    
-    static int skip(final ReadableByteChannel source, final int skip, final ByteBuffer buffer) throws IOException
+
+    static int skip(final ReadableByteChannel source, final int skip, final ByteBuffer buffer)
+            throws IOException
     {
         if (skip <= 0) {
             return 0;
         }
-        
+
         int toSkip = skip;
-        int skipped = 0; 
-        while(toSkip > 0 && skipped != -1) {
+        int skipped = 0;
+        while (toSkip > 0 && skipped != -1) {
             buffer.clear();
             if (toSkip < buffer.capacity()) {
                 buffer.limit(toSkip);
             }
-            
+
             skipped = source.read(buffer);
             if (skipped > 0) {
                 toSkip -= skipped;
@@ -156,18 +153,21 @@ final class SnappyFramed {
         return skip - toSkip;
     }
 
-    private static Class<?> lookupClassQuietly(String name) {
+    private static Class<?> lookupClassQuietly(String name)
+    {
         try {
             return SnappyFramed.class.getClassLoader().loadClass(name);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logger.getLogger(SnappyFramed.class.getName()).log(Level.FINE, "Did not find requested class: " + name, t);
         }
-        
+
         return null;
     }
-        
+
     /**
      * Provides jvm implementation specific operation to aggressively release resources associated with <i>buffer</i>.
+     *
      * @param buffer The {@code ByteBuffer} to release. Must not be {@code null}. Must be  {@link ByteBuffer#isDirect() direct}.
      */
     static void releaseDirectByteBuffer(ByteBuffer buffer)
@@ -178,7 +178,8 @@ final class SnappyFramed {
             try {
                 Object cleaner = SUN_BUFFER_CLEANER.invoke(buffer, (Object[]) null);
                 SUN_CLEANER_CLEAN.invoke(cleaner, (Object[]) null);
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 Logger.getLogger(SnappyFramed.class.getName()).log(Level.FINE, "Exception occurred attempting to clean up Sun specific DirectByteBuffer.", t);
             }
         }

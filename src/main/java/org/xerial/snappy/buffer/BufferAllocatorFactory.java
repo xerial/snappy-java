@@ -3,7 +3,8 @@ package org.xerial.snappy.buffer;
 /**
  *
  */
-public interface BufferAllocatorFactory {
+public interface BufferAllocatorFactory
+{
 
     BufferAllocator getBufferAllocator(int minSize);
 }
