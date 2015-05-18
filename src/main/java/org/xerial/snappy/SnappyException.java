@@ -28,47 +28,55 @@ import java.io.IOException;
 
 /**
  * Exception in snappy-java
- * 
- * @deprecated Snappy-java now uses {@link IOException}
+ *
  * @author leo
- * 
+ * @deprecated Snappy-java now uses {@link IOException}
  */
 @Deprecated
-public class SnappyException extends Exception
+public class SnappyException
+        extends Exception
 {
-    private static final long    serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     public final SnappyErrorCode errorCode;
 
-    public SnappyException(int code) {
+    public SnappyException(int code)
+    {
         this(SnappyErrorCode.getErrorCode(code));
     }
 
-    public SnappyException(SnappyErrorCode errorCode) {
+    public SnappyException(SnappyErrorCode errorCode)
+    {
         super();
         this.errorCode = errorCode;
     }
 
-    public SnappyException(SnappyErrorCode errorCode, Exception e) {
+    public SnappyException(SnappyErrorCode errorCode, Exception e)
+    {
         super(e);
         this.errorCode = errorCode;
     }
 
-    public SnappyException(SnappyErrorCode errorCode, String message) {
+    public SnappyException(SnappyErrorCode errorCode, String message)
+    {
         super(message);
         this.errorCode = errorCode;
     }
 
-    public SnappyErrorCode getErrorCode() {
+    public SnappyErrorCode getErrorCode()
+    {
         return errorCode;
     }
 
-    public static void throwException(int errorCode) throws SnappyException {
+    public static void throwException(int errorCode)
+            throws SnappyException
+    {
         throw new SnappyException(errorCode);
     }
 
     @Override
-    public String getMessage() {
+    public String getMessage()
+    {
         return String.format("[%s] %s", errorCode.name(), super.getMessage());
     }
 }

@@ -38,13 +38,17 @@ public class SnappyTest
     private static Logger _logger = Logger.getLogger(SnappyTest.class);
 
     @Test
-    public void getVersion() throws Exception {
+    public void getVersion()
+            throws Exception
+    {
         String version = Snappy.getNativeLibraryVersion();
         _logger.debug("version: " + version);
     }
 
     @Test
-    public void directBufferCheck() throws Exception {
+    public void directBufferCheck()
+            throws Exception
+    {
 
         try {
             ByteBuffer src = ByteBuffer.allocate(1024);
@@ -59,11 +63,12 @@ public class SnappyTest
         }
 
         fail("shouldn't reach here");
-
     }
 
     @Test
-    public void directBuffer() throws Exception {
+    public void directBuffer()
+            throws Exception
+    {
 
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < 20; ++i) {
@@ -109,7 +114,9 @@ public class SnappyTest
     }
 
     @Test
-    public void bufferOffset() throws Exception {
+    public void bufferOffset()
+            throws Exception
+    {
 
         String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
         byte[] orig = m.getBytes();
@@ -147,7 +154,9 @@ public class SnappyTest
     }
 
     @Test
-    public void byteArrayCompress() throws Exception {
+    public void byteArrayCompress()
+            throws Exception
+    {
 
         String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
         byte[] input = m.getBytes();
@@ -159,11 +168,12 @@ public class SnappyTest
         int uncompressedSize = Snappy.uncompress(output, 0, compressedSize, uncompressed, 0);
         String m2 = new String(uncompressed);
         assertEquals(m, m2);
-
     }
 
     @Test
-    public void rangeCheck() throws Exception {
+    public void rangeCheck()
+            throws Exception
+    {
         String m = "ACCAGGGGGGGGGGGGGGGGGGGGATAGATATTTCCCGAGATATTTTATATAAAAAAA";
         byte[] input = m.getBytes();
         byte[] output = new byte[Snappy.maxCompressedLength(input.length)];
@@ -189,11 +199,12 @@ public class SnappyTest
         bout.limit(bout.limit() - 1);
         bout.position(1);
         assertFalse(Snappy.isValidCompressedBuffer(bout));
-
     }
 
     @Test
-    public void highLevelAPI() throws Exception {
+    public void highLevelAPI()
+            throws Exception
+    {
 
         String m = "Hello! 01234 ACGDSFSDFJ World. FDSDF02394234 fdsfda03924";
         byte[] input = m.getBytes();
@@ -205,7 +216,9 @@ public class SnappyTest
     }
 
     @Test
-    public void lowLevelAPI() throws Exception {
+    public void lowLevelAPI()
+            throws Exception
+    {
 
         String m = "Hello! 01234 ACGDSFSDFJ World. FDSDF02394234 fdsfda03924";
         byte[] input = m.getBytes();
@@ -217,7 +230,9 @@ public class SnappyTest
     }
 
     @Test
-    public void simpleUsage() throws Exception {
+    public void simpleUsage()
+            throws Exception
+    {
 
         String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper"
                 + " for using Snappy from Google (written in C++), a fast compresser/decompresser.";
@@ -225,59 +240,72 @@ public class SnappyTest
         byte[] uncompressed = Snappy.uncompress(compressed);
         String result = new String(uncompressed, "UTF-8");
         _logger.debug(result);
-
     }
 
     @Test
-    public void floatArray() throws Exception {
-        float[] data = new float[] { 1.0f, -0.3f, 1.3f, 234.4f, 34 };
+    public void floatArray()
+            throws Exception
+    {
+        float[] data = new float[] {1.0f, -0.3f, 1.3f, 234.4f, 34};
         byte[] compressed = Snappy.compress(data);
         float[] result = Snappy.uncompressFloatArray(compressed);
         assertArrayEquals(data, result, 0.0f);
     }
 
     @Test
-    public void doubleArray() throws Exception {
-        double[] data = new double[] { 1.0, -0.3, 1.3, 234.4, 34 };
+    public void doubleArray()
+            throws Exception
+    {
+        double[] data = new double[] {1.0, -0.3, 1.3, 234.4, 34};
         byte[] compressed = Snappy.compress(data);
         double[] result = Snappy.uncompressDoubleArray(compressed);
         assertArrayEquals(data, result, 0.0f);
     }
 
     @Test
-    public void longArray() throws Exception {
-        long[] data = new long[] { 2, 3, 15, 4234, 43251531412342342L, 23423422342L };
+    public void longArray()
+            throws Exception
+    {
+        long[] data = new long[] {2, 3, 15, 4234, 43251531412342342L, 23423422342L};
         byte[] compressed = Snappy.compress(data);
         long[] result = Snappy.uncompressLongArray(compressed);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void shortArray() throws Exception {
-        short[] data = new short[] { 432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1 };
+    public void shortArray()
+            throws Exception
+    {
+        short[] data = new short[] {432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1};
         byte[] compressed = Snappy.compress(data);
         short[] result = Snappy.uncompressShortArray(compressed);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void intArray() throws Exception {
-        int[] data = new int[] { 432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1, Integer.MAX_VALUE, 3424, 43 };
+    public void intArray()
+            throws Exception
+    {
+        int[] data = new int[] {432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1, Integer.MAX_VALUE, 3424, 43};
         byte[] compressed = Snappy.compress(data);
         int[] result = Snappy.uncompressIntArray(compressed);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void charArray() throws Exception {
-        char[] data = new char[] { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!' };
+    public void charArray()
+            throws Exception
+    {
+        char[] data = new char[] {'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!'};
         byte[] compressed = Snappy.compress(data);
         char[] result = Snappy.uncompressCharArray(compressed);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void string() throws Exception {
+    public void string()
+            throws Exception
+    {
         String s = "Hello Snappy! Snappy! Snappy!";
         byte[] compressed = Snappy.compress(s);
         String uncompressedString = Snappy.uncompressString(compressed);
@@ -285,9 +313,11 @@ public class SnappyTest
     }
 
     @Test
-    public void isValidCompressedData() throws Exception {
+    public void isValidCompressedData()
+            throws Exception
+    {
 
-        byte[] b = new byte[] { (byte) 91, (byte) 34, (byte) 80, (byte) 73, (byte) 34, (byte) 93 };
+        byte[] b = new byte[] {(byte) 91, (byte) 34, (byte) 80, (byte) 73, (byte) 34, (byte) 93};
 
         assertFalse(Snappy.isValidCompressedBuffer(b));
 
@@ -298,7 +328,5 @@ public class SnappyTest
         catch (IOException e) {
             _logger.debug(e);
         }
-
     }
-
 }

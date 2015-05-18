@@ -34,41 +34,40 @@ import java.util.Arrays;
 
 /**
  * Preamble header for {@link SnappyOutputStream}.
- * 
+ * <p/>
  * <p>
  * The magic header is the following 8 bytes data:
- * 
+ * <p/>
  * <pre>
  * -126, 'S', 'N', 'A', 'P', 'P', 'Y', 0
  * </pre>
- * 
+ * <p/>
  * </p>
- * 
+ *
  * @author leo
- * 
  */
 public class SnappyCodec
 {
-    public static final byte[] MAGIC_HEADER               = new byte[] { -126, 'S', 'N', 'A', 'P', 'P', 'Y', 0 };
-    public static final int    MAGIC_LEN                  = MAGIC_HEADER.length;
-    public static final int    HEADER_SIZE                = MAGIC_LEN + 8;
-    public static final int    MAGIC_HEADER_HEAD         = SnappyOutputStream.readInt(MAGIC_HEADER, 0);
-    public static final int    MAGIC_HEADER_TAIL         = SnappyOutputStream.readInt(MAGIC_HEADER, 4);
+    public static final byte[] MAGIC_HEADER = new byte[] {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0};
+    public static final int MAGIC_LEN = MAGIC_HEADER.length;
+    public static final int HEADER_SIZE = MAGIC_LEN + 8;
+    public static final int MAGIC_HEADER_HEAD = SnappyOutputStream.readInt(MAGIC_HEADER, 0);
+    public static final int MAGIC_HEADER_TAIL = SnappyOutputStream.readInt(MAGIC_HEADER, 4);
 
     static {
-        assert(MAGIC_HEADER_HEAD < 0);
+        assert (MAGIC_HEADER_HEAD < 0);
     }
 
+    public static final int DEFAULT_VERSION = 1;
+    public static final int MINIMUM_COMPATIBLE_VERSION = 1;
 
-    public static final int    DEFAULT_VERSION            = 1;
-    public static final int    MINIMUM_COMPATIBLE_VERSION = 1;
-
-    public final byte[]        magic;
-    public final int           version;
-    public final int           compatibleVersion;
+    public final byte[] magic;
+    public final int version;
+    public final int compatibleVersion;
     private final byte[] headerArray;
 
-    private SnappyCodec(byte[] magic, int version, int compatibleVersion) {
+    private SnappyCodec(byte[] magic, int version, int compatibleVersion)
+    {
         this.magic = magic;
         this.version = version;
         this.compatibleVersion = compatibleVersion;
@@ -81,36 +80,44 @@ public class SnappyCodec
             d.writeInt(compatibleVersion);
             d.close();
         }
-        catch(IOException e) {
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
         headerArray = header.toByteArray();
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return String.format("version:%d, compatible version:%d", version, compatibleVersion);
     }
 
-    public static int headerSize() {
+    public static int headerSize()
+    {
         return HEADER_SIZE;
     }
 
-    public int writeHeader(byte[] dst, int dstOffset) {
+    public int writeHeader(byte[] dst, int dstOffset)
+    {
         System.arraycopy(headerArray, 0, dst, dstOffset, headerArray.length);
         return headerArray.length;
     }
 
-    public int writeHeader(OutputStream out) throws IOException {
+    public int writeHeader(OutputStream out)
+            throws IOException
+    {
         out.write(headerArray, 0, headerArray.length);
         return headerArray.length;
     }
 
-    public boolean isValidMagicHeader() {
+    public boolean isValidMagicHeader()
+    {
         return Arrays.equals(MAGIC_HEADER, magic);
     }
 
-    public static SnappyCodec readHeader(InputStream in) throws IOException {
+    public static SnappyCodec readHeader(InputStream in)
+            throws IOException
+    {
         DataInputStream d = new DataInputStream(in);
         byte[] magic = new byte[MAGIC_LEN];
         d.readFully(magic, 0, MAGIC_LEN);
@@ -120,5 +127,4 @@ public class SnappyCodec
     }
 
     public static SnappyCodec currentHeader = new SnappyCodec(MAGIC_HEADER, DEFAULT_VERSION, MINIMUM_COMPATIBLE_VERSION);
-
 }

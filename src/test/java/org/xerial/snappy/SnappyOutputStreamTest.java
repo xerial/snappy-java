@@ -44,7 +44,9 @@ public class SnappyOutputStreamTest
     private static Logger _logger = Logger.getLogger(SnappyOutputStreamTest.class);
 
     @Test
-    public void test() throws Exception {
+    public void test()
+            throws Exception
+    {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         SnappyOutputStream sout = new SnappyOutputStream(buf);
 
@@ -54,7 +56,7 @@ public class SnappyOutputStreamTest
 
         ByteArrayOutputStream orig = new ByteArrayOutputStream();
         byte[] tmp = new byte[1024];
-        for (int readBytes = 0; (readBytes = input.read(tmp)) != -1;) {
+        for (int readBytes = 0; (readBytes = input.read(tmp)) != -1; ) {
             sout.write(tmp, 0, readBytes);
             orig.write(tmp, 0, readBytes); // preserve the original data
         }
@@ -68,7 +70,7 @@ public class SnappyOutputStreamTest
         ByteArrayOutputStream decompressed = new ByteArrayOutputStream();
         byte[] compressed = buf.toByteArray();
         // decompress
-        for (int cursor = SnappyCodec.headerSize(); cursor < compressed.length;) {
+        for (int cursor = SnappyCodec.headerSize(); cursor < compressed.length; ) {
             int chunkSize = SnappyOutputStream.readInt(compressed, cursor);
             cursor += 4;
             byte[] tmpOut = new byte[Snappy.uncompressedLength(compressed, cursor, chunkSize)];
@@ -83,7 +85,9 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void bufferSize() throws Exception {
+    public void bufferSize()
+            throws Exception
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b, 1500);
         final int bytesToWrite = 5000;
@@ -96,18 +100,21 @@ public class SnappyOutputStreamTest
         os.close();
         SnappyInputStream is = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
         byte[] buf = new byte[bytesToWrite / 101];
-        while (is.read(buf) != -1) {}
+        while (is.read(buf) != -1) {
+        }
         is.close();
     }
 
     @Test
-    public void smallWrites() throws Exception {
+    public void smallWrites()
+            throws Exception
+    {
 
         byte[] orig = CalgaryTest.readFile("alice29.txt");
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream out = new SnappyOutputStream(b);
 
-        for(byte c : orig) {
+        for (byte c : orig) {
             out.write(c);
         }
         out.close();
@@ -116,7 +123,7 @@ public class SnappyOutputStreamTest
         byte[] decompressed = new byte[orig.length];
         int cursor = 0;
         int readLen = 0;
-        for(int i=0; i < decompressed.length && (readLen = is.read(decompressed, i, decompressed.length-i)) != -1; ) {
+        for (int i = 0; i < decompressed.length && (readLen = is.read(decompressed, i, decompressed.length - i)) != -1; ) {
             i += readLen;
         }
         is.close();
@@ -125,11 +132,14 @@ public class SnappyOutputStreamTest
 
     /**
      * Compress the input array by passing it chunk-by-chunk to a SnappyOutputStream.
+     *
      * @param orig the data to compress
      * @param maxChunkSize the maximum chunk size, in bytes.
      * @return the compressed bytes
      */
-    private static byte[] compressAsChunks(byte[] orig, int maxChunkSize) throws Exception {
+    private static byte[] compressAsChunks(byte[] orig, int maxChunkSize)
+            throws Exception
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream out = new SnappyOutputStream(b);
 
@@ -143,7 +153,9 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void batchingOfWritesShouldNotAffectCompressedDataSize() throws Exception {
+    public void batchingOfWritesShouldNotAffectCompressedDataSize()
+            throws Exception
+    {
         // Regression test for issue #100, a bug where the size of compressed data could be affected
         // by the batching of writes to the SnappyOutputStream rather than the total amount of data
         // written to the stream.
@@ -154,7 +166,7 @@ public class SnappyOutputStreamTest
         // compression quality:
         assertEquals(91013, expectedCompressedData.length);
         // The chunk size should not affect the size of the compressed output:
-        int[] chunkSizes = new int[] { 1, 100, 1023, 1024, 10000};
+        int[] chunkSizes = new int[] {1, 100, 1023, 1024, 10000};
         for (int chunkSize : chunkSizes) {
             byte[] compressedData = compressAsChunks(orig, chunkSize);
             assertEquals(String.format("when chunk size = %,d", chunkSize), expectedCompressedData.length, compressedData.length);
@@ -163,7 +175,9 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void closeShouldBeIdempotent() throws Exception {
+    public void closeShouldBeIdempotent()
+            throws Exception
+    {
         // Regression test for issue #107, a bug where close() was non-idempotent and would release
         // its buffers to the allocator multiple times, which could cause scenarios where two open
         // SnappyOutputStreams could share the same buffers, leading to stream corruption issues.
@@ -197,38 +211,47 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void writingToClosedStreamShouldThrowIOException() throws IOException {
+    public void writingToClosedStreamShouldThrowIOException()
+            throws IOException
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b);
         os.close();
         try {
             os.write(4);
             fail("Expected write() to throw IOException");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             // Expected exception
         }
         try {
-            os.write(new int[] { 1, 2, 3, 4});
+            os.write(new int[] {1, 2, 3, 4});
             fail("Expected write() to throw IOException");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             // Expected exception
         }
     }
 
     @Test
-    public void flushingClosedStreamShouldThrowIOException() throws IOException {
+    public void flushingClosedStreamShouldThrowIOException()
+            throws IOException
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b);
         os.close();
         try {
             os.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             // Expected exception
         }
     }
 
     @Test
-    public void closingStreamShouldMakeBuffersEligibleForGarbageCollection() throws IOException {
+    public void closingStreamShouldMakeBuffersEligibleForGarbageCollection()
+            throws IOException
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b, 4095, DefaultBufferAllocator.factory);
         WeakReference<byte[]> inputBuffer = new WeakReference<byte[]>(os.inputBuffer);
@@ -240,7 +263,9 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void longArrayCompress() throws Exception {
+    public void longArrayCompress()
+            throws Exception
+    {
         long[] l = new long[10];
         for (int i = 0; i < l.length; ++i) {
             l[i] = i % 3 + i * 11;
@@ -258,15 +283,16 @@ public class SnappyOutputStreamTest
 
         assertEquals(10 * 8, readBytes);
         assertArrayEquals(l, l2);
-
     }
 
     @Test
-    public void writeDoubleArray() throws Exception {
+    public void writeDoubleArray()
+            throws Exception
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b);
 
-        double[] orig = new double[] { 1.0, 2.0, 1.4, 0.00343430014, -4.4, 4e-20 };
+        double[] orig = new double[] {1.0, 2.0, 1.4, 0.00343430014, -4.4, 4e-20};
         os.write(orig);
         os.close();
 
@@ -279,11 +305,13 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void writeFloatArray() throws Exception {
+    public void writeFloatArray()
+            throws Exception
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b);
 
-        float[] orig = new float[] { 1.0f, 2.0f, 1.4f, 0.00343430014f, -4.4f, 4e-20f };
+        float[] orig = new float[] {1.0f, 2.0f, 1.4f, 0.00343430014f, -4.4f, 4e-20f};
         os.write(orig);
         os.close();
 
@@ -296,11 +324,13 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void writeIntArray() throws Exception {
+    public void writeIntArray()
+            throws Exception
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b);
 
-        int[] orig = new int[] { 0, -1, -34, 43, 234, 34324, -234 };
+        int[] orig = new int[] {0, -1, -34, 43, 234, 34324, -234};
         os.write(orig);
         os.close();
 
@@ -313,11 +343,13 @@ public class SnappyOutputStreamTest
     }
 
     @Test
-    public void writeShortArray() throws Exception {
+    public void writeShortArray()
+            throws Exception
+    {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         SnappyOutputStream os = new SnappyOutputStream(b);
 
-        short[] orig = new short[] { 0, -1, -34, 43, 234, 324, -234 };
+        short[] orig = new short[] {0, -1, -34, 43, 234, 324, -234};
         os.write(orig);
         os.close();
 
@@ -328,5 +360,4 @@ public class SnappyOutputStreamTest
 
         assertArrayEquals(orig, uncompressed);
     }
-
 }

@@ -41,18 +41,22 @@ public class SnappyInputStreamTest
 {
     private static Logger _logger = Logger.getLogger(SnappyInputStreamTest.class);
 
-    public static byte[] readResourceFile(String fileName) throws IOException {
+    public static byte[] readResourceFile(String fileName)
+            throws IOException
+    {
         BufferedInputStream input = new BufferedInputStream(FileResource.find(SnappyOutputStreamTest.class, fileName)
                 .openStream());
         assertNotNull(input);
         return readFully(input);
     }
 
-    public static byte[] readFully(InputStream input) throws IOException {
+    public static byte[] readFully(InputStream input)
+            throws IOException
+    {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[4096];
-            for (int readBytes = 0; (readBytes = input.read(buf)) != -1;) {
+            for (int readBytes = 0; (readBytes = input.read(buf)) != -1; ) {
                 out.write(buf, 0, readBytes);
             }
             out.flush();
@@ -63,10 +67,12 @@ public class SnappyInputStreamTest
         }
     }
 
-    public static byte[] byteWiseReadFully(InputStream input) throws IOException {
+    public static byte[] byteWiseReadFully(InputStream input)
+            throws IOException
+    {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[4096];
-        for (int readData = 0; (readData = input.read()) != -1;) {
+        for (int readData = 0; (readData = input.read()) != -1; ) {
             out.write(readData);
         }
         out.flush();
@@ -74,7 +80,9 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void read() throws Exception {
+    public void read()
+            throws Exception
+    {
         ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
         SnappyOutputStream snappyOut = new SnappyOutputStream(compressedBuf);
         byte[] orig = readResourceFile("alice29.txt");
@@ -88,11 +96,12 @@ public class SnappyInputStreamTest
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
-
     }
 
     @Test
-    public void readBlockCompressedData() throws Exception {
+    public void readBlockCompressedData()
+            throws Exception
+    {
         byte[] orig = readResourceFile("alice29.txt");
         byte[] compressed = Snappy.compress(orig);
 
@@ -104,7 +113,9 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void biteWiseRead() throws Exception {
+    public void biteWiseRead()
+            throws Exception
+    {
         byte[] orig = readResourceFile("testdata/calgary/paper6");
         byte[] compressed = Snappy.compress(orig);
 
@@ -113,17 +124,18 @@ public class SnappyInputStreamTest
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
-
     }
 
     @Test
-    public void available() throws Exception {
+    public void available()
+            throws Exception
+    {
         byte[] orig = readResourceFile("testdata/calgary/paper6");
         byte[] compressed = Snappy.compress(orig);
 
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
         byte[] buf = new byte[4];
-        for (int readBytes = 0; (readBytes = in.read(buf)) != -1;) {
+        for (int readBytes = 0; (readBytes = in.read(buf)) != -1; ) {
             assertTrue(in.available() >= 0);
         }
         assertTrue(in.available() == 0);
@@ -131,19 +143,23 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void emptyStream() throws Exception {
+    public void emptyStream()
+            throws Exception
+    {
         try {
             SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(new byte[0]));
             byte[] uncompressed = readFully(in);
             assertEquals(0, uncompressed.length);
             fail("should not reach here");
         }
-        catch(SnappyIOException e) {
+        catch (SnappyIOException e) {
             assertEquals(SnappyErrorCode.EMPTY_INPUT, e.getErrorCode());
         }
     }
 
-    public static byte[] compressResource(String resourcePath) throws Exception {
+    public static byte[] compressResource(String resourcePath)
+            throws Exception
+    {
         ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
         SnappyOutputStream snappyOut = new SnappyOutputStream(compressedBuf);
         byte[] orig = readResourceFile(resourcePath);
@@ -153,7 +169,9 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void chunkRead() throws Exception {
+    public void chunkRead()
+            throws Exception
+    {
         byte[] chunk1 = compressResource("alice29.txt");
         byte[] chunk2 = compressResource("testdata/calgary/paper6");
 
@@ -175,5 +193,4 @@ public class SnappyInputStreamTest
         assertArrayEquals(orig1, uncompressed1);
         assertArrayEquals(orig2, uncompressed2);
     }
-
 }
