@@ -1,3 +1,4 @@
+import de.johoop.findbugs4sbt.ReportType
 
 name := "snappy-java"
 
@@ -67,6 +68,14 @@ crossPaths := false
 logBuffered in Test := false
 
 incOptions := incOptions.value.withNameHashing(true)
+
+findbugsSettings
+
+findbugsReportType := Some(ReportType.FancyHtml)
+
+findbugsReportPath := Some(crossTarget.value / "findbugs" / "report.html")
+
+jacoco.settings
 
 libraryDependencies ++= Seq(
    "junit" % "junit" % "4.8.2" % "test",

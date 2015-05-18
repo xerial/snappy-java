@@ -476,7 +476,7 @@ public class Snappy
             throws IOException
     {
         byte[] result = new byte[Snappy.uncompressedLength(input)];
-        int byteSize = Snappy.uncompress(input, 0, input.length, result, 0);
+        Snappy.uncompress(input, 0, input.length, result, 0);
         return result;
     }
 
@@ -569,7 +569,7 @@ public class Snappy
     {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         char[] result = new char[uncompressedLength / 2];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        impl.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -585,7 +585,7 @@ public class Snappy
     {
         int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
         double[] result = new double[uncompressedLength / 8];
-        int byteSize = impl.rawUncompress(input, 0, input.length, result, 0);
+        impl.rawUncompress(input, 0, input.length, result, 0);
         return result;
     }
 
@@ -687,7 +687,7 @@ public class Snappy
     {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         float[] result = new float[uncompressedLength / 4];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        impl.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -718,7 +718,7 @@ public class Snappy
     {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         int[] result = new int[uncompressedLength / 4];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        impl.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -749,7 +749,7 @@ public class Snappy
     {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         long[] result = new long[uncompressedLength / 8];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        impl.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -780,7 +780,7 @@ public class Snappy
     {
         int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         short[] result = new short[uncompressedLength / 2];
-        int byteSize = impl.rawUncompress(input, offset, length, result, 0);
+        impl.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
@@ -838,7 +838,7 @@ public class Snappy
             UnsupportedEncodingException
     {
         byte[] uncompressed = new byte[uncompressedLength(input, offset, length)];
-        int compressedSize = uncompress(input, offset, length, uncompressed, 0);
+        uncompress(input, offset, length, uncompressed, 0);
         return new String(uncompressed, encoding);
     }
 
@@ -858,7 +858,7 @@ public class Snappy
             UnsupportedEncodingException
     {
         byte[] uncompressed = new byte[uncompressedLength(input, offset, length)];
-        int compressedSize = uncompress(input, offset, length, uncompressed, 0);
+        uncompress(input, offset, length, uncompressed, 0);
         return new String(uncompressed, encoding);
     }
 

@@ -95,11 +95,6 @@ public class SnappyInputStream
         }
         if (readBytes < header.length || header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
-            readFully(header, readBytes);
-            return;
-        }
-
-        if (!isValidHeader(header)) {
             // (probably) compressed by Snappy.compress(byte[])
             readFully(header, readBytes);
             return;
@@ -393,8 +388,8 @@ public class SnappyInputStream
             // Concatenated data
             int remainingHeaderSize = SnappyCodec.headerSize() - 4;
             readBytes = readNext(header, 4, remainingHeaderSize);
-            if (readBytes < remainingHeaderSize) {
-                return false;
+            if(readBytes < remainingHeaderSize) {
+                throw new SnappyIOException(SnappyErrorCode.FAILED_TO_UNCOMPRESS, String.format("Insufficient header size in a concatenated block"));
             }
 
             if (isValidHeader(header)) {

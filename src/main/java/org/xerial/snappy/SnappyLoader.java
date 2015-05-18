@@ -87,7 +87,10 @@ public class SnappyLoader
     static void cleanUpExtractedNativeLib()
     {
         if (nativeLibFile != null && nativeLibFile.exists()) {
-            nativeLibFile.delete();
+            boolean deleted = nativeLibFile.delete();
+            if (!deleted) {
+                // Deleting native lib has failed, but it's not serious so simply ignore it here
+            }
         }
     }
 
@@ -217,37 +220,50 @@ public class SnappyLoader
 
         try {
             // Extract a native library file into the target directory
-            InputStream reader = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
-            FileOutputStream writer = new FileOutputStream(extractedLibFile);
+            InputStream reader = null;
+            FileOutputStream writer = null;
             try {
-                byte[] buffer = new byte[8192];
-                int bytesRead = 0;
-                while ((bytesRead = reader.read(buffer)) != -1) {
-                    writer.write(buffer, 0, bytesRead);
+                reader = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
+                try {
+                    writer = new FileOutputStream(extractedLibFile);
+
+                    byte[] buffer = new byte[8192];
+                    int bytesRead = 0;
+                    while ((bytesRead = reader.read(buffer)) != -1) {
+                        writer.write(buffer, 0, bytesRead);
+                    }
+                }
+                finally {
+                    if (writer != null) {
+                        writer.close();
+                    }
                 }
             }
             finally {
-                // Delete the extracted lib file on JVM exit.
-                extractedLibFile.deleteOnExit();
-
-                if (writer != null) {
-                    writer.close();
-                }
                 if (reader != null) {
                     reader.close();
                 }
+
+                // Delete the extracted lib file on JVM exit.
+                extractedLibFile.deleteOnExit();
             }
 
             // Set executable (x) flag to enable Java to load the native library
-            extractedLibFile.setReadable(true);
-            extractedLibFile.setWritable(true, true);
-            extractedLibFile.setExecutable(true);
+            boolean success = extractedLibFile.setReadable(true) &&
+                    extractedLibFile.setWritable(true, true) &&
+                    extractedLibFile.setExecutable(true);
+            if (!success) {
+                // Setting file flag may fail, but in this case another error will be thrown in later phase
+            }
 
             // Check whether the contents are properly copied from the resource folder
             {
-                InputStream nativeIn = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
-                InputStream extractedLibIn = new FileInputStream(extractedLibFile);
+                InputStream nativeIn = null;
+                InputStream extractedLibIn = null;
                 try {
+                    nativeIn = SnappyLoader.class.getResourceAsStream(nativeLibraryFilePath);
+                    extractedLibIn = new FileInputStream(extractedLibFile);
+
                     if (!contentsEquals(nativeIn, extractedLibIn)) {
                         throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, String.format("Failed to write a native library file at %s", extractedLibFile));
                     }
@@ -318,7 +334,10 @@ public class SnappyLoader
         // Temporary folder for the native lib. Use the value of org.xerial.snappy.tempdir or java.io.tmpdir
         File tempFolder = new File(System.getProperty(KEY_SNAPPY_TEMPDIR, System.getProperty("java.io.tmpdir")));
         if (!tempFolder.exists()) {
-            tempFolder.mkdir();
+            boolean created = tempFolder.mkdirs();
+            if (!created) {
+                // if created == false, it will fail eventually in the later part
+            }
         }
 
         // Extract and load a native library inside the jar file

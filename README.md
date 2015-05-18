@@ -165,7 +165,15 @@ snappy-java uses sbt (simple build tool for Scala) as a build tool. Here is a si
     > ~test-only *     # run tests that matches a given name pattern  
     > publishM2        # publish jar to $HOME/.m2/repository
     > package          # create jar file
-    
+    > findbugs         # Produce findbugs report in target/findbugs
+    > jacoco:cover     # Report the code coverage of tests to target/jacoco folder    
+
+If you need to see detailed debug messages, launch sbt with `-Dloglevel=debug` option:
+
+```
+$ ./sbt -Dloglevel=debug
+```
+
 For the details of sbt usage, see my blog post: [Building Java Projects with sbt](http://xerial.org/blog/2014/03/24/sbt/)
 
 ## Miscellaneous Notes

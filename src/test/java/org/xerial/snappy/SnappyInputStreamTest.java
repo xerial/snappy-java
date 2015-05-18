@@ -35,7 +35,6 @@ import java.io.InputStream;
 import org.junit.Test;
 import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
-import scala.Array;
 
 public class SnappyInputStreamTest
 {
@@ -192,5 +191,17 @@ public class SnappyInputStreamTest
 
         assertArrayEquals(orig1, uncompressed1);
         assertArrayEquals(orig2, uncompressed2);
+    }
+
+    @Test
+    public void readSnappyCompressResult()
+            throws Exception
+    {
+        byte[] orig = readResourceFile("alice29.txt");
+        byte[] compressed = Snappy.compress(orig);
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
+        byte[] uncompressed = readFully(in);
+
+        assertArrayEquals(orig, uncompressed);
     }
 }
