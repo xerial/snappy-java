@@ -42,7 +42,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc Linux-ppc64 Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc Linux-ppc64 Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-sparcv9 SunOS-x86_64 AIX-ppc64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -140,6 +140,13 @@ SunOS-sparc_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include 
 SunOS-sparc_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 SunOS-sparc_LIBNAME   := libsnappyjava.so
 SunOS-sparc_SNAPPY_FLAGS  := 
+
+SunOS-sparcv9_CXX       := g++
+SunOS-sparcv9_STRIP     := strip
+SunOS-sparcv9_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC  -m64
+SunOS-sparcv9_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+SunOS-sparcv9_LIBNAME   := libsnappyjava.so
+SunOS-sparcv9_SNAPPY_FLAGS  :=
 
 SunOS-x86_64_CXX       := g++
 SunOS-x86_64_STRIP     := strip
