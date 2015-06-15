@@ -101,10 +101,14 @@ OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
 OsgiKeys.additionalHeaders := Map(
   "Bundle-NativeCode" -> Seq(
 "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x86-64",
+"org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x64",
+"org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=amd64",
 "org/xerial/snappy/native/Windows/x86/snappyjava.dll;osname=win32;processor=x86",
 "org/xerial/snappy/native/Mac/x86/libsnappyjava.jnilib;osname=macosx;processor=x86",
 "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.jnilib;osname=macosx;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
+"org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x64",
+"org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=amd64",
 "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
 "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
 "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
