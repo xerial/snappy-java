@@ -34,7 +34,8 @@ import org.junit.Test;
 public class OSInfoTest
 {
     @Test
-    public void osName() {
+    public void osName()
+    {
         assertEquals("Windows", OSInfo.translateOSNameToFolderName("Windows XP"));
         assertEquals("Windows", OSInfo.translateOSNameToFolderName("Windows 2000"));
         assertEquals("Windows", OSInfo.translateOSNameToFolderName("Windows Vista"));
@@ -53,7 +54,8 @@ public class OSInfoTest
     }
 
     @Test
-    public void archName() {
+    public void archName()
+    {
         assertEquals("i386", OSInfo.translateArchNameToFolderName("i386"));
         assertEquals("x86", OSInfo.translateArchNameToFolderName("x86"));
         assertEquals("ppc", OSInfo.translateArchNameToFolderName("ppc"));
@@ -61,7 +63,8 @@ public class OSInfoTest
     }
 
     @Test
-    public void folderPath() {
+    public void folderPath()
+    {
         String[] component = OSInfo.getNativeLibFolderPathForCurrentOS().split("/");
         assertEquals(2, component.length);
         assertEquals(OSInfo.getOSName(), component[0]);
@@ -69,7 +72,9 @@ public class OSInfoTest
     }
 
     @Test
-    public void testMainForOSName() throws Exception {
+    public void testMainForOSName()
+            throws Exception
+    {
 
         // preserve the current System.out
         PrintStream out = System.out;
@@ -78,18 +83,19 @@ public class OSInfoTest
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             PrintStream tmpOut = new PrintStream(buf);
             System.setOut(tmpOut);
-            OSInfo.main(new String[] { "--os" });
+            OSInfo.main(new String[] {"--os"});
             assertEquals(OSInfo.getOSName(), buf.toString());
         }
         finally {
             // reset STDOUT
             System.setOut(out);
         }
-
     }
 
     @Test
-    public void testMainForArchName() throws Exception {
+    public void testMainForArchName()
+            throws Exception
+    {
 
         // preserver the current System.out
         PrintStream out = System.out;
@@ -98,7 +104,7 @@ public class OSInfoTest
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             PrintStream tmpOut = new PrintStream(buf);
             System.setOut(tmpOut);
-            OSInfo.main(new String[] { "--arch" });
+            OSInfo.main(new String[] {"--arch"});
             assertEquals(OSInfo.getArchName(), buf.toString());
         }
         finally {
@@ -106,5 +112,4 @@ public class OSInfoTest
             System.setOut(out);
         }
     }
-
 }

@@ -43,35 +43,40 @@ import org.xerial.util.log.Logger;
 
 /**
  * Benchmark using Calgary data set
- * 
+ *
  * @author leo
- * 
  */
 public class CalgaryTest
 {
     private static Logger _logger = Logger.getLogger(CalgaryTest.class);
-    
+
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
 
-    static byte[] readFile(String file) throws IOException {
+    static byte[] readFile(String file)
+            throws IOException
+    {
         InputStream in = FileResource.find(CalgaryTest.class, file).openStream();
-        if (in == null)
+        if (in == null) {
             throw new IOException("file " + file + " is not found");
+        }
         try {
             return SnappyInputStreamTest.readFully(in);
         }
         finally {
-            if (in != null)
+            if (in != null) {
                 in.close();
+            }
         }
     }
 
-    public static final String[] files = { "bib", "book1", "book2", "geo", "news", "obj1", "obj2", "paper1", "paper2",
-            "paper3", "paper4", "paper5", "paper6", "pic", "progc", "progl", "progp", "trans" };
+    public static final String[] files = {"bib", "book1", "book2", "geo", "news", "obj1", "obj2", "paper1", "paper2",
+                                          "paper3", "paper4", "paper5", "paper6", "pic", "progc", "progl", "progp", "trans"};
 
     @Test
-    public void block() throws Exception {
+    public void block()
+            throws Exception
+    {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
 
@@ -83,7 +88,9 @@ public class CalgaryTest
     }
 
     @Test
-    public void stream() throws Exception {
+    public void stream()
+            throws Exception
+    {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
 
@@ -101,7 +108,9 @@ public class CalgaryTest
     }
 
     @Test
-    public void streamFramed() throws Exception {
+    public void streamFramed()
+            throws Exception
+    {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
 
@@ -111,54 +120,54 @@ public class CalgaryTest
             out.close();
 
             SnappyFramedInputStream in = new SnappyFramedInputStream(new ByteArrayInputStream(compressedBuf.toByteArray()));
-            
+
             byte[] uncompressed = new byte[orig.length];
             int readBytes = readBytes(in, uncompressed, 0, orig.length);
-            
+
             assertEquals(orig.length, readBytes);
             assertArrayEquals(orig, uncompressed);
         }
     }
 
     @Test
-    public void streamFramedToFile() throws Exception {
+    public void streamFramedToFile()
+            throws Exception
+    {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
 
             final File tempFile = tempFolder.newFile(f);
             final FileOutputStream compressedFOS = new FileOutputStream(tempFile);
-            try
-            {
+            try {
                 SnappyFramedOutputStream out = new SnappyFramedOutputStream(compressedFOS);
                 out.write(orig);
                 out.close();
             }
-            finally
-            {
+            finally {
                 compressedFOS.close();
             }
-            
+
             byte[] uncompressed = new byte[orig.length];
 
             final FileInputStream compressedFIS = new FileInputStream(tempFile);
-            try
-            {
+            try {
                 SnappyFramedInputStream in = new SnappyFramedInputStream(compressedFIS.getChannel());
                 int readBytes = readBytes(in, uncompressed, 0, orig.length);
-                
+
                 assertEquals(orig.length, readBytes);
             }
-            finally
-            {
+            finally {
                 compressedFIS.close();
             }
-            
+
             assertArrayEquals(orig, uncompressed);
         }
     }
 
     @Test
-    public void streamFramedNoCRCVerify() throws Exception {
+    public void streamFramedNoCRCVerify()
+            throws Exception
+    {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
 
@@ -168,17 +177,19 @@ public class CalgaryTest
             out.close();
 
             SnappyFramedInputStream in = new SnappyFramedInputStream(new ByteArrayInputStream(compressedBuf.toByteArray()), false);
-            
+
             byte[] uncompressed = new byte[orig.length];
             int readBytes = readBytes(in, uncompressed, 0, orig.length);
-            
+
             assertEquals(orig.length, readBytes);
             assertArrayEquals(orig, uncompressed);
         }
     }
 
     @Test
-    public void byteWiseRead() throws Exception {
+    public void byteWiseRead()
+            throws Exception
+    {
         for (String f : files) {
             byte[] orig = readFile("testdata/calgary/" + f);
 
@@ -190,10 +201,11 @@ public class CalgaryTest
             SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressedBuf.toByteArray()));
             byte[] uncompressed = new byte[orig.length];
             int cursor = 0;
-            for (;;) {
+            for (; ; ) {
                 int b = in.read();
-                if (b == -1)
+                if (b == -1) {
                     break;
+                }
                 uncompressed[cursor++] = (byte) b;
             }
             assertEquals(orig.length, cursor);
@@ -201,24 +213,22 @@ public class CalgaryTest
         }
     }
 
-    static final int readBytes(InputStream source, byte[] dest, int offset, int length) throws IOException
-    {        
+    static final int readBytes(InputStream source, byte[] dest, int offset, int length)
+            throws IOException
+    {
         // how many bytes were read.
         int lastRead = source.read(dest, offset, length);
 
         int totalRead = lastRead;
 
         // if we did not read as many bytes as we had hoped, try reading again.
-        if (lastRead < length)
-        {
+        if (lastRead < length) {
             // as long the buffer is not full (remaining() == 0) and we have not reached EOF (lastRead == -1) keep reading.
-            while (totalRead < length && lastRead != -1)
-            {
+            while (totalRead < length && lastRead != -1) {
                 lastRead = source.read(dest, offset + totalRead, length - totalRead);
 
                 // if we got EOF, do not add to total read.
-                if (lastRead != -1)
-                {
+                if (lastRead != -1) {
                     totalRead += lastRead;
                 }
             }

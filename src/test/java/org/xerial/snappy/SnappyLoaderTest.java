@@ -42,26 +42,31 @@ public class SnappyLoaderTest
 {
     private static Logger _logger = Logger.getLogger(SnappyLoaderTest.class);
 
-    public static BufferedInputStream openByteStream(Class< ? > referenceClass, String resourceFileName)
-            throws IOException {
+    public static BufferedInputStream openByteStream(Class<?> referenceClass, String resourceFileName)
+            throws IOException
+    {
         URL url = FileResource.find(referenceClass, resourceFileName);
         if (url != null) {
             return new BufferedInputStream(url.openStream());
         }
-        else
+        else {
             return null;
+        }
     }
 
-    public static <T> String loadIntoString(Class<T> referenceClass, String path) throws IOException {
+    public static <T> String loadIntoString(Class<T> referenceClass, String path)
+            throws IOException
+    {
         BufferedInputStream in = openByteStream(referenceClass, path);
-        if (in == null)
+        if (in == null) {
             throw new FileNotFoundException(
                     String.format("reference class:%s, path:%s", referenceClass.getName(), path));
+        }
 
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         try {
             byte[] tmp = new byte[4028];
-            for (int readBytes = 0; (readBytes = in.read(tmp)) != -1;) {
+            for (int readBytes = 0; (readBytes = in.read(tmp)) != -1; ) {
                 buf.write(tmp, 0, readBytes);
             }
             buf.flush();
@@ -73,7 +78,9 @@ public class SnappyLoaderTest
     }
 
     @Test
-    public void loadSnappyByDiffentClassloadersInTheSameJVM() throws Exception {
+    public void loadSnappyByDiffentClassloadersInTheSameJVM()
+            throws Exception
+    {
 
         // Parent class loader cannot see Snappy.class
         ClassLoader parent = this.getClass().getClassLoader().getParent();
@@ -89,17 +96,17 @@ public class SnappyLoaderTest
 
         // Prepare the child class loaders which can load Snappy.class
         URL classPath = new File("target/classes").toURI().toURL();
-        ClassRealm L1 = cw.newRealm("l1", URLClassLoader.newInstance(new URL[] { classPath }, parent));
-        ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] { classPath }, parent));
+        ClassRealm L1 = cw.newRealm("l1", URLClassLoader.newInstance(new URL[] {classPath}, parent));
+        ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] {classPath}, parent));
 
         // Actually load Snappy.class in a child class loader
 
-        Class< ? > S1 = L1.loadClass("org.xerial.snappy.Snappy");
+        Class<?> S1 = L1.loadClass("org.xerial.snappy.Snappy");
         Method m = S1.getMethod("compress", String.class);
         byte[] v = (byte[]) m.invoke(null, "hello world");
 
         // Load Snappy.class from another child class loader
-        Class< ? > S2 = L2.loadClass("org.xerial.snappy.Snappy");
+        Class<?> S2 = L2.loadClass("org.xerial.snappy.Snappy");
         Method m2 = S2.getMethod("compress", String.class);
         byte[] v2 = (byte[]) m2.invoke(null, "hello world");
 
@@ -107,17 +114,22 @@ public class SnappyLoaderTest
     }
 
     @Test
-    public void load() throws Exception {
+    public void load()
+            throws Exception
+    {
         SnappyLoader.load();
         _logger.debug(Snappy.maxCompressedLength(1024));
     }
 
     @Test
-    public void autoLoad() throws Exception {
+    public void autoLoad()
+            throws Exception
+    {
         _logger.debug(Snappy.maxCompressedLength(1024));
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         // Test for loading native library specified in -Djava.library.path
         System.setProperty(SnappyLoader.KEY_SNAPPY_USE_SYSTEMLIB, "true");
         _logger.debug(Snappy.maxCompressedLength(1024));

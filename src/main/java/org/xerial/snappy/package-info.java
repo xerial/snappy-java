@@ -16,7 +16,7 @@
 
 /**
  * Snappy API for compressing/decompressing data.
- * 
+ * <p/>
  * Usage
  * First, import {@link org.xerial.snappy.Snappy} in your Java code:
  * <code>
@@ -34,9 +34,9 @@
  * System.out.println(result);
  * </pre>
  * </code>
- * 
+ * <p/>
  * <p>In addition, high-level methods (Snappy.compress(String), Snappy.compress(float[] ..) etc. ) and low-level ones (e.g. Snappy.rawCompress(.. ), Snappy.rawUncompress(..), etc.), which minimize memory copies, can be used. </p>
- * 
+ * <p/>
  * <h3>Stream-based API</h3>
  * Stream-based compressor/decompressor SnappyOutputStream, SnappyInputStream are also available for reading/writing large data sets.
  */

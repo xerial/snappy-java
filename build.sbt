@@ -1,6 +1,4 @@
-import SonatypeKeys._
-
-sonatypeSettings
+import de.johoop.findbugs4sbt.ReportType
 
 name := "snappy-java"
 
@@ -10,7 +8,7 @@ organizationName := "xerial.org"
 
 description  := "snappy-java: A fast compression/decompression library"
 
-profileName := "org.xerial" 
+sonatypeProfileName := "org.xerial" 
 
 pomExtra := {
    <url>https://github.comm/xerial/snappy-java</url>
@@ -47,9 +45,17 @@ pomExtra := {
     </scm>
 }
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.6"
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
+
+javacOptions in doc := {
+ val opts = Seq("-source", "1.6")
+ if (scala.util.Properties.isJavaAtLeast("1.8"))
+   opts ++ Seq("-Xdoclint:none")
+ else
+   opts
+}
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 
@@ -62,6 +68,14 @@ crossPaths := false
 logBuffered in Test := false
 
 incOptions := incOptions.value.withNameHashing(true)
+
+findbugsSettings
+
+findbugsReportType := Some(ReportType.FancyHtml)
+
+findbugsReportPath := Some(crossTarget.value / "findbugs" / "report.html")
+
+jacoco.settings
 
 libraryDependencies ++= Seq(
    "junit" % "junit" % "4.8.2" % "test",
@@ -87,10 +101,14 @@ OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
 OsgiKeys.additionalHeaders := Map(
   "Bundle-NativeCode" -> Seq(
 "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x86-64",
+"org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x64",
+"org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=amd64",
 "org/xerial/snappy/native/Windows/x86/snappyjava.dll;osname=win32;processor=x86",
 "org/xerial/snappy/native/Mac/x86/libsnappyjava.jnilib;osname=macosx;processor=x86",
 "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.jnilib;osname=macosx;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
+"org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x64",
+"org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=amd64",
 "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
 "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
 "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
@@ -106,3 +124,28 @@ OsgiKeys.additionalHeaders := Map(
  "Bundle-ActivationPolicy" -> "lazy",
  "Bundle-Name" -> "snappy-java: A fast compression/decompression library"
 )
+
+import ReleaseTransformations._
+import sbtrelease._
+
+releaseTagName := { (version in ThisBuild).value }
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  runTest,
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  ReleaseStep(action = Command.process("publishSigned", _)),
+  setNextVersion,
+  commitNextVersion,
+  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  pushChanges
+)
+
+
+com.etsy.sbt.Checkstyle.checkstyleSettings
+
+com.etsy.sbt.Checkstyle.CheckstyleTasks.checkstyleConfig := file("src/checkstyle/checks.xml")

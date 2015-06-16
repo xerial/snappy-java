@@ -30,9 +30,8 @@ import java.util.Locale;
 
 /**
  * Provides OS name and architecture name.
- * 
+ *
  * @author leo
- * 
  */
 public class OSInfo
 {
@@ -91,8 +90,8 @@ public class OSInfo
         archMapping.put(IBMZ_64, IBMZ_64);
     }
 
-
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         if (args.length >= 1) {
             if ("--os".equals(args[0])) {
                 System.out.print(getOSName());
@@ -107,27 +106,31 @@ public class OSInfo
         System.out.print(getNativeLibFolderPathForCurrentOS());
     }
 
-    public static String getNativeLibFolderPathForCurrentOS() {
+    public static String getNativeLibFolderPathForCurrentOS()
+    {
         return getOSName() + "/" + getArchName();
     }
 
-    public static String getOSName() {
+    public static String getOSName()
+    {
         return translateOSNameToFolderName(System.getProperty("os.name"));
     }
 
-    public static String getArchName() {
+    public static String getArchName()
+    {
         // if running Linux on ARM, need to determine ABI of JVM
         String osArch = System.getProperty("os.arch");
         if (osArch.startsWith("arm") && System.getProperty("os.name").contains("Linux")) {
             String javaHome = System.getProperty("java.home");
             try {
                 // determine if first JVM found uses ARM hard-float ABI
-                String[] cmdarray = { "/bin/sh", "-c", "find '" + javaHome +
-                    "' -name 'libjvm.so' | head -1 | xargs readelf -A | " +
-                    "grep 'Tag_ABI_VFP_args: VFP registers'" };
+                String[] cmdarray = {"/bin/sh", "-c", "find '" + javaHome +
+                        "' -name 'libjvm.so' | head -1 | xargs readelf -A | " +
+                        "grep 'Tag_ABI_VFP_args: VFP registers'"};
                 int exitCode = Runtime.getRuntime().exec(cmdarray).waitFor();
-                if (exitCode == 0)
+                if (exitCode == 0) {
                     return "armhf";
+                }
             }
             catch (IOException e) {
                 // ignored: fall back to "arm" arch (soft-float ABI)
@@ -135,16 +138,18 @@ public class OSInfo
             catch (InterruptedException e) {
                 // ignored: fall back to "arm" arch (soft-float ABI)
             }
-        } 
+        }
         else {
             String lc = osArch.toLowerCase(Locale.US);
-            if(archMapping.containsKey(lc))
+            if (archMapping.containsKey(lc)) {
                 return archMapping.get(lc);
+            }
         }
         return translateArchNameToFolderName(osArch);
     }
 
-    static String translateOSNameToFolderName(String osName) {
+    static String translateOSNameToFolderName(String osName)
+    {
         if (osName.contains("Windows")) {
             return "Windows";
         }
@@ -162,7 +167,8 @@ public class OSInfo
         }
     }
 
-    static String translateArchNameToFolderName(String archName) {
+    static String translateArchNameToFolderName(String archName)
+    {
         return archName.replaceAll("\\W", "");
     }
 }

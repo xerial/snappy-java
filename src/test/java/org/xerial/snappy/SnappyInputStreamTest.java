@@ -40,18 +40,22 @@ public class SnappyInputStreamTest
 {
     private static Logger _logger = Logger.getLogger(SnappyInputStreamTest.class);
 
-    public static byte[] readResourceFile(String fileName) throws IOException {
+    public static byte[] readResourceFile(String fileName)
+            throws IOException
+    {
         BufferedInputStream input = new BufferedInputStream(FileResource.find(SnappyOutputStreamTest.class, fileName)
                 .openStream());
         assertNotNull(input);
         return readFully(input);
     }
 
-    public static byte[] readFully(InputStream input) throws IOException {
+    public static byte[] readFully(InputStream input)
+            throws IOException
+    {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             byte[] buf = new byte[4096];
-            for (int readBytes = 0; (readBytes = input.read(buf)) != -1;) {
+            for (int readBytes = 0; (readBytes = input.read(buf)) != -1; ) {
                 out.write(buf, 0, readBytes);
             }
             out.flush();
@@ -62,10 +66,12 @@ public class SnappyInputStreamTest
         }
     }
 
-    public static byte[] byteWiseReadFully(InputStream input) throws IOException {
+    public static byte[] byteWiseReadFully(InputStream input)
+            throws IOException
+    {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         byte[] buf = new byte[4096];
-        for (int readData = 0; (readData = input.read()) != -1;) {
+        for (int readData = 0; (readData = input.read()) != -1; ) {
             out.write(readData);
         }
         out.flush();
@@ -73,7 +79,9 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void read() throws Exception {
+    public void read()
+            throws Exception
+    {
         ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
         SnappyOutputStream snappyOut = new SnappyOutputStream(compressedBuf);
         byte[] orig = readResourceFile("alice29.txt");
@@ -87,11 +95,12 @@ public class SnappyInputStreamTest
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
-
     }
 
     @Test
-    public void readBlockCompressedData() throws Exception {
+    public void readBlockCompressedData()
+            throws Exception
+    {
         byte[] orig = readResourceFile("alice29.txt");
         byte[] compressed = Snappy.compress(orig);
 
@@ -103,7 +112,9 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void biteWiseRead() throws Exception {
+    public void biteWiseRead()
+            throws Exception
+    {
         byte[] orig = readResourceFile("testdata/calgary/paper6");
         byte[] compressed = Snappy.compress(orig);
 
@@ -112,17 +123,18 @@ public class SnappyInputStreamTest
 
         assertEquals(orig.length, uncompressed.length);
         assertArrayEquals(orig, uncompressed);
-
     }
 
     @Test
-    public void available() throws Exception {
+    public void available()
+            throws Exception
+    {
         byte[] orig = readResourceFile("testdata/calgary/paper6");
         byte[] compressed = Snappy.compress(orig);
 
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
         byte[] buf = new byte[4];
-        for (int readBytes = 0; (readBytes = in.read(buf)) != -1;) {
+        for (int readBytes = 0; (readBytes = in.read(buf)) != -1; ) {
             assertTrue(in.available() >= 0);
         }
         assertTrue(in.available() == 0);
@@ -130,16 +142,66 @@ public class SnappyInputStreamTest
     }
 
     @Test
-    public void emptyStream() throws Exception {
+    public void emptyStream()
+            throws Exception
+    {
         try {
             SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(new byte[0]));
             byte[] uncompressed = readFully(in);
             assertEquals(0, uncompressed.length);
             fail("should not reach here");
         }
-        catch(SnappyIOException e) {
+        catch (SnappyIOException e) {
             assertEquals(SnappyErrorCode.EMPTY_INPUT, e.getErrorCode());
         }
     }
 
+    public static byte[] compressResource(String resourcePath)
+            throws Exception
+    {
+        ByteArrayOutputStream compressedBuf = new ByteArrayOutputStream();
+        SnappyOutputStream snappyOut = new SnappyOutputStream(compressedBuf);
+        byte[] orig = readResourceFile(resourcePath);
+        snappyOut.write(orig);
+        snappyOut.close();
+        return compressedBuf.toByteArray();
+    }
+
+    @Test
+    public void chunkRead()
+            throws Exception
+    {
+        byte[] chunk1 = compressResource("alice29.txt");
+        byte[] chunk2 = compressResource("testdata/calgary/paper6");
+
+        byte[] concatenated = new byte[chunk1.length + chunk2.length];
+        System.arraycopy(chunk1, 0, concatenated, 0, chunk1.length);
+        System.arraycopy(chunk2, 0, concatenated, chunk1.length, chunk2.length);
+
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(concatenated));
+        byte[] uncompressed = readFully(in);
+
+        byte[] orig1 = readResourceFile("alice29.txt");
+        byte[] orig2 = readResourceFile("testdata/calgary/paper6");
+        assertEquals(orig1.length + orig2.length, uncompressed.length);
+        byte[] uncompressed1 = new byte[orig1.length];
+        byte[] uncompressed2 = new byte[orig2.length];
+        System.arraycopy(uncompressed, 0, uncompressed1, 0, orig1.length);
+        System.arraycopy(uncompressed, orig1.length, uncompressed2, 0, orig2.length);
+
+        assertArrayEquals(orig1, uncompressed1);
+        assertArrayEquals(orig2, uncompressed2);
+    }
+
+    @Test
+    public void readSnappyCompressResult()
+            throws Exception
+    {
+        byte[] orig = readResourceFile("alice29.txt");
+        byte[] compressed = Snappy.compress(orig);
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
+        byte[] uncompressed = readFully(in);
+
+        assertArrayEquals(orig, uncompressed);
+    }
 }
