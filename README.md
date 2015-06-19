@@ -115,7 +115,7 @@ When building on Solaris use
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
-## Building linux x86_64 binary
+## Building Linux x86\_64 binary
 
 snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++, compiled as follows:
 
@@ -134,6 +134,14 @@ $ make install
 ```
 
 This g++ build enables static linking of libstdc++. For more infomation on building GCC, see GCC's home page.
+
+## Building Linux s390/s390x binaries
+
+Older snapshots of snappy contain a buggy config.h.in that does not work properly on some big-endian platforms like Linux on IBM z (s390/s390x). Building snappy-java on s390/s390x requires fetching the snappy source from GitHub, and processing the source with autoconf to obtain a usable config.h. On a RHEL s390x system, these steps produced a working 64-bit snappy-java build (the process should be similar for other distributions):
+
+	$ sudo yum install java-1.7.1-ibm-devel libstdc++-static-devel
+	$ export JAVA_HOME=/usr/lib/jvm/java-1.7.1-ibm-1.7.1.2.10-1jpp.3.el7_0.s390x
+	$ make USE_GIT=1 GIT_REPO_URL=https://github.com/google/snappy.git GIT_SNAPPY_BRANCH=master IBM_JDK_7=1
 
 ## Cross-compiling for other platforms
 The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:
