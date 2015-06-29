@@ -163,8 +163,10 @@ public class SnappyOutputStreamTest
         // Compress the data once so that we know the expected size:
         byte[] expectedCompressedData = compressAsChunks(orig, Integer.MAX_VALUE);
         // Hardcoding an expected compressed size here will catch regressions that lower the
-        // compression quality:
-        assertEquals(91013, expectedCompressedData.length);
+        // compression quality. On little-endian platforms, the expected size is 91013; on
+        // big-endian platforms, the expected size is 90943.
+        assertTrue(String.format("unexpected compressed data size (%d)", expectedCompressedData.length),
+                   (expectedCompressedData.length == 91013 || expectedCompressedData.length == 90943));
         // The chunk size should not affect the size of the compressed output:
         int[] chunkSizes = new int[] {1, 100, 1023, 1024, 10000};
         for (int chunkSize : chunkSizes) {
