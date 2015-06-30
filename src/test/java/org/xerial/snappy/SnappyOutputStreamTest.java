@@ -31,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.ByteOrder;
 
 import org.junit.Test;
 import org.xerial.snappy.buffer.BufferAllocatorFactory;
@@ -164,7 +165,10 @@ public class SnappyOutputStreamTest
         byte[] expectedCompressedData = compressAsChunks(orig, Integer.MAX_VALUE);
         // Hardcoding an expected compressed size here will catch regressions that lower the
         // compression quality:
-        assertEquals(91013, expectedCompressedData.length);
+        if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN)
+            assertEquals(90943, expectedCompressedData.length);
+        else
+            assertEquals(91013, expectedCompressedData.length);
         // The chunk size should not affect the size of the compressed output:
         int[] chunkSizes = new int[] {1, 100, 1023, 1024, 10000};
         for (int chunkSize : chunkSizes) {
