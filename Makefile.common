@@ -116,6 +116,17 @@ Linux-ppc64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-ppc64_LIBNAME   := libsnappyjava.so
 Linux-ppc64_SNAPPY_FLAGS  :=
 
+AIX-ppc_CXX       := g++
+AIX-ppc_STRIP     := strip
+AIX-ppc_LIBNAME   := libsnappyjava.a
+ifeq ($(IBM_JDK_7),)
+  AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
+else
+  AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -I$(JAVA_HOME)/include/aix -Ilib/inc_ibm -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC
+endif
+AIX-ppc_LINKFLAGS := -shared -static-libgcc -static-libstdc++ -lcrypt
+AIX-ppc_SNAPPY_FLAGS  :=
+
 AIX-ppc64_CXX       := g++
 AIX-ppc64_STRIP     := strip -X64
 AIX-ppc64_LIBNAME   := libsnappyjava.a
