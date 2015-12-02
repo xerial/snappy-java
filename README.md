@@ -1,31 +1,31 @@
 The snappy-java is a Java port of the snappy
 <http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
 
-## Features 
+## Features
   * Fast compression/decompression around 200~400MB/sec.
-  * Less memory usage. SnappyOutputStream uses only 32KB+ in default. 
+  * Less memory usage. SnappyOutputStream uses only 32KB+ in default.
   * JNI-based implementation to achieve comparable performance to the native C++ version.  
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.).
   * Compression/decompression of Java primitive arrays (`float[]`, `double[]`, `int[]`, `short[]`, `long[]`, etc.)
-  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`). 
-  * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`. 
-  * [Framing-format support](http://snappy.googlecode.com/svn/trunk/framing_format.txt) (Since 1.1.0 version)
+  * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`).
+  * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`.
+  * [Framing-format support](https://github.com/google/snappy/blob/master/framing_format.txt) (Since 1.1.0 version)
   * OSGi support
   * [Apache License Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). Free for both commercial and non-commercial use.
 
-## Performance 
+## Performance
   * Snappy's main target is very high-speed compression/decompression with reasonable compression size. So the compression ratio of snappy-java is modest and about the same as `LZF` (ranging 20%-100% according to the dataset).
 
   * Here are some [benchmark results](https://github.com/ning/jvm-compressor-benchmark/wiki), comparing
  snappy-java and the other compressors
- `LZO-java`/`LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [Tatu Saloranta @cotowncoder](http://twitter.com/#!/cowtowncoder) for providing the benchmark suite. 
+ `LZO-java`/`LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [Tatu Saloranta @cotowncoder](http://twitter.com/#!/cowtowncoder) for providing the benchmark suite.
   * The benchmark result indicates snappy-java is the fastest compreesor/decompressor in Java: http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html
  * The decompression speed is twice as fast as the others: http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html
 
 
-## Download 
+## Download
 
- * [Release Notes](Milestone.md) 
+ * [Release Notes](Milestone.md)
 
 The current stable version is available from here:
   * Release version: http://central.maven.org/maven2/org/xerial/snappy/snappy-java/
@@ -51,7 +51,7 @@ libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.2"
 ```
 
 
-## Usage 
+## Usage
 First, import `org.xerial.snapy.Snappy` in your Java code:
 
 ```java
@@ -65,15 +65,15 @@ String input = "Hello snappy-java! Snappy-java is a JNI-based wrapper of "
      + "Snappy, a fast compresser/decompresser.";
 byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
 byte[] uncompressed = Snappy.uncompress(compressed);
-     
+
 String result = new String(uncompressed, "UTF-8");
 System.out.println(result);
 ```
 
-In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used. 
+In addition, high-level methods (`Snappy.compress(String)`, `Snappy.compress(float[] ..)` etc. ) and low-level ones (e.g. `Snappy.rawCompress(.. )`,  `Snappy.rawUncompress(..)`, etc.), which minimize memory copies, can be used.
 
 ### Stream-based API
-Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets. `SnappyFramedOutputStream`/`SnappyFramedInputStream` can be used for the [framing format](https://code.google.com/p/snappy/source/browse/trunk/framing_format.txt). 
+Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` are also available for reading/writing large data sets. `SnappyFramedOutputStream`/`SnappyFramedInputStream` can be used for the [framing format](https://github.com/google/snappy/blob/master/framing_format.txt). 
 
  * See also [Javadoc API](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.2/snappy-java-1.1.2-javadoc.jar/!/index.html)
 
@@ -82,7 +82,7 @@ Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` ar
 
 | Write\Read      | `Snappy.uncompress`   | `SnappyInputStream`  | `SnappyFramedInputStream` |
 | --------------- |:-------------------:|:------------------:|:-----------------------:|
-| `Snappy.compress` | ok | ok | x | 
+| `Snappy.compress` | ok | ok | x |
 | `SnappyOutputStream`  | x | ok | x |
 | `SnappyFramedOutputStream` | x | x | ok |
 
@@ -90,7 +90,7 @@ Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` ar
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
 
     $ javac -classpath ".;snappy-java-(VERSION).jar" Sample.java  # in Windows
-    or 
+    or
     $ javac -classpath ".:snappy-java-(VERSION).jar" Sample.java  # in Mac or Linux
 
 
@@ -102,15 +102,15 @@ Post bug reports or feature request to the Issue Tracker: <https://github.com/xe
 Public discussion forum is here: [Xerial Public Discussion Group)[http://groups.google.com/group/xerial?hl=en]
 
 
-## Building from the source code 
+## Building from the source code
 See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), g++ compiler (mingw in Windows) etc.
 
     $ git clone https://github.com/xerial/snappy-java.git
     $ cd snappy-java
     $ make
-    
+
 When building on Solaris use
-    
+
     $ gmake
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
@@ -187,7 +187,7 @@ For the details of sbt usage, see my blog post: [Building Java Projects with sbt
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
-Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders. 
+Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders.
 
 ----
 Snappy-java is developed by [Taro L. Saito](http://www.xerial.org/leo). Twitter  [@taroleo](http://twitter.com/#!/taroleo)
