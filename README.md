@@ -99,7 +99,7 @@ If you have snappy-java-(VERSION).jar in the current directory, use `-classpath`
 ## Public discussion group
 Post bug reports or feature request to the Issue Tracker: <https://github.com/xerial/snappy-java/issues>
 
-Public discussion forum is here: [Xerial Public Discussion Group)[http://groups.google.com/group/xerial?hl=en]
+Public discussion forum is here: [Xerial Public Discussion Group](http://groups.google.com/group/xerial?hl=en)
 
 
 ## Building from the source code
