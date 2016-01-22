@@ -25,6 +25,7 @@
 package org.xerial.snappy;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -282,19 +283,27 @@ public class Snappy
      */
     public static String getNativeLibraryVersion()
     {
-
         URL versionFile = SnappyLoader.class.getResource("/org/xerial/snappy/VERSION");
 
         String version = "unknown";
         try {
             if (versionFile != null) {
-                Properties versionData = new Properties();
-                versionData.load(versionFile.openStream());
-                version = versionData.getProperty("version", version);
-                if (version.equals("unknown")) {
-                    version = versionData.getProperty("VERSION", version);
+                InputStream in = null;
+                try {
+                    Properties versionData = new Properties();
+                    in = versionFile.openStream();
+                    versionData.load(in);
+                    version = versionData.getProperty("version", version);
+                    if (version.equals("unknown")) {
+                        version = versionData.getProperty("VERSION", version);
+                    }
+                    version = version.trim().replaceAll("[^0-9\\.]", "");
                 }
-                version = version.trim().replaceAll("[^0-9\\.]", "");
+                finally {
+                    if(in != null) {
+                        in.close();
+                    }
+                }
             }
         }
         catch (IOException e) {
