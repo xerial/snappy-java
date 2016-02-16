@@ -32,36 +32,37 @@ import java.util.jar.Manifest;
 
 /**
  * OSGi bundle entry point
- * 
+ *
  * @author leo
- * 
  */
-public class SnappyBundleActivator implements BundleActivator
+public class SnappyBundleActivator
+        implements BundleActivator
 {
-	/**
-	 * Name of the Snappy native library
-	 */
-	public static final String LIBRARY_NAME = "snappyjava";
-	
-    /** 
+    /**
+     * Name of the Snappy native library
+     */
+    public static final String LIBRARY_NAME = "snappyjava";
+
+    /**
      * Make a call to {@link System#loadLibrary(String)} to load the native library which assumes
      * that the library is available on the path based on this {@link Bundle}'s {@link Manifest}.
      */
-    public void start(BundleContext context) throws Exception 
+    public void start(BundleContext context)
+            throws Exception
     {
-    	String library = System.mapLibraryName(LIBRARY_NAME);
-    	if (library.toLowerCase().endsWith(".dylib")) 
-    	{
-    		// some MacOS JDK7+ vendors map to dylib instead of jnilib
-    		library = library.replace(".dylib", ".jnilib");
-    	}
-    	System.loadLibrary(library);
-    	SnappyLoader.setApi(new SnappyNative());
+        String library = System.mapLibraryName(LIBRARY_NAME);
+        if (library.toLowerCase().endsWith(".dylib")) {
+            // some MacOS JDK7+ vendors map to dylib instead of jnilib
+            library = library.replace(".dylib", ".jnilib");
+        }
+        System.loadLibrary(library);
+        SnappyLoader.setApi(new SnappyNative());
     }
 
-    public void stop(BundleContext context) throws Exception
+    public void stop(BundleContext context)
+            throws Exception
     {
-    	SnappyLoader.setApi(null);
+        SnappyLoader.setApi(null);
         SnappyLoader.cleanUpExtractedNativeLib();
     }
 }

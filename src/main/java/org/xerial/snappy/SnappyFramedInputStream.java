@@ -28,12 +28,15 @@ import java.util.Arrays;
  * href="http://snappy.googlecode.com/svn/trunk/framing_format.txt"
  * >x-snappy-framed</a> as an {@link InputStream} and
  * {@link ReadableByteChannel}.
- * 
+ *
  * @author Brett Okken
  * @since 1.1.0
  */
-public final class SnappyFramedInputStream extends InputStream implements
-        ReadableByteChannel {
+public final class SnappyFramedInputStream
+        extends InputStream
+        implements
+        ReadableByteChannel
+{
 
     private final ReadableByteChannel rbc;
     private final ByteBuffer frameHeader;
@@ -77,51 +80,51 @@ public final class SnappyFramedInputStream extends InputStream implements
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * input stream.
-     * 
-     * @param in
-     *            the underlying input stream. Must not be {@code null}.
+     *
+     * @param in the underlying input stream. Must not be {@code null}.
      */
-    public SnappyFramedInputStream(InputStream in) throws IOException {
+    public SnappyFramedInputStream(InputStream in)
+            throws IOException
+    {
         this(in, true);
     }
 
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * input stream.
-     * 
-     * @param in
-     *            the underlying input stream. Must not be {@code null}.
-     * @param verifyChecksums
-     *            if true, checksums in input stream will be verified
+     *
+     * @param in the underlying input stream. Must not be {@code null}.
+     * @param verifyChecksums if true, checksums in input stream will be verified
      */
     public SnappyFramedInputStream(InputStream in, boolean verifyChecksums)
-            throws IOException {
+            throws IOException
+    {
         this(Channels.newChannel(in), verifyChecksums);
     }
 
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * channel.
-     * 
-     * @param in
-     *            the underlying readable channel. Must not be {@code null}.
+     *
+     * @param in the underlying readable channel. Must not be {@code null}.
      */
     public SnappyFramedInputStream(ReadableByteChannel in)
-            throws IOException {
+            throws IOException
+    {
         this(in, true);
     }
 
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * channel.
-     * 
-     * @param in
-     *            the underlying readable channel. Must not be {@code null}.
-     * @param verifyChecksums
-     *            if true, checksums in input stream will be verified
+     *
+     * @param in the underlying readable channel. Must not be {@code null}.
+     * @param verifyChecksums if true, checksums in input stream will be verified
      */
     public SnappyFramedInputStream(ReadableByteChannel in,
-            boolean verifyChecksums) throws IOException {
+            boolean verifyChecksums)
+            throws IOException
+    {
         if (in == null) {
             throw new NullPointerException("in is null");
         }
@@ -150,16 +153,17 @@ public final class SnappyFramedInputStream extends InputStream implements
     /**
      * @param size
      */
-    private void allocateBuffersBasedOnSize(int size) {
+    private void allocateBuffersBasedOnSize(int size)
+    {
 
         if (input != null) {
             releaseDirectByteBuffer(input);
         }
-        
+
         if (uncompressedDirect != null) {
             releaseDirectByteBuffer(uncompressedDirect);
         }
-        
+
         input = ByteBuffer.allocateDirect(size);
         final int maxCompressedLength = Snappy.maxCompressedLength(size);
         uncompressedDirect = ByteBuffer.allocateDirect(maxCompressedLength);
@@ -167,7 +171,9 @@ public final class SnappyFramedInputStream extends InputStream implements
     }
 
     @Override
-    public int read() throws IOException {
+    public int read()
+            throws IOException
+    {
         if (closed) {
             return -1;
         }
@@ -178,7 +184,9 @@ public final class SnappyFramedInputStream extends InputStream implements
     }
 
     @Override
-    public int read(byte[] output, int offset, int length) throws IOException {
+    public int read(byte[] output, int offset, int length)
+            throws IOException
+    {
 
         if (output == null) {
             throw new IllegalArgumentException("output is null");
@@ -207,7 +215,9 @@ public final class SnappyFramedInputStream extends InputStream implements
     }
 
     @Override
-    public int available() throws IOException {
+    public int available()
+            throws IOException
+    {
         if (closed) {
             return 0;
         }
@@ -218,7 +228,8 @@ public final class SnappyFramedInputStream extends InputStream implements
      * {@inheritDoc}
      */
     @Override
-    public boolean isOpen() {
+    public boolean isOpen()
+    {
         return !closed;
     }
 
@@ -226,7 +237,9 @@ public final class SnappyFramedInputStream extends InputStream implements
      * {@inheritDoc}
      */
     @Override
-    public int read(ByteBuffer dst) throws IOException {
+    public int read(ByteBuffer dst)
+            throws IOException
+    {
 
         if (dst == null) {
             throw new IllegalArgumentException("dst is null");
@@ -259,14 +272,15 @@ public final class SnappyFramedInputStream extends InputStream implements
      * Any calls after the source has been exhausted will result in a return
      * value of {@code 0}.
      * </p>
-     * 
-     * @param os
-     *            The destination to write decompressed content to.
+     *
+     * @param os The destination to write decompressed content to.
      * @return The number of bytes transferred.
      * @throws IOException
      * @since 1.1.1
      */
-    public long transferTo(OutputStream os) throws IOException {
+    public long transferTo(OutputStream os)
+            throws IOException
+    {
         if (os == null) {
             throw new IllegalArgumentException("os is null");
         }
@@ -291,21 +305,22 @@ public final class SnappyFramedInputStream extends InputStream implements
      * Transfers the entire content of this {@link ReadableByteChannel} to
      * <i>wbc</i>. This potentially limits the amount of buffering required to
      * decompress content.
-     * 
+     * <p/>
      * <p>
      * Unlike {@link #read(ByteBuffer)}, this method does not need to be called
      * multiple times. A single call will transfer all available content. Any
      * calls after the source has been exhausted will result in a return value
      * of {@code 0}.
      * </p>
-     * 
-     * @param wbc
-     *            The destination to write decompressed content to.
+     *
+     * @param wbc The destination to write decompressed content to.
      * @return The number of bytes transferred.
      * @throws IOException
      * @since 1.1.1
      */
-    public long transferTo(WritableByteChannel wbc) throws IOException {
+    public long transferTo(WritableByteChannel wbc)
+            throws IOException
+    {
         if (wbc == null) {
             throw new IllegalArgumentException("wbc is null");
         }
@@ -335,10 +350,13 @@ public final class SnappyFramedInputStream extends InputStream implements
     }
 
     @Override
-    public void close() throws IOException {
+    public void close()
+            throws IOException
+    {
         try {
             rbc.close();
-        } finally {
+        }
+        finally {
             if (!closed) {
                 closed = true;
             }
@@ -346,18 +364,20 @@ public final class SnappyFramedInputStream extends InputStream implements
             if (input != null) {
                 releaseDirectByteBuffer(input);
             }
-            
+
             if (uncompressedDirect != null) {
                 releaseDirectByteBuffer(uncompressedDirect);
             }
         }
     }
 
-    static enum FrameAction {
+    static enum FrameAction
+    {
         RAW, SKIP, UNCOMPRESS;
     }
 
-    public static final class FrameMetaData {
+    public static final class FrameMetaData
+    {
         final int length;
         final FrameAction frameAction;
 
@@ -365,14 +385,16 @@ public final class SnappyFramedInputStream extends InputStream implements
          * @param frameAction
          * @param length
          */
-        public FrameMetaData(FrameAction frameAction, int length) {
+        public FrameMetaData(FrameAction frameAction, int length)
+        {
             super();
             this.frameAction = frameAction;
             this.length = length;
         }
     }
 
-    public static final class FrameData {
+    public static final class FrameData
+    {
         final int checkSum;
         final int offset;
 
@@ -380,14 +402,17 @@ public final class SnappyFramedInputStream extends InputStream implements
          * @param checkSum
          * @param offset
          */
-        public FrameData(int checkSum, int offset) {
+        public FrameData(int checkSum, int offset)
+        {
             super();
             this.checkSum = checkSum;
             this.offset = offset;
         }
     }
 
-    private boolean ensureBuffer() throws IOException {
+    private boolean ensureBuffer()
+            throws IOException
+    {
         if (available() > 0) {
             return true;
         }
@@ -435,14 +460,15 @@ public final class SnappyFramedInputStream extends InputStream implements
                         .allocateDirect(uncompressedLength);
                 buffer = new byte[Math.max(input.capacity(), uncompressedLength)];
             }
-            
+
             uncompressedDirect.clear();
 
             this.valid = Snappy.uncompress(input, uncompressedDirect);
 
             uncompressedDirect.get(buffer, 0, valid);
             this.position = 0;
-        } else {
+        }
+        else {
             // we need to start reading at the offset
             input.position(frameData.offset);
             this.position = 0;
@@ -461,7 +487,9 @@ public final class SnappyFramedInputStream extends InputStream implements
         return true;
     }
 
-    private boolean readBlockHeader() throws IOException {
+    private boolean readBlockHeader()
+            throws IOException
+    {
         frameHeader.clear();
         int read = readBytes(rbc, frameHeader);
 
@@ -478,13 +506,13 @@ public final class SnappyFramedInputStream extends InputStream implements
     }
 
     /**
-     * 
      * @param frameHeader
      * @return
      * @throws IOException
      */
     private FrameMetaData getFrameMetaData(ByteBuffer frameHeader)
-            throws IOException {
+            throws IOException
+    {
 
         assert frameHeader.hasArray();
 
@@ -537,16 +565,18 @@ public final class SnappyFramedInputStream extends InputStream implements
     }
 
     /**
-     * 
      * @param content
      * @return
      * @throws IOException
      */
-    private FrameData getFrameData(ByteBuffer content) throws IOException {
+    private FrameData getFrameData(ByteBuffer content)
+            throws IOException
+    {
         return new FrameData(getCrc32c(content), 4);
     }
 
-    private int getCrc32c(ByteBuffer content) {
+    private int getCrc32c(ByteBuffer content)
+    {
 
         final int position = content.position();
 

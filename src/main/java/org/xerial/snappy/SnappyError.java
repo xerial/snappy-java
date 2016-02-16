@@ -26,37 +26,40 @@ package org.xerial.snappy;
 
 /**
  * Used when serious errors (unchecked exception) are observed.
- * 
+ *
  * @author leo
- * 
  */
-public class SnappyError extends Error
+public class SnappyError
+        extends Error
 {
     /**
-     * 
+     *
      */
-    private static final long    serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     public final SnappyErrorCode errorCode;
 
-    public SnappyError(SnappyErrorCode code) {
+    public SnappyError(SnappyErrorCode code)
+    {
         super();
         this.errorCode = code;
     }
 
-    public SnappyError(SnappyErrorCode code, Error e) {
+    public SnappyError(SnappyErrorCode code, Error e)
+    {
         super(e);
         this.errorCode = code;
     }
 
-    public SnappyError(SnappyErrorCode code, String message) {
+    public SnappyError(SnappyErrorCode code, String message)
+    {
         super(message);
         this.errorCode = code;
     }
 
     @Override
-    public String getMessage() {
+    public String getMessage()
+    {
         return String.format("[%s] %s", errorCode.name(), super.getMessage());
     }
-
 }

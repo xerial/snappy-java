@@ -35,7 +35,7 @@ endif
 
 $(SNAPPY_ARCHIVE):
 	@mkdir -p $(@D)
-	curl -o$@ http://snappy.googlecode.com/files/snappy-$(VERSION).tar.gz
+	curl -L -o$@ https://github.com/google/snappy/releases/download/$(VERSION)/snappy-$(VERSION).tar.gz
 
 $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 	$(TAR) xvfz $< -C $(TARGET)	
@@ -47,7 +47,7 @@ $(SNAPPY_GIT_UNPACKED):
 	git clone $(GIT_REPO_URL) $(SNAPPY_SRC_DIR)
 	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(GIT_SNAPPY_BRANCH) $(GIT_SNAPPY_BRANCH)
 	touch $@
-	cd  $(SNAPPY_SRC_DIR) && ./configure
+	cd  $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 

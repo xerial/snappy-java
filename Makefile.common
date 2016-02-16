@@ -42,7 +42,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc Linux-ppc64 Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc Linux-ppc64 Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -116,6 +116,17 @@ Linux-ppc64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-ppc64_LIBNAME   := libsnappyjava.so
 Linux-ppc64_SNAPPY_FLAGS  :=
 
+AIX-ppc_CXX       := g++
+AIX-ppc_STRIP     := strip
+AIX-ppc_LIBNAME   := libsnappyjava.a
+ifeq ($(IBM_JDK_7),)
+  AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
+else
+  AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -I$(JAVA_HOME)/include/aix -Ilib/inc_ibm -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -maix32
+endif
+AIX-ppc_LINKFLAGS := -shared -static-libgcc -static-libstdc++ -lcrypt
+AIX-ppc_SNAPPY_FLAGS  :=
+
 AIX-ppc64_CXX       := g++
 AIX-ppc64_STRIP     := strip -X64
 AIX-ppc64_LIBNAME   := libsnappyjava.a
@@ -126,6 +137,28 @@ else
 endif
 AIX-ppc64_LINKFLAGS := -shared -static-libgcc -static-libstdc++ -lcrypt
 AIX-ppc64_SNAPPY_FLAGS  :=
+
+Linux-s390_CXX       := g++
+Linux-s390_STRIP     := strip
+ifeq ($(IBM_JDK_7),)
+  Linux-s390_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m31
+else
+  Linux-s390_CXXFLAGS  := -DHAVE_CONFIG_H -I$(JAVA_HOME)/include/linux -Ilib/inc_ibm -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -m31 
+endif
+Linux-s390_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-s390_LIBNAME   := libsnappyjava.so
+Linux-s390_SNAPPY_FLAGS  :=
+
+Linux-s390x_CXX       := g++
+Linux-s390x_STRIP     := strip
+ifeq ($(IBM_JDK_7),)
+  Linux-s390x_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
+else
+  Linux-s390x_CXXFLAGS  := -DHAVE_CONFIG_H -I$(JAVA_HOME)/include/linux -Ilib/inc_ibm -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -m64 
+endif
+Linux-s390x_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-s390x_LIBNAME   := libsnappyjava.so
+Linux-s390x_SNAPPY_FLAGS  :=
 
 SunOS-x86_CXX       := g++ 
 SunOS-x86_STRIP     := strip

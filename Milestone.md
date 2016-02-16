@@ -1,5 +1,17 @@
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.2.1 (2016-01-22)
+ * Fixed #131
+
+## snappy-java-1.1.2 (22 September 2015)
+ * This is a backward compatible release for 1.1.x. 
+ * Add AIX (32-bit) support. 
+    * There is no upgrade for the native libraries of the other platforms.
+ * A major change since 1.1.1 is a support for reading concatenated results of SnappyOutputStream(s)
+
+## snappy-java-1.1.2-RC2 (18 May 2015)
+ * Fix #107: SnappyOutputStream.close() is not idempotent
+
 ## snappy-java-1.1.2-RC1 (13 May 2015)
  * SnappyInputStream now supports reading concatenated compressed results of SnappyOutputStream
  * There has been no compressed format change since 1.0.5.x. So You can read the compressed results interchangeablly between these versions.

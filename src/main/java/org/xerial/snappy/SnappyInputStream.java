@@ -30,30 +30,31 @@ import java.io.InputStream;
 
 /**
  * A stream filter for reading data compressed by {@link SnappyOutputStream}.
- * 
- * 
+ *
  * @author leo
- * 
  */
-public class SnappyInputStream extends InputStream
+public class SnappyInputStream
+        extends InputStream
 {
-    private boolean             finishedReading    = false;
+    private boolean finishedReading = false;
     protected final InputStream in;
 
-    private byte[]              compressed;
-    private byte[]              uncompressed;
-    private int                 uncompressedCursor = 0;
-    private int                 uncompressedLimit  = 0;
+    private byte[] compressed;
+    private byte[] uncompressed;
+    private int uncompressedCursor = 0;
+    private int uncompressedLimit = 0;
 
-    private byte[]              header             = new byte[SnappyCodec.headerSize()];
+    private byte[] header = new byte[SnappyCodec.headerSize()];
 
     /**
      * Create a filter for reading compressed data as a uncompressed stream
-     * 
+     *
      * @param input
      * @throws IOException
      */
-    public SnappyInputStream(InputStream input) throws IOException {
+    public SnappyInputStream(InputStream input)
+            throws IOException
+    {
         this.in = input;
         readHeader();
     }
@@ -65,57 +66,63 @@ public class SnappyInputStream extends InputStream
      * @see java.io.InputStream#close()
      */
     @Override
-    public void close() throws IOException {
+    public void close()
+            throws IOException
+    {
         compressed = null;
         uncompressed = null;
-        if (in != null)
+        if (in != null) {
             in.close();
+        }
     }
 
-    protected void readHeader() throws IOException {
+    protected void readHeader()
+            throws IOException
+    {
         int readBytes = 0;
         while (readBytes < header.length) {
             int ret = in.read(header, readBytes, header.length - readBytes);
-            if (ret == -1)
+            if (ret == -1) {
                 break;
+            }
             readBytes += ret;
         }
 
         // Quick test of the header
-        if(readBytes == 0) {
+        if (readBytes == 0) {
             // Snappy produces at least 1-byte result. So the empty input is not a valid input
             throw new SnappyIOException(SnappyErrorCode.EMPTY_INPUT, "Cannot decompress empty stream");
         }
         if (readBytes < header.length || header[0] != SnappyCodec.MAGIC_HEADER[0]) {
             // do the default uncompression
-            readFully(header, readBytes);
-            return;
-        }
-
-        if(!isValidHeader(header)) {
             // (probably) compressed by Snappy.compress(byte[])
             readFully(header, readBytes);
             return;
         }
     }
 
-    private static boolean isValidHeader(byte[] header) throws IOException {
+    private static boolean isValidHeader(byte[] header)
+            throws IOException
+    {
         SnappyCodec codec = SnappyCodec.readHeader(new ByteArrayInputStream(header));
         if (codec.isValidMagicHeader()) {
             // The input data is compressed by SnappyOutputStream
-            if(codec.version < SnappyCodec.MINIMUM_COMPATIBLE_VERSION) {
+            if (codec.version < SnappyCodec.MINIMUM_COMPATIBLE_VERSION) {
                 throw new SnappyIOException(SnappyErrorCode.INCOMPATIBLE_VERSION, String.format(
-                    "Compressed with an incompatible codec version %d. At least version %d is required",
-                    codec.version, SnappyCodec.MINIMUM_COMPATIBLE_VERSION));
+                        "Compressed with an incompatible codec version %d. At least version %d is required",
+                        codec.version, SnappyCodec.MINIMUM_COMPATIBLE_VERSION));
             }
             return true;
         }
-        else
+        else {
             return false;
+        }
     }
 
-    protected void readFully(byte[] fragment, int fragmentLength) throws IOException {
-        if(fragmentLength == 0) {
+    protected void readFully(byte[] fragment, int fragmentLength)
+            throws IOException
+    {
+        if (fragmentLength == 0) {
             finishedReading = true;
             return;
         }
@@ -123,7 +130,7 @@ public class SnappyInputStream extends InputStream
         compressed = new byte[Math.max(8 * 1024, fragmentLength)]; // 8K
         System.arraycopy(fragment, 0, compressed, 0, fragmentLength);
         int cursor = fragmentLength;
-        for (int readBytes = 0; (readBytes = in.read(compressed, cursor, compressed.length - cursor)) != -1;) {
+        for (int readBytes = 0; (readBytes = in.read(compressed, cursor, compressed.length - cursor)) != -1; ) {
             cursor += readBytes;
             if (cursor >= compressed.length) {
                 byte[] newBuf = new byte[(compressed.length * 2)];
@@ -140,7 +147,6 @@ public class SnappyInputStream extends InputStream
         Snappy.uncompress(compressed, 0, cursor, uncompressed, 0);
         this.uncompressedCursor = 0;
         this.uncompressedLimit = uncompressedLength;
-
     }
 
     /**
@@ -151,26 +157,31 @@ public class SnappyInputStream extends InputStream
      * @see java.io.InputStream#read(byte[], int, int)
      */
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len)
+            throws IOException
+    {
         return rawRead(b, off, len);
     }
 
     /**
      * Read uncompressed data into the specified array
-     * 
+     *
      * @param array
      * @param byteOffset
      * @param byteLength
      * @return written bytes
      * @throws IOException
      */
-    public int rawRead(Object array, int byteOffset, int byteLength) throws IOException {
+    public int rawRead(Object array, int byteOffset, int byteLength)
+            throws IOException
+    {
         int writtenBytes = 0;
-        for (; writtenBytes < byteLength;) {
+        for (; writtenBytes < byteLength; ) {
 
             if (uncompressedCursor >= uncompressedLimit) {
-                if (hasNextChunk())
+                if (hasNextChunk()) {
                     continue;
+                }
                 else {
                     return writtenBytes == 0 ? -1 : writtenBytes;
                 }
@@ -186,157 +197,165 @@ public class SnappyInputStream extends InputStream
 
     /**
      * Read long array from the stream
-     * 
-     * @param d
-     *            input
-     * @param off
-     *            offset
-     * @param len
-     *            the number of long elements to read
+     *
+     * @param d input
+     * @param off offset
+     * @param len the number of long elements to read
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(long[] d, int off, int len) throws IOException {
+    public int read(long[] d, int off, int len)
+            throws IOException
+    {
         return rawRead(d, off * 8, len * 8);
     }
 
     /**
      * Read long array from the stream
-     * 
+     *
      * @param d
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(long[] d) throws IOException {
+    public int read(long[] d)
+            throws IOException
+    {
         return read(d, 0, d.length);
     }
 
     /**
      * Read double array from the stream
-     * 
-     * @param d
-     *            input
-     * @param off
-     *            offset
-     * @param len
-     *            the number of double elements to read
+     *
+     * @param d input
+     * @param off offset
+     * @param len the number of double elements to read
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(double[] d, int off, int len) throws IOException {
+    public int read(double[] d, int off, int len)
+            throws IOException
+    {
         return rawRead(d, off * 8, len * 8);
     }
 
     /**
      * Read double array from the stream
-     * 
+     *
      * @param d
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(double[] d) throws IOException {
+    public int read(double[] d)
+            throws IOException
+    {
         return read(d, 0, d.length);
     }
 
     /**
      * Read int array from the stream
-     * 
+     *
      * @param d
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(int[] d) throws IOException {
+    public int read(int[] d)
+            throws IOException
+    {
         return read(d, 0, d.length);
     }
 
     /**
      * Read int array from the stream
-     * 
-     * @param d
-     *            input
-     * @param off
-     *            offset
-     * @param len
-     *            the number of int elements to read
+     *
+     * @param d input
+     * @param off offset
+     * @param len the number of int elements to read
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(int[] d, int off, int len) throws IOException {
+    public int read(int[] d, int off, int len)
+            throws IOException
+    {
         return rawRead(d, off * 4, len * 4);
     }
 
     /**
      * Read float array from the stream
-     * 
-     * @param d
-     *            input
-     * @param off
-     *            offset
-     * @param len
-     *            the number of float elements to read
+     *
+     * @param d input
+     * @param off offset
+     * @param len the number of float elements to read
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(float[] d, int off, int len) throws IOException {
+    public int read(float[] d, int off, int len)
+            throws IOException
+    {
         return rawRead(d, off * 4, len * 4);
     }
 
     /**
      * Read float array from the stream
-     * 
+     *
      * @param d
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(float[] d) throws IOException {
+    public int read(float[] d)
+            throws IOException
+    {
         return read(d, 0, d.length);
     }
 
     /**
      * Read short array from the stream
-     * 
-     * @param d
-     *            input
-     * @param off
-     *            offset
-     * @param len
-     *            the number of short elements to read
+     *
+     * @param d input
+     * @param off offset
+     * @param len the number of short elements to read
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(short[] d, int off, int len) throws IOException {
+    public int read(short[] d, int off, int len)
+            throws IOException
+    {
         return rawRead(d, off * 2, len * 2);
     }
 
     /**
      * Read short array from the stream
-     * 
+     *
      * @param d
      * @return the total number of bytes read into the buffer, or -1 if there is
-     *         no more data because the end of the stream has been reached.
+     * no more data because the end of the stream has been reached.
      * @throws IOException
      */
-    public int read(short[] d) throws IOException {
+    public int read(short[] d)
+            throws IOException
+    {
         return read(d, 0, d.length);
     }
 
     /**
      * Read next len bytes
+     *
      * @param dest
      * @param offset
      * @param len
      * @return read bytes
      */
-    private int readNext(byte[] dest, int offset, int len) throws IOException {
+    private int readNext(byte[] dest, int offset, int len)
+            throws IOException
+    {
         int readBytes = 0;
         while (readBytes < len) {
             int ret = in.read(dest, readBytes + offset, len - readBytes);
@@ -349,29 +368,36 @@ public class SnappyInputStream extends InputStream
         return readBytes;
     }
 
-    protected boolean hasNextChunk() throws IOException {
-        if (finishedReading)
+    protected boolean hasNextChunk()
+            throws IOException
+    {
+        if (finishedReading) {
             return false;
+        }
 
         uncompressedCursor = 0;
         uncompressedLimit = 0;
 
         int readBytes = readNext(header, 0, 4);
-        if(readBytes < 4)
+        if (readBytes < 4) {
             return false;
+        }
 
         int chunkSize = SnappyOutputStream.readInt(header, 0);
-        if(chunkSize == SnappyCodec.MAGIC_HEADER_HEAD) {
+        if (chunkSize == SnappyCodec.MAGIC_HEADER_HEAD) {
             // Concatenated data
             int remainingHeaderSize = SnappyCodec.headerSize() - 4;
             readBytes = readNext(header, 4, remainingHeaderSize);
-            if(readBytes < remainingHeaderSize)
-                return false;
+            if(readBytes < remainingHeaderSize) {
+                throw new SnappyIOException(SnappyErrorCode.FAILED_TO_UNCOMPRESS, String.format("Insufficient header size in a concatenated block"));
+            }
 
-            if(isValidHeader(header))
+            if (isValidHeader(header)) {
                 return hasNextChunk();
-            else
+            }
+            else {
                 return false;
+            }
         }
 
         // extend the compressed data buffer size
@@ -381,8 +407,9 @@ public class SnappyInputStream extends InputStream
         readBytes = 0;
         while (readBytes < chunkSize) {
             int ret = in.read(compressed, readBytes, chunkSize - readBytes);
-            if (ret == -1)
+            if (ret == -1) {
                 break;
+            }
             readBytes += ret;
         }
         if (readBytes < chunkSize) {
@@ -412,15 +439,19 @@ public class SnappyInputStream extends InputStream
      * @see java.io.InputStream#read()
      */
     @Override
-    public int read() throws IOException {
+    public int read()
+            throws IOException
+    {
         if (uncompressedCursor < uncompressedLimit) {
             return uncompressed[uncompressedCursor++] & 0xFF;
         }
         else {
-            if (hasNextChunk())
+            if (hasNextChunk()) {
                 return read();
-            else
+            }
+            else {
                 return -1;
+            }
         }
     }
 
@@ -428,7 +459,9 @@ public class SnappyInputStream extends InputStream
      * @see java.io.InputStream#available()
      */
     @Override
-    public int available() throws IOException {
+    public int available()
+            throws IOException
+    {
         if (uncompressedCursor < uncompressedLimit) {
             return uncompressedLimit - uncompressedCursor;
         }

@@ -1,3 +1,4 @@
+import de.johoop.findbugs4sbt.ReportType
 
 name := "snappy-java"
 
@@ -10,7 +11,7 @@ description  := "snappy-java: A fast compression/decompression library"
 sonatypeProfileName := "org.xerial" 
 
 pomExtra := {
-   <url>https://github.comm/xerial/snappy-java</url>
+   <url>https://github.com/xerial/snappy-java</url>
    <licenses>
        <license>
            <name>The Apache Software License, Version 2.0</name>
@@ -68,6 +69,14 @@ logBuffered in Test := false
 
 incOptions := incOptions.value.withNameHashing(true)
 
+findbugsSettings
+
+findbugsReportType := Some(ReportType.FancyHtml)
+
+findbugsReportPath := Some(crossTarget.value / "findbugs" / "report.html")
+
+jacoco.settings
+
 libraryDependencies ++= Seq(
    "junit" % "junit" % "4.8.2" % "test",
    "org.codehaus.plexus" % "plexus-classworlds" % "2.4" % "test",
@@ -92,15 +101,21 @@ OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
 OsgiKeys.additionalHeaders := Map(
   "Bundle-NativeCode" -> Seq(
 "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x86-64",
+"org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x64",
+"org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=amd64",
 "org/xerial/snappy/native/Windows/x86/snappyjava.dll;osname=win32;processor=x86",
 "org/xerial/snappy/native/Mac/x86/libsnappyjava.jnilib;osname=macosx;processor=x86",
 "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.jnilib;osname=macosx;processor=x86-64",
 "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
+"org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x64",
+"org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=amd64",
 "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
 "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
 "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
 "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64",
 "org/xerial/snappy/native/Linux/ppc64le/libsnappyjava.so;osname=linux;processor=ppc64le",
+"org/xerial/snappy/native/Linux/s390x/libsnappyjava.so;osname=linux;processor=s390x",
+"org/xerial/snappy/native/AIX/ppc/libsnappyjava.a;osname=aix;processor=ppc",
 "org/xerial/snappy/native/AIX/ppc64/libsnappyjava.a;osname=aix;processor=ppc64",
 "org/xerial/snappy/native/SunOS/x86/libsnappyjava.so;osname=sunos;processor=x86",
 "org/xerial/snappy/native/SunOS/x86_64/libsnappyjava.so;osname=sunos;processor=x86-64",
@@ -131,3 +146,8 @@ releaseProcess := Seq[ReleaseStep](
   ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
   pushChanges
 )
+
+
+com.etsy.sbt.Checkstyle.checkstyleSettings
+
+com.etsy.sbt.Checkstyle.CheckstyleTasks.checkstyleConfig := file("src/checkstyle/checks.xml")

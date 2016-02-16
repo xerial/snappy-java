@@ -26,11 +26,11 @@ package org.xerial.snappy;
 
 /**
  * Error codes of snappy-java
- * 
+ *
  * @author leo
- * 
  */
-public enum SnappyErrorCode {
+public enum SnappyErrorCode
+{
 
     // DO NOT change these error code IDs because these numbers are used inside SnappyNative.cpp
     UNKNOWN(0),
@@ -41,24 +41,27 @@ public enum SnappyErrorCode {
     FAILED_TO_UNCOMPRESS(5),
     EMPTY_INPUT(6),
     INCOMPATIBLE_VERSION(7),
-    INVALID_CHUNK_SIZE(8)
-    ;
+    INVALID_CHUNK_SIZE(8);
 
     public final int id;
 
-    private SnappyErrorCode(int id) {
+    private SnappyErrorCode(int id)
+    {
         this.id = id;
     }
 
-    public static SnappyErrorCode getErrorCode(int id) {
+    public static SnappyErrorCode getErrorCode(int id)
+    {
         for (SnappyErrorCode code : SnappyErrorCode.values()) {
-            if (code.id == id)
+            if (code.id == id) {
                 return code;
+            }
         }
         return UNKNOWN;
     }
 
-    public static String getErrorMessage(int id) {
+    public static String getErrorMessage(int id)
+    {
         return getErrorCode(id).name();
     }
 }
