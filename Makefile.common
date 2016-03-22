@@ -42,7 +42,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-aarch64 Linux-ppc Linux-ppc64 Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-ppc Linux-ppc64 Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -199,13 +199,6 @@ Linux-armhf_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include 
 Linux-armhf_LINKFLAGS := -shared -static-libgcc
 Linux-armhf_LIBNAME   := libsnappyjava.so
 Linux-armhf_SNAPPY_FLAGS:= 
-
-Linux-aarch64_CXX       := $(CROSS_PREFIX)g++
-Linux-aarch64_STRIP     := $(CROSS_PREFIX)strip
-Linux-aarch64_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden
-Linux-aarch64_LINKFLAGS := -shared -static-libgcc
-Linux-aarch64_LIBNAME   := libsnappyjava.so
-Linux-aarch64_SNAPPY_FLAGS:=
 
 Mac-x86_CXX       := g++ -arch i386
 Mac-x86_STRIP     := strip -x
