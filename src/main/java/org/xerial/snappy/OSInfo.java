@@ -45,6 +45,7 @@ public class OSInfo
     public static final String PPC64 = "ppc64";
     public static final String IBMZ = "s390";
     public static final String IBMZ_64 = "s390x";
+    public static final String AARCH_64 = "aarch64";
 
     static {
         // x86 mappings
@@ -88,6 +89,9 @@ public class OSInfo
 
         // IBM z 64-bit mappings
         archMapping.put(IBMZ_64, IBMZ_64);
+
+        // Aarch64 mappings
+        archMapping.put(AARCH_64, AARCH_64);
     }
 
     public static void main(String[] args)
