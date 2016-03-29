@@ -1,5 +1,8 @@
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.2.22 (2016-03-29)
+ * Add AArch64 support
+
 ## snappy-java-1.1.2.1 (2016-01-22)
  * Fixed #131
 
