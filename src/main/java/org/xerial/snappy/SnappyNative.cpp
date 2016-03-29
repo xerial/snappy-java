@@ -18,6 +18,11 @@
 #include <snappy.h>
 #include "SnappyNative.h"
 
+#ifdef SNAPPY_BITSHUFFLE_ENABLED
+#include <bitshuffle.h>
+#include <stdint.h>
+#endif
+
 void throw_exception(JNIEnv *env, jobject self, int errorCode)
 {
 	jclass c = env->FindClass("org/xerial/snappy/SnappyNative");
@@ -166,6 +171,100 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 	}
 
 	return (jint) decompressedLength;
+}
+
+
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    supportBitSuffle
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_supportBitSuffle
+  (JNIEnv *, jobject) {
+#ifdef SNAPPY_BITSHUFFLE_ENABLED
+        return (jboolean) true;
+#else
+        return (jboolean) false;
+#endif
+}
+
+
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    bitShuffle
+ * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_bitShuffle
+  (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint typeSize, jint length, jobject output, jint outputOffset)
+{
+#ifdef SNAPPY_BITSHUFFLE_ENABLED
+	char* in = (char*) env->GetPrimitiveArrayCritical((jarray) input, 0);
+	char* out = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
+	if(in == 0 || out == 0) {
+		// out of memory
+		if(in != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+		}
+		if(out != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+		}
+		throw_exception(env, self, 4);
+		return 0;
+	}
+
+        int64_t processedBytes = bshuf_bitshuffle(
+                        in + inputOffset, out + outputOffset, (size_t) (length / typeSize), (size_t) typeSize, 0);
+
+	env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+	env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+
+	return (jint) processedBytes;
+#else
+        // Returns an error code for unsupported operations
+        throw_exception(env, self, 1);
+        return (jint) 0;
+#endif
+}
+
+
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    bitUnShuffle
+ * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_bitUnShuffle
+  (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint typeSize, jint length, jobject output, jint outputOffset)
+{
+#ifdef SNAPPY_BITSHUFFLE_ENABLED
+	char* in = (char*) env->GetPrimitiveArrayCritical((jarray) input, 0);
+	char* out = (char*) env->GetPrimitiveArrayCritical((jarray) output, 0);
+	if(in == 0 || out == 0) {
+		// out of memory
+		if(in != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+		}
+		if(out != 0) {
+			env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+		}
+		throw_exception(env, self, 4);
+		return 0;
+	}
+
+        int64_t processedBytes = bshuf_bitunshuffle(
+                        in + inputOffset, out + outputOffset, (size_t) (length / typeSize), (size_t) typeSize, 0);
+
+	env->ReleasePrimitiveArrayCritical((jarray) input, in, 0);
+	env->ReleasePrimitiveArrayCritical((jarray) output, out, 0);
+
+	return (jint) processedBytes;
+#else
+        // Returns an error code for unsupported operations
+        throw_exception(env, self, 1);
+        return (jint) 0;
+#endif
 }
 
 

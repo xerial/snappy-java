@@ -329,4 +329,34 @@ public class SnappyTest
             _logger.debug(e);
         }
     }
+
+    @Test
+    public void bitShuffleLongArray()
+            throws Exception
+    {
+        long[] data = new long[] {2, 3, 15, 4234, 43251531412342342L, 23423422342L};
+        byte[] shuffledData = Snappy.bitShuffle(data);
+        long[] result = Snappy.bitUnShuffleLongArray(shuffledData);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void bitShuffleShortArray()
+            throws Exception
+    {
+        short[] data = new short[] {432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1};
+        byte[] shuffledData = Snappy.bitShuffle(data);
+        short[] result = Snappy.bitUnShuffleShortArray(shuffledData);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void bitShuffleIntArray()
+            throws Exception
+    {
+        int[] data = new int[] {432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1, Integer.MAX_VALUE, 3424, 43};
+        byte[] shuffledData = Snappy.bitShuffle(data);
+        int[] result = Snappy.bitUnShuffleIntArray(shuffledData);
+        assertArrayEquals(data, result);
+    }
 }

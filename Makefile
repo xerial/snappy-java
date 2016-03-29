@@ -7,17 +7,57 @@ SBT:=./sbt
 all: snappy
 
 SNAPPY_OUT:=$(TARGET)/$(snappy)-$(os_arch)
-SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz 
+SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz
 SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
-SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
-
-SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
 SNAPPY_GIT_REV:=2b9152d9c5bed71dffb7f7f6c7a3ec48b058ff2d # 1.1.3 with autogen.sh fix
+SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
+SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 
-CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR)
+ifdef ENABLE_BITSHUFFLE
+  # TODO: Upgrade to a stable release
+  BITSHUFFLE_VERSION:=55f9b4caec73fa21d13947cacea1295926781440
+  BITSHUFFLE_ARCHIVE:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION).tar.gz
+  BITSHUFFLE_C:=bitshuffle_core.c iochain.c
+  BITSHUFFLE_SRC_DIR:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION)/src
+  BITSHUFFLE_SRC:=$(addprefix $(BITSHUFFLE_SRC_DIR)/,$(BITSHUFFLE_C))
+  BITSHUFFLE_UNPACKED:=$(TARGET)/bitshuffle-extracted.log
+endif
+
+ifdef USE_GIT
+  ifndef GIT_REPO_URL
+    $(warning GIT_REPO_URL is not set when using git)
+  endif
+  ifndef GIT_SNAPPY_BRANCH
+    $(warning GIT_SNAPPY_BRANCH is not set when using git)
+  endif
+endif
+
+ifdef ENABLE_BITSHUFFLE
+  $(BITSHUFFLE_ARCHIVE):
+	@mkdir -p $(@D)
+	curl -L -o$@ https://github.com/kiyo-masui/bitshuffle/archive/$(BITSHUFFLE_VERSION).tar.gz
+
+  $(BITSHUFFLE_UNPACKED): $(BITSHUFFLE_ARCHIVE)
+	$(TAR) xvfz $< -C $(TARGET)
+	touch $@
+
+  $(BITSHUFFLE_SRC): $(BITSHUFFLE_UNPACKED)
+
+  $(SNAPPY_OUT)/%.o : $(BITSHUFFLE_SRC_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+  SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o)
+
+  CXXFLAGS:=$(CXXFLAGS) -DSNAPPY_BITSHUFFLE_ENABLED -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
+else
+  SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
+
+  CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR)
+endif
 
 ifeq ($(OS_NAME),SunOS)
 	TAR:= gtar
@@ -28,6 +68,11 @@ endif
 $(SNAPPY_ARCHIVE):
 	@mkdir -p $(@D)
 	curl -L -o$@ https://github.com/google/snappy/releases/download/$(VERSION)/snappy-$(VERSION).tar.gz
+
+$(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
+	$(TAR) xvfz $< -C $(TARGET)
+	touch $@
+	cd  $(SNAPPY_SRC_DIR) && ./configure
 
 $(SNAPPY_GIT_UNPACKED):
 	rm -rf $(SNAPPY_SRC_DIR)
@@ -50,18 +95,18 @@ $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
 $(SNAPPY_OUT)/%.o : $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@ 
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(SNAPPY_OUT)/SnappyNative.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h  
+$(SNAPPY_OUT)/SnappyNative.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 
 $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
-	$(CXX) $(CXXFLAGS) -o $@ $+ $(LINKFLAGS) 
+	$(CXX) $(CXXFLAGS) -o $@ $+ $(LINKFLAGS)
 	$(STRIP) $@
 
-clean-native: 
+clean-native:
 	rm -rf $(SNAPPY_OUT)
 
 clean:
@@ -76,7 +121,7 @@ snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s
 native: $(SNAPPY_GIT_UNPACKED) $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) 
+$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
 	cp $< $@
 	@mkdir -p $(NATIVE_TARGET_DIR)
@@ -85,20 +130,20 @@ $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 
 package: $(TARGET)/$(snappy-jar-version).jar
 
-$(TARGET)/$(snappy-jar-version).jar: 
-	$(SBT) package 
+$(TARGET)/$(snappy-jar-version).jar:
+	$(SBT) package
 
 test: $(NATIVE_DLL)
 	$(SBT) test
 
-win32: 
+win32:
 	$(MAKE) native CROSS_PREFIX=i686-w64-mingw32- OS_NAME=Windows OS_ARCH=x86
 
 # for cross-compilation on Ubuntu, install the g++-mingw-w64-x86-64 package
 win64:
 	$(MAKE) native CROSS_PREFIX=x86_64-w64-mingw32- OS_NAME=Windows OS_ARCH=x86_64
 
-mac32: 
+mac32:
 	$(MAKE) native OS_NAME=Mac OS_ARCH=x86
 
 linux32:
@@ -139,11 +184,10 @@ googlecode-src-upload: $(TARGET)/snappy-java-$(VERSION)-src.upload
 GOOGLECODE_USER:=leo@xerial.org
 
 $(TARGET)/snappy-java-$(VERSION)-lib.upload:
-	./googlecode_upload.py -s "library for all platforms" -p snappy-java -l "Type-Executable,Featured,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).jar 
+	./googlecode_upload.py -s "library for all platforms" -p snappy-java -l "Type-Executable,Featured,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).jar
 	touch $@
 
 $(TARGET)/snappy-java-$(VERSION)-src.upload:
-	./googlecode_upload.py -s "source code archive" -p snappy-java -l "Type-Source,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).tar.gz 
+	./googlecode_upload.py -s "source code archive" -p snappy-java -l "Type-Source,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).tar.gz
 	touch $@
-
 

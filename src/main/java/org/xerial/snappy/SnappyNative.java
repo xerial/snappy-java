@@ -66,6 +66,22 @@ public class SnappyNative
     public native int rawUncompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
             throws IOException;
 
+    // ------------------------------------------------------------------------
+    // Bit-shuffling routines to improve compression of typed binary data.
+    // A quick benchmark result can be found in a gist below;
+    // https://gist.github.com/maropu/01103215df34b317a7a7
+    // ------------------------------------------------------------------------
+
+    // Returns true iff a native library loaded in JVMs can run bit-shuffling.
+    // Bit-shuffling is executable only in x86 environments that support SSE/AVX instructions.
+    public native boolean supportBitSuffle();
+
+    public native int bitShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
+            throws IOException;
+
+    public native int bitUnShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
+            throws IOException;
+
     // Returns the maximal size of the compressed representation of
     // input data that is "source_bytes" bytes in length;
     public native int maxCompressedLength(int source_bytes);

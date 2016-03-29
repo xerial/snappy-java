@@ -65,6 +65,30 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
+ * Method:    supportBitSuffle
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_supportBitSuffle
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    bitShuffle
+ * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_bitShuffle
+  (JNIEnv *, jobject, jobject, jint, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    bitUnShuffle
+ * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_bitUnShuffle
+  (JNIEnv *, jobject, jobject, jint, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
  * Method:    maxCompressedLength
  * Signature: (I)I
  */
