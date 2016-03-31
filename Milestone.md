@@ -1,5 +1,8 @@
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.2.4 (2016-03-30)
+ * Improved `SnappyOutputStream.write(byte[], off, len)` performance.
+
 ## snappy-java-1.1.2.3 (2016-03-30)
  * Improved `SnappyInputStream.read(byte[], off, len)` performance.
 
