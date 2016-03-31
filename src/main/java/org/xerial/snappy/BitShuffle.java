@@ -51,11 +51,8 @@ public class BitShuffle
      */
     public static byte[] bitShuffle(short[] input) throws IOException {
         byte[] output = new byte[input.length * 2];
-        if (impl.supportBitSuffle()) {
-            impl.bitShuffle(input, 0, 2, input.length * 2, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length * 2, output, 0);
-        }
+        int numProcessed = impl.bitShuffle(input, 0, 2, input.length * 2, output, 0);
+        assert(numProcessed == input.length * 2);
         return output;
     }
 
@@ -68,11 +65,8 @@ public class BitShuffle
      */
     public static byte[] bitShuffle(int[] input) throws IOException {
         byte[] output = new byte[input.length * 4];
-        if (impl.supportBitSuffle()) {
-            impl.bitShuffle(input, 0, 4, input.length * 4, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length * 4, output, 0);
-        }
+        int numProcessed = impl.bitShuffle(input, 0, 4, input.length * 4, output, 0);
+        assert(numProcessed == input.length * 4);
         return output;
     }
 
@@ -85,11 +79,8 @@ public class BitShuffle
      */
     public static byte[] bitShuffle(long[] input) throws IOException {
         byte[] output = new byte[input.length * 8];
-        if (impl.supportBitSuffle()) {
-            impl.bitShuffle(input, 0, 8, input.length * 8, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length * 8, output, 0);
-        }
+        int numProcessed = impl.bitShuffle(input, 0, 8, input.length * 8, output, 0);
+        assert(numProcessed == input.length * 8);
         return output;
     }
 
@@ -102,11 +93,8 @@ public class BitShuffle
      */
     public static byte[] bitShuffle(float[] input) throws IOException {
         byte[] output = new byte[input.length * 4];
-        if (impl.supportBitSuffle()) {
-            impl.bitShuffle(input, 0, 4, input.length * 4, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length * 4, output, 0);
-        }
+        int numProcessed = impl.bitShuffle(input, 0, 4, input.length * 4, output, 0);
+        assert(numProcessed == input.length * 4);
         return output;
     }
 
@@ -119,11 +107,8 @@ public class BitShuffle
      */
     public static byte[] bitShuffle(double[] input) throws IOException {
         byte[] output = new byte[input.length * 8];
-        if (impl.supportBitSuffle()) {
-            impl.bitShuffle(input, 0, 8, input.length * 8, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length * 8, output, 0);
-        }
+        int numProcessed = impl.bitShuffle(input, 0, 8, input.length * 8, output, 0);
+        assert(numProcessed == input.length * 8);
         return output;
     }
 
@@ -136,11 +121,8 @@ public class BitShuffle
      */
     public static short[] bitUnShuffleShortArray(byte[] input) throws IOException {
         short[] output = new short[input.length / 2];
-        if (impl.supportBitSuffle()) {
-            impl.bitUnShuffle(input, 0, 2, input.length, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length, output, 0);
-        }
+        int numProcessed = impl.bitUnShuffle(input, 0, 2, input.length, output, 0);
+        assert(numProcessed == input.length);
         return output;
     }
 
@@ -153,11 +135,8 @@ public class BitShuffle
      */
     public static int[] bitUnShuffleIntArray(byte[] input) throws IOException {
         int[] output = new int[input.length / 4];
-        if (impl.supportBitSuffle()) {
-            impl.bitUnShuffle(input, 0, 4, input.length, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length, output, 0);
-        }
+        int numProcessed = impl.bitUnShuffle(input, 0, 4, input.length, output, 0);
+        assert(numProcessed == input.length);
         return output;
     }
 
@@ -170,11 +149,8 @@ public class BitShuffle
      */
     public static long[] bitUnShuffleLongArray(byte[] input) throws IOException {
         long[] output = new long[input.length / 8];
-        if (impl.supportBitSuffle()) {
-            impl.bitUnShuffle(input, 0, 8, input.length, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length, output, 0);
-        }
+        int numProcessed = impl.bitUnShuffle(input, 0, 8, input.length, output, 0);
+        assert(numProcessed == input.length);
         return output;
     }
 
@@ -187,11 +163,8 @@ public class BitShuffle
      */
     public static float[] bitUnShuffleFloatArray(byte[] input) throws IOException {
         float[] output = new float[input.length / 4];
-        if (impl.supportBitSuffle()) {
-            impl.bitUnShuffle(input, 0, 4, input.length, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length, output, 0);
-        }
+        int numProcessed = impl.bitUnShuffle(input, 0, 4, input.length, output, 0);
+        assert(numProcessed == input.length);
         return output;
     }
 
@@ -204,11 +177,8 @@ public class BitShuffle
      */
     public static double[] bitUnShuffleDoubleArray(byte[] input) throws IOException {
         double[] output = new double[input.length / 8];
-        if (impl.supportBitSuffle()) {
-            impl.bitUnShuffle(input, 0, 8, input.length, output, 0);
-        } else {
-            Snappy.arrayCopy(input, 0, input.length, output, 0);
-        }
+        int numProcessed = impl.bitUnShuffle(input, 0, 8, input.length, output, 0);
+        assert(numProcessed == input.length);
         return output;
     }
 }

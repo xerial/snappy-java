@@ -9,14 +9,6 @@ extern "C" {
 #endif
 /*
  * Class:     org_xerial_snappy_BitShuffleNative
- * Method:    supportBitSuffle
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_BitShuffleNative_supportBitSuffle
-  (JNIEnv *, jobject);
-
-/*
- * Class:     org_xerial_snappy_BitShuffleNative
  * Method:    bitShuffle
  * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
  */

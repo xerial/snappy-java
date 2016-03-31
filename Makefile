@@ -49,7 +49,8 @@ $(SNAPPY_OUT)/%.o : $(BITSHUFFLE_SRC_DIR)/%.c
 
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o)
 
-CXXFLAGS:=$(CXXFLAGS) -DSNAPPY_BITSHUFFLE_ENABLED -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
+# Undefined macros for sse2/avx2 to generate a platform-independent binary
+CXXFLAGS:=$(CXXFLAGS) -U__AVX2__ -U__SSE2__  -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
 
 ifeq ($(OS_NAME),SunOS)
 	TAR:= gtar

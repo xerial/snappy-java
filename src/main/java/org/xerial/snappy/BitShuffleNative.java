@@ -45,11 +45,6 @@ public class BitShuffleNative
     // A quick benchmark result can be found in a gist below;
     // https://gist.github.com/maropu/01103215df34b317a7a7
     // ------------------------------------------------------------------------
-
-    // Returns true iff a native library loaded in JVMs can run bit-shuffling.
-    // Bit-shuffling is executable only in x86 environments that support SSE/AVX instructions.
-    public native boolean supportBitSuffle();
-
     public native int bitShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
             throws IOException;
 
