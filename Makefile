@@ -13,17 +13,9 @@ SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
 
-SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
-
-ifdef USE_GIT
-  ifndef GIT_REPO_URL
-    $(warning GIT_REPO_URL is not set when using git)
-  endif
-  ifndef GIT_SNAPPY_BRANCH
-    $(warning GIT_SNAPPY_BRANCH is not set when using git)
-  endif
-endif
+SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
+SNAPPY_GIT_REV:=2b9152d9c5bed71dffb7f7f6c7a3ec48b058ff2d # 1.1.3 with autogen.sh fix
 
 CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR)
 
@@ -37,17 +29,13 @@ $(SNAPPY_ARCHIVE):
 	@mkdir -p $(@D)
 	curl -L -o$@ https://github.com/google/snappy/releases/download/$(VERSION)/snappy-$(VERSION).tar.gz
 
-$(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
-	$(TAR) xvfz $< -C $(TARGET)	
-	touch $@
-	cd  $(SNAPPY_SRC_DIR) && ./configure
-
 $(SNAPPY_GIT_UNPACKED):
+	rm -rf $(SNAPPY_SRC_DIR)
 	@mkdir -p $(SNAPPY_SRC_DIR)
-	git clone $(GIT_REPO_URL) $(SNAPPY_SRC_DIR)
-	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(GIT_SNAPPY_BRANCH) $(GIT_SNAPPY_BRANCH)
+	git clone $(SNAPPY_GIT_REPO_URL) $(SNAPPY_SRC_DIR)
+	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(VERSION) $(SNAPPY_GIT_REV)
+	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 	touch $@
-	cd  $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 
 jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
 
@@ -58,11 +46,7 @@ $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/s
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
 	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.SnappyNative
 
-ifndef USE_GIT
-  $(SNAPPY_SRC): $(SNAPPY_UNPACKED)
-else
-  $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
-endif
+$(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
 $(SNAPPY_OUT)/%.o : $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
@@ -89,11 +73,7 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s+\"(.*)\"/\1/" version.sbt | sed -e "/^$$/d")
 
-ifndef USE_GIT
-  native: $(SNAPPY_UNPACKED) $(NATIVE_DLL)
-else
-  native: $(SNAPPY_GIT_UNPACKED) $(NATIVE_DLL)
-endif
+native: $(SNAPPY_GIT_UNPACKED) $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME) 
