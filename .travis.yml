@@ -1,15 +1,13 @@
 language: scala
 scala:
-   - 2.11.1
+   - 2.11.7
+
+sudo: false
+
 jdk:
   - openjdk6
   - openjdk7
   - oraclejdk7
-
-branches:
-  only:
-    - master
-    - develop
+  - oraclejdk8
 
 script: ./sbt test
-
