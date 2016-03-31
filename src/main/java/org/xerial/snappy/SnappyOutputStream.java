@@ -109,10 +109,27 @@ public class SnappyOutputStream
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     @Override
-    public void write(byte[] b, int off, int len)
+    public void write(byte[] b, int byteOffset, int byteLength)
             throws IOException
     {
-        rawWrite(b, off, len);
+        if (closed) {
+            throw new IOException("Stream is closed");
+        }
+        int cursor = 0;
+        while (cursor < byteLength) {
+            int readLen = Math.min(byteLength - cursor, blockSize - inputCursor);
+            // copy the input data to uncompressed buffer
+            if (readLen > 0) {
+                System.arraycopy(b, byteOffset + cursor, inputBuffer, inputCursor, readLen);
+                inputCursor += readLen;
+            }
+            if (inputCursor < blockSize) {
+                return;
+            }
+
+            compressInput();
+            cursor += readLen;
+        }
     }
 
     /**
