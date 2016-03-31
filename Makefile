@@ -16,15 +16,13 @@ SNAPPY_GIT_REV:=2b9152d9c5bed71dffb7f7f6c7a3ec48b058ff2d # 1.1.3 with autogen.sh
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 
-ifdef ENABLE_BITSHUFFLE
-  # TODO: Upgrade to a stable release
-  BITSHUFFLE_VERSION:=55f9b4caec73fa21d13947cacea1295926781440
-  BITSHUFFLE_ARCHIVE:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION).tar.gz
-  BITSHUFFLE_C:=bitshuffle_core.c iochain.c
-  BITSHUFFLE_SRC_DIR:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION)/src
-  BITSHUFFLE_SRC:=$(addprefix $(BITSHUFFLE_SRC_DIR)/,$(BITSHUFFLE_C))
-  BITSHUFFLE_UNPACKED:=$(TARGET)/bitshuffle-extracted.log
-endif
+# TODO: Upgrade to a stable release
+BITSHUFFLE_VERSION:=55f9b4caec73fa21d13947cacea1295926781440
+BITSHUFFLE_ARCHIVE:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION).tar.gz
+BITSHUFFLE_C:=bitshuffle_core.c iochain.c
+BITSHUFFLE_SRC_DIR:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION)/src
+BITSHUFFLE_SRC:=$(addprefix $(BITSHUFFLE_SRC_DIR)/,$(BITSHUFFLE_C))
+BITSHUFFLE_UNPACKED:=$(TARGET)/bitshuffle-extracted.log
 
 ifdef USE_GIT
   ifndef GIT_REPO_URL
@@ -35,29 +33,23 @@ ifdef USE_GIT
   endif
 endif
 
-ifdef ENABLE_BITSHUFFLE
-  $(BITSHUFFLE_ARCHIVE):
+$(BITSHUFFLE_ARCHIVE):
 	@mkdir -p $(@D)
 	curl -L -o$@ https://github.com/kiyo-masui/bitshuffle/archive/$(BITSHUFFLE_VERSION).tar.gz
 
-  $(BITSHUFFLE_UNPACKED): $(BITSHUFFLE_ARCHIVE)
+$(BITSHUFFLE_UNPACKED): $(BITSHUFFLE_ARCHIVE)
 	$(TAR) xvfz $< -C $(TARGET)
 	touch $@
 
-  $(BITSHUFFLE_SRC): $(BITSHUFFLE_UNPACKED)
+$(BITSHUFFLE_SRC): $(BITSHUFFLE_UNPACKED)
 
-  $(SNAPPY_OUT)/%.o : $(BITSHUFFLE_SRC_DIR)/%.c
+$(SNAPPY_OUT)/%.o : $(BITSHUFFLE_SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-  SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o)
+SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o)
 
-  CXXFLAGS:=$(CXXFLAGS) -DSNAPPY_BITSHUFFLE_ENABLED -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
-else
-  SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) SnappyNative.o)
-
-  CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR)
-endif
+CXXFLAGS:=$(CXXFLAGS) -DSNAPPY_BITSHUFFLE_ENABLED -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
 
 ifeq ($(OS_NAME),SunOS)
 	TAR:= gtar
@@ -82,7 +74,7 @@ $(SNAPPY_GIT_UNPACKED):
 	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 	touch $@
 
-jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h
+jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
@@ -91,16 +83,24 @@ $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class : $(SRC)/org/xerial/s
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
 	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.SnappyNative
 
+
+$(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class : $(SRC)/org/xerial/snappy/BitShuffleNative.java
+	@mkdir -p $(TARGET)/jni-classes
+	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+
+$(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class
+	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.BitShuffleNative
+
 $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
 $(SNAPPY_OUT)/%.o : $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(SNAPPY_OUT)/SnappyNative.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h
+#$(SNAPPY_OUT)/SnappyNative.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShufflenative.h
+$(SNAPPY_OUT)/SnappyNative.o : $(SRC)/org/xerial/snappy/SnappyNative.cpp jni-header
 	@mkdir -p $(@D)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
 
 $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $+ $(LINKFLAGS)

@@ -30,7 +30,7 @@ public class BitShuffle
 {
     static {
         try {
-            impl = SnappyLoader.load();
+            impl = SnappyLoader.loadBitShuffleApi();
         }
         catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -38,9 +38,9 @@ public class BitShuffle
     }
 
     /**
-     * An instance of SnappyNative
+     * An instance of BitShuffleNative
      */
-    private static SnappyNative impl;
+    private static BitShuffleNative impl;
 
     /**
      * Apply a bit-shuffling filter into the input short array.

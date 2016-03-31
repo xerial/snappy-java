@@ -44,7 +44,7 @@ public class Snappy
 {
     static {
         try {
-            impl = SnappyLoader.load();
+            impl = SnappyLoader.loadSnappyApi();
         }
         catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -66,7 +66,7 @@ public class Snappy
     public static void cleanUp()
     {
         SnappyLoader.cleanUpExtractedNativeLib();
-        SnappyLoader.setApi(null);
+        SnappyLoader.setSnappyApi(null);
     }
 
     /**
