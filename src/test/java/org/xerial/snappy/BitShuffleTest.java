@@ -29,7 +29,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class BitShuffleTest {
-     @Test
+
+    @Test
     public void bitShuffleLongArray()
             throws Exception
     {
@@ -57,5 +58,25 @@ public class BitShuffleTest {
         byte[] shuffledData = BitShuffle.bitShuffle(data);
         int[] result = BitShuffle.bitUnShuffleIntArray(shuffledData);
         assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void bitShuffleFloatArray()
+            throws Exception
+    {
+        float[] data = new float[] {100.0f, 0.5f, -0.1f, 30.3f, Float.MIN_NORMAL, Float.MAX_EXPONENT, Float.MAX_VALUE, -0.1f, Integer.MIN_VALUE};
+        byte[] shuffledData = BitShuffle.bitShuffle(data);
+        float[] result = BitShuffle.bitUnShuffleFloatArray(shuffledData);
+        assertArrayEquals(data, result, 0.0000001f);
+    }
+
+    @Test
+    public void bitShuffleDoubleArray()
+            throws Exception
+    {
+        double[] data = new double[] {100.0f, 0.5f, -0.1f, 30.3f, Float.MIN_NORMAL, Float.MAX_EXPONENT, Float.MAX_VALUE, -0.1f, Integer.MIN_VALUE};
+        byte[] shuffledData = BitShuffle.bitShuffle(data);
+        double[] result = BitShuffle.bitUnShuffleDoubleArray(shuffledData);
+        assertArrayEquals(data, result, 0.0000001f);
     }
 }
