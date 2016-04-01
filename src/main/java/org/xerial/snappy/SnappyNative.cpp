@@ -32,7 +32,8 @@ inline void throw_exception(JNIEnv *env, jobject self, int errorCode)
 JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
   (JNIEnv * env, jobject self)
 {
-	return env->NewStringUTF("1.1.0");
+	// TODO: Do we need to read this library version from resources/org/xerial/snappy/VERSION?
+	return env->NewStringUTF("1.1.3");
 }
 
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ

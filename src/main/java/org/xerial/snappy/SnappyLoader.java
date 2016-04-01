@@ -404,7 +404,7 @@ public class SnappyLoader
                 versionData.load(versionFile.openStream());
                 version = versionData.getProperty("version", version);
                 if (version.equals("unknown")) {
-                    version = versionData.getProperty("VERSION", version);
+                    version = versionData.getProperty("SNAPPY_VERSION", version);
                 }
                 version = version.trim().replaceAll("[^0-9M\\.]", "");
             }

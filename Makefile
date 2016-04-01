@@ -7,30 +7,20 @@ SBT:=./sbt
 all: snappy
 
 SNAPPY_OUT:=$(TARGET)/$(snappy)-$(os_arch)
-SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(VERSION).tar.gz
+SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(SNAPPY_VERSION).tar.gz
 SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
-SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(VERSION)
+SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
 SNAPPY_GIT_REV:=2b9152d9c5bed71dffb7f7f6c7a3ec48b058ff2d # 1.1.3 with autogen.sh fix
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 
-BITSHUFFLE_VERSION:=0.2.2
 BITSHUFFLE_ARCHIVE:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION).tar.gz
 BITSHUFFLE_C:=bitshuffle_core.c iochain.c
 BITSHUFFLE_SRC_DIR:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION)/src
 BITSHUFFLE_SRC:=$(addprefix $(BITSHUFFLE_SRC_DIR)/,$(BITSHUFFLE_C))
 BITSHUFFLE_UNPACKED:=$(TARGET)/bitshuffle-extracted.log
-
-ifdef USE_GIT
-  ifndef GIT_REPO_URL
-    $(warning GIT_REPO_URL is not set when using git)
-  endif
-  ifndef GIT_SNAPPY_BRANCH
-    $(warning GIT_SNAPPY_BRANCH is not set when using git)
-  endif
-endif
 
 $(BITSHUFFLE_ARCHIVE):
 	@mkdir -p $(@D)
@@ -48,7 +38,7 @@ $(SNAPPY_OUT)/%.o: $(BITSHUFFLE_SRC_DIR)/%.c
 
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o BitShuffleNative.o)
 
-ifndef UNIVERSAL_BITSHUFFLE
+ifdef UNIVERSAL_BITSHUFFLE
   # Undefined macros to generate a platform-independent binary
   CXXFLAGS:=$(CXXFLAGS) -U__AVX2__ -U__SSE2__  -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
 else
@@ -63,7 +53,7 @@ endif
 
 $(SNAPPY_ARCHIVE):
 	@mkdir -p $(@D)
-	curl -L -o$@ https://github.com/google/snappy/releases/download/$(VERSION)/snappy-$(VERSION).tar.gz
+	curl -L -o$@ https://github.com/google/snappy/releases/download/$(SNAPPY_VERSION)/snappy-$(SNAPPY_VERSION).tar.gz
 
 $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 	$(TAR) xvfz $< -C $(TARGET)
@@ -184,16 +174,16 @@ install-m2:
 
 googlecode-upload: googlecode-lib-upload googlecode-src-upload
 
-googlecode-lib-upload: $(TARGET)/snappy-java-$(VERSION)-lib.upload
-googlecode-src-upload: $(TARGET)/snappy-java-$(VERSION)-src.upload
+googlecode-lib-upload: $(TARGET)/snappy-java-$(SNAPPY_VERSION)-lib.upload
+googlecode-src-upload: $(TARGET)/snappy-java-$(SNAPPY_VERSION)-src.upload
 
 GOOGLECODE_USER:=leo@xerial.org
 
-$(TARGET)/snappy-java-$(VERSION)-lib.upload:
-	./googlecode_upload.py -s "library for all platforms" -p snappy-java -l "Type-Executable,Featured,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).jar
+$(TARGET)/snappy-java-$(SNAPPY_VERSION)-lib.upload:
+	./googlecode_upload.py -s "library for all platforms" -p snappy-java -l "Type-Executable,Featured,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(SNAPPY_VERSION).jar
 	touch $@
 
-$(TARGET)/snappy-java-$(VERSION)-src.upload:
-	./googlecode_upload.py -s "source code archive" -p snappy-java -l "Type-Source,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(VERSION).tar.gz
+$(TARGET)/snappy-java-$(SNAPPY_VERSION)-src.upload:
+	./googlecode_upload.py -s "source code archive" -p snappy-java -l "Type-Source,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(SNAPPY_VERSION).tar.gz
 	touch $@
 
