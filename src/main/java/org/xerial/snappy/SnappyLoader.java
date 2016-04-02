@@ -81,7 +81,6 @@ public class SnappyLoader
 
     private static volatile boolean isLoaded = false;
     private static volatile SnappyNative snappyApi = null;
-    // TODO: Do we need a separate loader for [[BitShuffleNative]]?
     private static volatile BitShuffleNative bitshuffleApi = null;
 
     private static File nativeLibFile = null;
