@@ -66,7 +66,6 @@ public class SnappyNative
     public native int rawUncompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
             throws IOException;
 
-
     // Returns the maximal size of the compressed representation of
     // input data that is "source_bytes" bytes in length;
     public native int maxCompressedLength(int source_bytes);
