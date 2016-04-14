@@ -34,15 +34,22 @@ $(BITSHUFFLE_SRC): $(BITSHUFFLE_UNPACKED)
 
 $(SNAPPY_OUT)/%.o: $(BITSHUFFLE_SRC_DIR)/%.c
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS_BITSHUFFLE) -c $< -o $@
 
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o BitShuffleNative.o)
 
-ifdef UNIVERSAL_BITSHUFFLE
-  # Undefined macros to generate a platform-independent binary
-  CXXFLAGS:=$(CXXFLAGS) -U__AVX2__ -U__SSE2__  -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
-else
-  CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
+CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
+
+ifndef CXXFLAGS_BITSHUFFLE
+  ifeq ($(OS_NAME)-$(OS_ARCH),Linux-x86_64)
+	# SSE2 is supported in all the x86_64 platforms and AVX2 is only supported
+        # in the small part of them. gcc in linux/x86_64 typically enables SSE2 by default though,
+	# we explicitly set flags below to make this precondition clearer.
+	CXXFLAGS_BITSHUFFLE:=-U__AVX2__ -msse2
+  else
+	# Undefined macros to generate a platform-independent binary
+	CXXFLAGS_BITSHUFFLE:=-U__AVX2__ -U__SSE2__
+  endif
 endif
 
 ifeq ($(OS_NAME),SunOS)
