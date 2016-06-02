@@ -1,7 +1,8 @@
 Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
-## snappy-java-1.1.2.5 (2016-06-02)
+## snappy-java-1.1.2.6 (2016-06-02)
  * Fix a bug in SnappyInputStream when reading compressed data that happened to have the same first byte with the stream magic header (#142)
+  * Never use 1.1.2.5 (This is a broken build)
 
 ## snappy-java-1.1.2.4 (2016-03-30)
  * Improved `SnappyOutputStream.write(byte[], off, len)` performance.
