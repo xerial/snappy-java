@@ -120,6 +120,18 @@ public class SnappyCodec
         return Arrays.equals(MAGIC_HEADER, magic);
     }
 
+    public static boolean hasMagicHeaderPrefix(byte[] b) {
+        int limit = Math.min(MAGIC_LEN, b.length);
+        int i = 0;
+        while(i < limit) {
+            if(b[i] != MAGIC_HEADER[i]) {
+                return false;
+            }
+            ++i;
+        }
+        return true;
+    }
+
     public static SnappyCodec readHeader(InputStream in)
             throws IOException
     {
