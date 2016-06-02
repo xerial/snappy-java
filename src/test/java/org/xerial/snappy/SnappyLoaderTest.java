@@ -117,7 +117,7 @@ public class SnappyLoaderTest
     public void load()
             throws Exception
     {
-        SnappyLoader.load();
+        SnappyLoader.loadSnappyApi();
         _logger.debug(Snappy.maxCompressedLength(1024));
     }
 
