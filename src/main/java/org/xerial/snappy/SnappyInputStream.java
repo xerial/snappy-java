@@ -93,7 +93,7 @@ public class SnappyInputStream
             // Snappy produces at least 1-byte result. So the empty input is not a valid input
             throw new SnappyIOException(SnappyErrorCode.EMPTY_INPUT, "Cannot decompress empty stream");
         }
-        if (readBytes < header.length || header[0] != SnappyCodec.MAGIC_HEADER[0]) {
+        if (readBytes < header.length || !SnappyCodec.hasMagicHeaderPrefix(header)) {
             // do the default uncompression
             // (probably) compressed by Snappy.compress(byte[])
             readFully(header, readBytes);

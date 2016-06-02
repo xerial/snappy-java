@@ -204,4 +204,37 @@ public class SnappyInputStreamTest
 
         assertArrayEquals(orig, uncompressed);
     }
+
+    @Test
+    public void checkMagicHeader()
+            throws IOException
+    {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        // Write uncompressed length beginning with -126 (the same with magicheader[0])
+        b.write(SnappyCodec.MAGIC_HEADER[0]);
+        b.write(0x01);
+        // uncompressed data length = 130
+
+        ByteArrayOutputStream data = new ByteArrayOutputStream();
+        for(int i=0; i<130; ++i) {
+            data.write('A');
+        }
+        byte[] dataMoreThan8Len = data.toByteArray();
+
+        // write literal (lower 2-bit of the first tag byte is 00, upper 6-bits represents data size)
+        b.write(60<<2); // 1-byte data length follows
+        b.write(dataMoreThan8Len.length-1); // subsequent data length
+        b.write(dataMoreThan8Len);
+
+        byte[] compressed = b.toByteArray();
+
+        // This should succeed
+        assertArrayEquals(dataMoreThan8Len, Snappy.uncompress(compressed));
+
+        // Reproduce error in #142
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(b.toByteArray()));
+        byte[] uncompressed = readFully(in);
+
+        assertArrayEquals(dataMoreThan8Len, uncompressed);
+    }
 }
