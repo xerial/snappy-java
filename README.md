@@ -143,6 +143,12 @@ Older snapshots of snappy contain a buggy config.h.in that does not work properl
 	$ export JAVA_HOME=/usr/lib/jvm/java-1.7.1-ibm-1.7.1.2.10-1jpp.3.el7_0.s390x
 	$ make USE_GIT=1 GIT_REPO_URL=https://github.com/google/snappy.git GIT_SNAPPY_BRANCH=master IBM_JDK_7=1
 
+## Activating SSE2/AVX2 instructions in BitShuffle
+
+The most of the native libraries that snappy-java contains disable SSE2/AVX2 instructions in terms of portability (SSE2 is enabled only in Linux/x86_64 platforms). To enable AVX2 instructions, you need to compile as follows:
+
+	$ make CXXFLAGS_BITSHUFFLE=-mavx2  # -msse2 for SSE2 instructions
+
 ## Cross-compiling for other platforms
 The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:
 
