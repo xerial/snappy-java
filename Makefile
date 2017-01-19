@@ -132,9 +132,9 @@ snappy: native $(TARGET)/$(snappy-jar-version).jar
 
 $(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
-	cp $< $@
+	cp $(SNAPPY_OUT)/$(LIBNAME) $@
 	@mkdir -p $(NATIVE_TARGET_DIR)
-	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
+	cp $(SNAPPY_OUT)/$(LIBNAME) $(NATIVE_TARGET_DIR)/$(LIBNAME)
 
 package: $(TARGET)/$(snappy-jar-version).jar
 
