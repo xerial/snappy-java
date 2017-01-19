@@ -18,22 +18,22 @@
 #include <snappy.h>
 #include "SnappyNative.h"
 
-inline void throw_exception(JNIEnv *env, jobject self, int errorCode)
+void throw_exception(JNIEnv *env, jobject self, int errorCode)
 {
 	jclass c = env->FindClass("org/xerial/snappy/SnappyNative");
 	if(c==0)
 		return;
-	jmethodID mth_throwex = env->GetMethodID(c, "throw_error", "(I)V");
-	if(mth_throwex == 0)
-		return;
-	env->CallVoidMethod(self, mth_throwex, (jint) errorCode);
+    jmethodID mth_throwex = env->GetMethodID(c, "throw_error", "(I)V");
+    if(mth_throwex == 0)
+    	return;
+    env->CallVoidMethod(self, mth_throwex, (jint) errorCode);
 }
+
 
 JNIEXPORT jstring JNICALL Java_org_xerial_snappy_SnappyNative_nativeLibraryVersion
   (JNIEnv * env, jobject self)
 {
-	// TODO: Do we need to read this library version from resources/org/xerial/snappy/VERSION?
-	return env->NewStringUTF("1.1.3");
+	return env->NewStringUTF("1.1.0");
 }
 
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ
@@ -41,7 +41,9 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__JJJ
      size_t compressedLength;
      snappy::RawCompress((char*) srcAddr, (size_t) length, (char*) destAddr, &compressedLength);
      return (jlong) compressedLength;
-}
+  }
+
+
 
 JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__JJJ
   (JNIEnv* env, jobject self, jlong srcAddr, jlong length, jlong destAddr) {
@@ -56,7 +58,9 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__JJJ
  	}
 
  	return (jlong) uncompressedLength;
-}
+  }
+
+
 
 /*
  * Class:     org_xerial_snappy_Snappy
@@ -77,6 +81,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_ni
 	snappy::RawCompress(uncompressedBuffer + upos, (size_t) ulen, compressedBuffer + cpos, &compressedLength);
 	return (jint) compressedLength;
 }
+
 
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawCompress__Ljava_lang_Object_2IILjava_lang_Object_2I
   (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint inputLen, jobject output, jint outputOffset)
@@ -136,6 +141,7 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 	return (jint) uncompressedLength;
 }
 
+
 /*
  * Class:     org_xerial_snappy_Snappy
  * Method:    uncompress
@@ -161,6 +167,8 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 
 	return (jint) decompressedLength;
 }
+
+
 
 /*
  * Class:     org_xerial_snappy_Snappy
@@ -232,7 +240,8 @@ JNIEXPORT jlong JNICALL Java_org_xerial_snappy_SnappyNative_uncompressedLength__
 	}
 
 	return (jint) result;
-}
+  }
+
 
 JNIEXPORT jboolean JNICALL Java_org_xerial_snappy_SnappyNative_isValidCompressedBuffer__Ljava_nio_ByteBuffer_2II
   (JNIEnv * env, jobject self, jobject compressed, jint cpos, jint clen)
@@ -296,4 +305,5 @@ JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
 	env->ReleasePrimitiveArrayCritical((jarray) input, src, 0);
 	env->ReleasePrimitiveArrayCritical((jarray) output, dest, 0);
 }
+
 

@@ -8,13 +8,13 @@ endif
 
 
 JAVA  := "$$JAVA_HOME/bin/java"
-JAVAC := "$$JAVA_HOME/bin/javac"
+JAVAC := "$$JAVA_HOME/bin/javac" 
 JAVAH := "$$JAVA_HOME/bin/javah"
 
 OSINFO_CLASS := org.xerial.snappy.OSInfo
 OSINFO_PROG := lib/org/xerial/snappy/OSInfo.class
 
-## building OSInfo.java
+## building OSInfo.java 
 #$(info compiling OSInfo.java)
 #$(shell mkdir -p lib)
 #$(shell $(JAVAC) src/main/java/org/xerial/snappy/OSInfo.java -d lib)
@@ -31,7 +31,7 @@ else
 	sep := :
 endif
 
-snappy := snappy-$(SNAPPY_VERSION)
+snappy := snappy-$(VERSION)
 
 
 jni_md := $(shell find -L "$(JAVA_HOME)" -name jni_md.h | head -1)
@@ -70,7 +70,7 @@ Default_STRIP        := $(CROSS_PREFIX)strip
 Default_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
 Default_LINKFLAGS    := -shared -static
 Default_LIBNAME      := libsnappyjava.so
-Default_SNAPPY_FLAGS :=
+Default_SNAPPY_FLAGS := 
 
 Linux-x86_CXX       := $(CROSS_PREFIX)g++
 Linux-x86_STRIP     := $(CROSS_PREFIX)strip
@@ -81,18 +81,18 @@ else
 endif
 Linux-x86_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_LIBNAME   := libsnappyjava.so
-Linux-x86_SNAPPY_FLAGS:=
+Linux-x86_SNAPPY_FLAGS:= 
 
-Linux-x86_64_CXX       := $(CROSS_PREFIX)g++
+Linux-x86_64_CXX       := $(CROSS_PREFIX)g++ 
 Linux-x86_64_STRIP     := $(CROSS_PREFIX)strip
 ifeq ($(IBM_JDK_7),)
-  Linux-x86_64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
+  Linux-x86_64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
 else
-  Linux-x86_64_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
+  Linux-x86_64_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
 endif
 Linux-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_64_LIBNAME   := libsnappyjava.so
-Linux-x86_64_SNAPPY_FLAGS  :=
+Linux-x86_64_SNAPPY_FLAGS  := 
 
 Linux-ppc_CXX         := g++
 Linux-ppc_STRIP       := strip
@@ -108,7 +108,7 @@ Linux-ppc_SNAPPY_FLAGS  :=
 Linux-ppc64_CXX       := g++
 Linux-ppc64_STRIP     := strip
 ifeq ($(IBM_JDK_7),)
-  Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
+  Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64 
 else
   Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2 -fPIC -m64
 endif
@@ -160,19 +160,19 @@ Linux-s390x_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-s390x_LIBNAME   := libsnappyjava.so
 Linux-s390x_SNAPPY_FLAGS  :=
 
-SunOS-x86_CXX       := g++
+SunOS-x86_CXX       := g++ 
 SunOS-x86_STRIP     := strip
 SunOS-x86_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden
 SunOS-x86_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 SunOS-x86_LIBNAME   := libsnappyjava.so
-SunOS-x86_SNAPPY_FLAGS  :=
+SunOS-x86_SNAPPY_FLAGS  := 
 
-SunOS-sparc_CXX       := g++
+SunOS-sparc_CXX       := g++ 
 SunOS-sparc_STRIP     := strip
 SunOS-sparc_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden
 SunOS-sparc_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 SunOS-sparc_LIBNAME   := libsnappyjava.so
-SunOS-sparc_SNAPPY_FLAGS  :=
+SunOS-sparc_SNAPPY_FLAGS  := 
 
 SunOS-x86_64_CXX       := g++
 SunOS-x86_64_STRIP     := strip
@@ -191,14 +191,14 @@ Linux-arm_STRIP     := $(CROSS_PREFIX)strip
 Linux-arm_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=softfp
 Linux-arm_LINKFLAGS := -shared -static-libgcc
 Linux-arm_LIBNAME   := libsnappyjava.so
-Linux-arm_SNAPPY_FLAGS:=
+Linux-arm_SNAPPY_FLAGS:= 
 
 Linux-armhf_CXX       := $(CROSS_PREFIX)g++
 Linux-armhf_STRIP     := $(CROSS_PREFIX)strip
 Linux-armhf_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=hard
 Linux-armhf_LINKFLAGS := -shared -static-libgcc
 Linux-armhf_LIBNAME   := libsnappyjava.so
-Linux-armhf_SNAPPY_FLAGS:=
+Linux-armhf_SNAPPY_FLAGS:= 
 
 Linux-aarch64_CXX       := $(CROSS_PREFIX)g++
 Linux-aarch64_STRIP     := $(CROSS_PREFIX)strip
@@ -214,46 +214,47 @@ Mac-x86_LINKFLAGS := -dynamiclib -static-libgcc
 Mac-x86_LIBNAME   := libsnappyjava.jnilib
 Mac-x86_SNAPPY_FLAGS  :=
 
-Mac-x86_64_CXX       := g++ -arch $(OS_ARCH)
+Mac-x86_64_CXX       := g++ -arch $(OS_ARCH) 
 Mac-x86_64_STRIP     := strip -x
 Mac-x86_64_CXXFLAGS  := -Ilib/inc_mac -I$(JAVA_HOME)/include -O2 -fPIC -mmacosx-version-min=10.5 -fvisibility=hidden
-Mac-x86_64_LINKFLAGS := -dynamiclib
-Mac-x86_64_LIBNAME   := libsnappyjava.jnilib
-Mac-x86_64_SNAPPY_FLAGS  :=
+Mac-x86_64_LINKFLAGS := -dynamiclib 
+Mac-x86_64_LIBNAME   := libsnappyjava.jnilib 
+Mac-x86_64_SNAPPY_FLAGS  := 
 
 FreeBSD-x86_64_CXX          := $(CROSS_PREFIX)g++
 FreeBSD-x86_64_STRIP        := $(CROSS_PREFIX)strip
 FreeBSD-x86_64_CXXFLAGS     := -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
 FreeBSD-x86_64_LINKFLAGS    := -shared -static-libgcc
 FreeBSD-x86_64_LIBNAME      := libsnappyjava.so
-FreeBSD-x86_64_SNAPPY_FLAGS :=
+FreeBSD-x86_64_SNAPPY_FLAGS := 
 
 Windows-x86_CXX          := $(CROSS_PREFIX)g++
 Windows-x86_STRIP        := $(CROSS_PREFIX)strip
-Windows-x86_CXXFLAGS     := -Ilib/inc_win -O2
+Windows-x86_CXXFLAGS     := -Ilib/inc_win -O2 
 Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_LIBNAME      := snappyjava.dll
-Windows-x86_SNAPPY_FLAGS :=
+Windows-x86_SNAPPY_FLAGS := 
 
 Windows-x86_64_CXX          := $(CROSS_PREFIX)g++
 Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
-Windows-x86_64_CXXFLAGS     := -Ilib/inc_win -O2
-Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static
+Windows-x86_64_CXXFLAGS     := -Ilib/inc_win -O2 
+Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static 
 Windows-x86_64_LIBNAME      := snappyjava.dll
-Windows-x86_64_SNAPPY_FLAGS :=
+Windows-x86_64_SNAPPY_FLAGS := 
 
 
 CXX        := $($(os_arch)_CXX)
 STRIP     := $($(os_arch)_STRIP)
-CXXFLAGS    := $($(os_arch)_CXXFLAGS)
-LINKFLAGS := $($(os_arch)_LINKFLAGS)
+CXXFLAGS    := $($(os_arch)_CXXFLAGS) 
+LINKFLAGS := $($(os_arch)_LINKFLAGS) 
 LIBNAME   := $($(os_arch)_LIBNAME)
 SNAPPY_FLAGS := $($(os_arch)_SNAPPY_FLAGS)
 
 
 
-CXXFLAGS := $(CXXFLAGS) -Ilib/include
+CXXFLAGS := $(CXXFLAGS) -Ilib/include  
 ifneq ($(jni_include),)
 CXXFLAGS := $(CXXFLAGS) -I"$(jni_include)"
 endif
+
 
