@@ -3,7 +3,7 @@ SRC:=src/main/java
 include src/main/resources/org/xerial/snappy/VERSION
 
 ifndef JAVA_HOME
-$(error Set JAVA_HOME environment variable)
+$(warning Set JAVA_HOME environment variable)
 endif
 
 

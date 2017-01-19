@@ -110,7 +110,10 @@ $(SNAPPY_OUT)/BitShuffleNative.o: $(SRC)/org/xerial/snappy/BitShuffleNative.cpp 
 
 $(SNAPPY_OUT)/$(LIBNAME): $(SNAPPY_OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $+ $(LINKFLAGS)
-	$(STRIP) $@
+    # Workaround for strip Protocol error when using VirtualBox on Mac
+	cp $@ /tmp/$(@F)
+	$(STRIP) /tmp/$(@F)
+	cp /tmp/$(@F) $@
 
 clean-native:
 	rm -rf $(SNAPPY_OUT)
@@ -144,10 +147,10 @@ test: $(NATIVE_DLL)
 
 DOCKER_RUN_OPTS=--rm
 
-win32: $(SQLITE_UNPACKED) jni-header
+win32: jni-header
 	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86'
 
-win64: $(SQLITE_UNPACKED) jni-header
+win64: jni-header
 	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64'
 
 mac32:
