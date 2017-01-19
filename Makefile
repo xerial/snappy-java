@@ -12,7 +12,7 @@ SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
-SNAPPY_GIT_REV:=2b9152d9c5bed71dffb7f7f6c7a3ec48b058ff2d # 1.1.3 with autogen.sh fix
+SNAPPY_GIT_REV:=32d6d7d8a2ef328a2ee1dd40f072e21f4983ebda # 1.1.3 May 23, 2016
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 
