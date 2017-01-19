@@ -79,8 +79,10 @@ public class SnappyLoader
     public static final String KEY_SNAPPY_USE_SYSTEMLIB = "org.xerial.snappy.use.systemlib";
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
-    private static volatile boolean isLoaded = false;
-    private static volatile SnappyNative api = null;
+    private static boolean isLoaded = false;
+
+    private static volatile SnappyNative snappyApi = null;
+    private static volatile BitShuffleNative bitshuffleApi = null;
 
     private static File nativeLibFile = null;
 
@@ -91,17 +93,19 @@ public class SnappyLoader
             if (!deleted) {
                 // Deleting native lib has failed, but it's not serious so simply ignore it here
             }
+            snappyApi = null;
+            bitshuffleApi = null;
         }
     }
 
     /**
-     * Set the api instance.
+     * Set the `snappyApi` instance.
      *
      * @param nativeCode
      */
-    static synchronized void setApi(SnappyNative nativeCode)
+    static synchronized void setSnappyApi(SnappyNative nativeCode)
     {
-        api = nativeCode;
+        snappyApi = nativeCode;
     }
 
     /**
@@ -142,40 +146,47 @@ public class SnappyLoader
         loadSnappySystemProperties();
     }
 
-    static synchronized SnappyNative load()
+    static synchronized SnappyNative loadSnappyApi()
     {
-        if (api != null) {
-            return api;
+        if (snappyApi != null) {
+            return snappyApi;
         }
+        loadNativeLibrary();
+        setSnappyApi(new SnappyNative());
+        return snappyApi;
+    }
 
-        try {
-            loadNativeLibrary();
-
-            setApi(new SnappyNative());
-            isLoaded = true;
+    static synchronized BitShuffleNative loadBitShuffleApi()
+    {
+        if (bitshuffleApi != null) {
+            return bitshuffleApi;
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
-        }
-
-        return api;
+        loadNativeLibrary();
+        bitshuffleApi = new BitShuffleNative();
+        return bitshuffleApi;
     }
 
     /**
      * Load a native library of snappy-java
      */
-    private static void loadNativeLibrary()
+    private synchronized static void loadNativeLibrary()
     {
-
-        nativeLibFile = findNativeLibrary();
-        if (nativeLibFile != null) {
-            // Load extracted or specified snappyjava native library.
-            System.load(nativeLibFile.getAbsolutePath());
-        }
-        else {
-            // Load preinstalled snappyjava (in the path -Djava.library.path)
-            System.loadLibrary("snappyjava");
+        if (!isLoaded) {
+            try {
+                nativeLibFile = findNativeLibrary();
+                if (nativeLibFile != null) {
+                    // Load extracted or specified snappyjava native library.
+                    System.load(nativeLibFile.getAbsolutePath());
+                } else {
+                    // Load preinstalled snappyjava (in the path -Djava.library.path)
+                    System.loadLibrary("snappyjava");
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                throw new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, e.getMessage());
+            }
+            isLoaded = true;
         }
     }
 
@@ -372,7 +383,7 @@ public class SnappyLoader
                 versionData.load(versionFile.openStream());
                 version = versionData.getProperty("version", version);
                 if (version.equals("unknown")) {
-                    version = versionData.getProperty("VERSION", version);
+                    version = versionData.getProperty("SNAPPY_VERSION", version);
                 }
                 version = version.trim().replaceAll("[^0-9M\\.]", "");
             }

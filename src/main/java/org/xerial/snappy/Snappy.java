@@ -44,7 +44,7 @@ public class Snappy
 {
     static {
         try {
-            impl = SnappyLoader.load();
+            impl = SnappyLoader.loadSnappyApi();
         }
         catch (Exception e) {
             throw new ExceptionInInitializerError(e);
@@ -66,7 +66,7 @@ public class Snappy
     public static void cleanUp()
     {
         SnappyLoader.cleanUpExtractedNativeLib();
-        SnappyLoader.setApi(null);
+        SnappyLoader.setSnappyApi(null);
     }
 
     /**
@@ -295,7 +295,7 @@ public class Snappy
                     versionData.load(in);
                     version = versionData.getProperty("version", version);
                     if (version.equals("unknown")) {
-                        version = versionData.getProperty("VERSION", version);
+                        version = versionData.getProperty("SNAPPY_VERSION", version);
                     }
                     version = version.trim().replaceAll("[^0-9\\.]", "");
                 }
