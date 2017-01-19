@@ -42,7 +42,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armhf Linux-aarch64 Linux-ppc Linux-ppc64 Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-aarch64 Linux-ppc Linux-ppc64 Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -188,17 +188,31 @@ SunOS-x86_64_SNAPPY_FLAGS  :=
 
 Linux-arm_CXX       := $(CROSS_PREFIX)g++
 Linux-arm_STRIP     := $(CROSS_PREFIX)strip
-Linux-arm_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=softfp
+Linux-arm_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=softfp
 Linux-arm_LINKFLAGS := -shared -static-libgcc
 Linux-arm_LIBNAME   := libsnappyjava.so
 Linux-arm_SNAPPY_FLAGS:=
 
-Linux-armhf_CXX       := $(CROSS_PREFIX)g++
-Linux-armhf_STRIP     := $(CROSS_PREFIX)strip
-Linux-armhf_CXXFLAGS  := -include lib/inc_linux/jni_md.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=hard
-Linux-armhf_LINKFLAGS := -shared -static-libgcc
-Linux-armhf_LIBNAME   := libsnappyjava.so
-Linux-armhf_SNAPPY_FLAGS:=
+Linux-armv6_CXX       := $(CROSS_PREFIX)g++
+Linux-armv6_STRIP     := $(CROSS_PREFIX)strip
+Linux-armv6_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=hard
+Linux-armv6_LINKFLAGS := -shared -static-libgcc
+Linux-armv6_LIBNAME   := libsnappyjava.so
+Linux-armv6_SNAPPY_FLAGS:=
+
+Linux-armv7_CXX       := $(CROSS_PREFIX)g++
+Linux-armv7_STRIP     := $(CROSS_PREFIX)strip
+Linux-armv7_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=hard
+Linux-armv7_LINKFLAGS := -shared -static-libgcc
+Linux-armv7_LIBNAME   := libsnappyjava.so
+Linux-armv7_SNAPPY_FLAGS:=
+
+Linux-android-arm_CXX       := $(CROSS_PREFIX)g++
+Linux-android-arm_STRIP     := $(CROSS_PREFIX)strip
+Linux-android-arm_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden
+Linux-android-arm_LINKFLAGS := -shared -static-libgcc
+Linux-android-arm_LIBNAME   := libsnappyjava.so
+Linux-android-arm_SNAPPY_FLAGS:=
 
 Linux-aarch64_CXX       := $(CROSS_PREFIX)g++
 Linux-aarch64_STRIP     := $(CROSS_PREFIX)strip
