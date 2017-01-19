@@ -6,7 +6,7 @@ SBT:=./sbt
 
 all: snappy
 
-SNAPPY_OUT:=$(TARGET)/$(snappy)-$(os_arch)
+SNAPPY_OUT:=$(TARGET)/snappy-$(SNAPPY_VERSION)-$(os_arch)
 SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(SNAPPY_VERSION).tar.gz
 SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
@@ -15,6 +15,7 @@ SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
 SNAPPY_GIT_REV:=32d6d7d8a2ef328a2ee1dd40f072e21f4983ebda # 1.1.3 May 23, 2016
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
+SNAPPY_SOURCE_CONFIGURED:=$(TARGET)/snappy-configure.log
 
 BITSHUFFLE_ARCHIVE:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION).tar.gz
 BITSHUFFLE_C:=bitshuffle_core.c iochain.c
@@ -71,7 +72,10 @@ $(SNAPPY_GIT_UNPACKED):
 	rm -rf $(SNAPPY_SRC_DIR)
 	@mkdir -p $(SNAPPY_SRC_DIR)
 	git clone $(SNAPPY_GIT_REPO_URL) $(SNAPPY_SRC_DIR)
-	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(VERSION) $(SNAPPY_GIT_REV)
+	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(SNAPPY_VERSION) $(SNAPPY_GIT_REV)
+	touch $@
+
+$(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
 	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 	touch $@
 
@@ -91,7 +95,6 @@ $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class: $(SRC)/org/xeria
 $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class
 	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.BitShuffleNative
 
-$(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
 $(SNAPPY_OUT)/%.o: $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
@@ -121,15 +124,14 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s+\"(.*)\"/\1/" version.sbt | sed -e "/^$$/d")
 
-native: $(SNAPPY_GIT_UNPACKED) $(NATIVE_DLL)
+native: $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
+$(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
 	cp $< $@
 	@mkdir -p $(NATIVE_TARGET_DIR)
 	cp $< $(NATIVE_TARGET_DIR)/$(LIBNAME)
-
 
 package: $(TARGET)/$(snappy-jar-version).jar
 
