@@ -56,13 +56,13 @@ public class SnappyBundleActivator
             library = library.replace(".dylib", ".jnilib");
         }
         System.loadLibrary(library);
-        SnappyLoader.setSnappyApi(new SnappyNative());
+        SnappyLoader.setApi(new SnappyNative());
     }
 
     public void stop(BundleContext context)
             throws Exception
     {
-        SnappyLoader.setSnappyApi(null);
+        SnappyLoader.setApi(null);
         SnappyLoader.cleanUpExtractedNativeLib();
     }
 }
