@@ -176,11 +176,11 @@ public class OSInfo {
             }
 
             // For java7, we stil need to if run some shell commands to determine ABI of JVM
-            String javaHome = System.getProperty("java.home");
             try {
                 // determine if first JVM found uses ARM hard-float ABI
                 int exitCode = Runtime.getRuntime().exec("which readelf").waitFor();
                 if(exitCode == 0) {
+                    String javaHome = System.getProperty("java.home");
                     String[] cmdarray = {"/bin/sh", "-c", "find '" + javaHome +
                         "' -name 'libjvm.so' | head -1 | xargs readelf -A | " +
                         "grep 'Tag_ABI_VFP_args: VFP registers'"};

@@ -1,0 +1,23 @@
+FROM centos:5
+MAINTAINER Taro L. Saito <leo@xerial.org>
+
+RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /tmp/work \
+  && cd /tmp/work \
+  && wget http://www.netgull.com/gcc/releases/gcc-4.8.3/gcc-4.8.3.tar.gz \
+  && tar xvfz gcc-4.8.3.tar.gz \
+  && cd gcc-4.8.3 \
+  && ./contrib/download_prerequisites \
+  && cd .. \
+  && mkdir objdir
+
+RUN cd /tmp/work/objdir \
+  && ../gcc-4.8.3/configure --prefix=/usr/local/gcc-4.8.3 CXXFLAGS=-fPIC CFLAGS=-fPIC --enable-languages=c,c++ \
+  && make \
+  && make install
+  && rm -rf /tmp/work
+
+ENV PATH /usr/local/gcc-4.8.3/bin:$PATH
+WORKDIR /work
