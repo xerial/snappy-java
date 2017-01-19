@@ -130,6 +130,8 @@ snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s
 native: $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
+native-all: win32 win64 mac64 native-arm linux-ppc64 linux-aarch64
+
 $(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
 	cp $(SNAPPY_OUT)/$(LIBNAME) $@
