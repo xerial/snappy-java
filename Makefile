@@ -79,7 +79,7 @@ $(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
 	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 	touch $@
 
-jni-header: $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
@@ -153,8 +153,12 @@ win32: jni-header
 win64: jni-header
 	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64'
 
-mac32:
+# deprecated
+mac32: jni-header
 	$(MAKE) native OS_NAME=Mac OS_ARCH=x86
+
+mac64: jni-header
+	docker run -it $(DOCKER_RUN_OPTS) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 
 linux32:
 	$(MAKE) native OS_NAME=Linux OS_ARCH=x86
@@ -162,23 +166,24 @@ linux32:
 freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
 
-# for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabi package
-linux-arm:
-	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm
+# For ARM
+linux-arm: jni-header
+	./docker/dockcross-armv5 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=arm-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm'
 
-# for cross-compilation on Ubuntu, install the g++-arm-linux-gnueabihf package
-linux-armhf:
-	$(MAKE) native CROSS_PREFIX=arm-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armhf
+linux-armv6: jni-header
+	./docker/dockcross-armv6 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=arm-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
 
-# for cross-compilation on Ubuntu, install the g++-aarch64-linux-gnu
-linux-aarch64:
-	$(MAKE) native CROSS_PREFIX=aarch64-linux-gnu- OS_NAME=Linux OS_ARCH=aarch64
+linux-armv7: jni-header
+	./docker/dockcross-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=arm-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv7'
 
-clean-native-linux32:
-	$(MAKE) clean-native OS_NAME=Linux OS_ARCH=x86
+linux-android-arm: jni-header
+	./docker/dockcross-android-arm -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/arm-linux-androideabi/bin/arm-linux-androideabi- OS_NAME=Linux OS_ARCH=android-arm'
 
-clean-native-win32:
-	$(MAKE) clean-native OS_NAME=Windows OS_ARCH=x86
+linux-ppc64: jni-header
+	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64le'
+
+linux-aarch64: jni-header
+	./docker/dockcross-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-linux-gnu- OS_NAME=Linux OS_ARCH=aarch64'
 
 javadoc:
 	$(SBT) doc

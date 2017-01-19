@@ -45,7 +45,7 @@ pomExtra := {
     </scm>
 }
 
-scalaVersion := "2.11.6"
+scalaVersion in ThisBuild := "2.11.8"
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
 
