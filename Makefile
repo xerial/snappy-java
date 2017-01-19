@@ -141,12 +141,14 @@ $(TARGET)/$(snappy-jar-version).jar:
 test: $(NATIVE_DLL)
 	$(SBT) test
 
-win32:
-	$(MAKE) native CROSS_PREFIX=i686-w64-mingw32- OS_NAME=Windows OS_ARCH=x86
 
-# for cross-compilation on Ubuntu, install the g++-mingw-w64-x86-64 package
-win64:
-	$(MAKE) native CROSS_PREFIX=x86_64-w64-mingw32- OS_NAME=Windows OS_ARCH=x86_64
+DOCKER_RUN_OPTS=--rm
+
+win32: $(SQLITE_UNPACKED) jni-header
+	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86'
+
+win64: $(SQLITE_UNPACKED) jni-header
+	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64'
 
 mac32:
 	$(MAKE) native OS_NAME=Mac OS_ARCH=x86
