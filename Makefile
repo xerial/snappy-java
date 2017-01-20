@@ -130,7 +130,7 @@ snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s
 native: $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: win32 win64 mac64 native-arm linux-ppc64 linux-aarch64
+native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64 linux-aarch64
 
 $(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -163,7 +163,10 @@ mac64: jni-header
 	docker run -it $(DOCKER_RUN_OPTS) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 
 linux32: jni-header
-	docker run $(DOCKER_RUN_OPTS) -ti -v $$PWD:/work xerial/centos5-linux-x86 bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86'
+	docker run $(DOCKER_RUN_OPTS) -ti -v $$PWD:/work xerial/centos5-linux-x86_64-pic bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86'
+
+linux64: jni-header
+	docker run $(DOCKER_RUN_OPTS) -ti -v $$PWD:/work xerial/centos5-linux-x86_64-pic bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=x86_64'
 
 freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64

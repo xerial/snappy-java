@@ -15,9 +15,13 @@ RUN mkdir /tmp/work \
 
 RUN cd /tmp/work/objdir \
   && ../gcc-4.8.3/configure --prefix=/usr/local/gcc-4.8.3 CXXFLAGS=-fPIC CFLAGS=-fPIC --enable-languages=c,c++ \
-  && make \
-  && make install
+  && make
+
+RUN cd /tmp/work/objdir \
+  && make install \
   && rm -rf /tmp/work
 
 ENV PATH /usr/local/gcc-4.8.3/bin:$PATH
+ENV LD_LIBRARY_PATH /usr/local/gcc-4.8.3/lib64/:$LD_LIBRARY_PATH
+
 WORKDIR /work
