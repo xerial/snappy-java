@@ -10,10 +10,14 @@ description  := "snappy-java: A fast compression/decompression library"
 
 sonatypeProfileName := "org.xerial"
 
-credentials += Credentials("Sonatype Nexus Repository Manager",
-  "oss.sonatype.org",
-  sys.env.getOrElse("SONATYPE_USERNAME", ""),
-  sys.env.getOrElse("SONATYPE_PASSWORD", ""))
+credentials ++= {
+  if(sys.env.contains("SONATYPE_USERNAME") && sys.env.contains("SONATYPE_PASSWORD")) {
+    Seq(Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", sys.env("SONATYPE_USERNAME"), sys.env("SONATYPE_PASSWORD")))
+  }
+  else {
+    Seq.empty
+  }
+}
 
 pomExtra := {
    <url>https://github.com/xerial/snappy-java</url>
