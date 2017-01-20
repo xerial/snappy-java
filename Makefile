@@ -83,14 +83,14 @@ jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
-	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+	$(JAVAC) -source 1.7 -target 1.7 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
 	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.SnappyNative
 
 $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class: $(SRC)/org/xerial/snappy/BitShuffleNative.java
 	@mkdir -p $(TARGET)/jni-classes
-	$(JAVAC) -source 1.6 -target 1.6 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+	$(JAVAC) -source 1.7 -target 1.7 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class
 	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.BitShuffleNative
@@ -130,7 +130,7 @@ snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s
 native: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: jni-header win32 win64 mac64 native-arm linux32 linux64 linux-ppc64 linux-aarch64
+native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64 linux-aarch64
 
 $(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
