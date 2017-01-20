@@ -27,5 +27,5 @@ script:
         make linux64 && ./sbt test;
       fi;
     else
-      make linux64 && ./sbt test;
+      ./sbt test;
     fi
