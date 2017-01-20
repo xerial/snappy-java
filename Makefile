@@ -79,7 +79,7 @@ $(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
 	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 	touch $@
 
-jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
@@ -127,10 +127,10 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s+\"(.*)\"/\1/" version.sbt | sed -e "/^$$/d")
 
-native: $(NATIVE_DLL)
+native: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64 linux-aarch64
+native-all: jni-header win32 win64 mac64 native-arm linux32 linux64 linux-ppc64 linux-aarch64
 
 $(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
