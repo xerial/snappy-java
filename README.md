@@ -139,9 +139,6 @@ A file `target/snappy-java-$(version).jar` is the product additionally containin
 
 Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. Usual JNI-library specific problem no longer exists since snappy-java version 1.0.3 or higher can be loaded by multiple class loaders.
 
-----
-Snappy-java is developed by [Taro L. Saito](http://www.xerial.org/leo). Twitter  [@taroleo](http://twitter.com/#!/taroleo)
-
 
 ### Configure snappy-java using property file
 
@@ -152,4 +149,7 @@ Here is a list of the available properties:
  * org.xerial.snappy.lib.name   (library file name)
  * org.xerial.snappy.tempdir    (temporary directory to extract a native library bundled in snappy-java)
  * org.xerial.snappy.use.systemlib  (if this value is true, use system installed libsnappyjava.so looking the path specified by java.library.path) 
+
+----
+Snappy-java is developed by [Taro L. Saito](http://www.xerial.org/leo). Twitter  [@taroleo](http://twitter.com/#!/taroleo)
 
