@@ -1,7 +1,7 @@
 FROM centos:5
 MAINTAINER Taro L. Saito <leo@xerial.org>
 
-RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 \
+RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 curl \
  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /tmp/work \
