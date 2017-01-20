@@ -1,4 +1,6 @@
-The snappy-java is a Java port of the snappy
+snappy-java
+=== 
+snappy-java is a Java port of the snappy
 <http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
 
 ## Features
@@ -94,82 +96,10 @@ If you have snappy-java-(VERSION).jar in the current directory, use `-classpath`
     $ javac -classpath ".:snappy-java-(VERSION).jar" Sample.java  # in Mac or Linux
 
 
-
-
 ## Public discussion group
 Post bug reports or feature request to the Issue Tracker: <https://github.com/xerial/snappy-java/issues>
 
 Public discussion forum is here: [Xerial Public Discussion Group](http://groups.google.com/group/xerial?hl=en)
-
-
-## Building from the source code
-See the [installation instruction](https://github.com/xerial/snappy-java/blob/develop/INSTALL). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), g++ compiler (mingw in Windows) etc.
-
-    $ git clone https://github.com/xerial/snappy-java.git
-    $ cd snappy-java
-    $ make
-
-When building on Solaris use
-
-    $ gmake
-
-A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
-
-## Building Linux x86\_64 binary
-
-snappy-java tries to static link libstdc++ to increase the availability for various Linux versions. However, standard distributions of 64-bit Linux OS rarely provide libstdc++ compiled with `-fPIC` option. I currently uses custom g++, compiled as follows:
-
-```
-$ cd work
-$ wget (gcc-4.8.3 source)
-$ tar xvfz (gcc-4.8.3.tar.gz)
-$ cd gcc-4.8.3
-$ ./contrib/download_prerequisites
-$ cd ..
-$ mkdir objdir
-$ cd objdir
-$ ../gcc-4.8.3/configure --prefix=$HOME/local/gcc-4.8.3 CXXFLAGS=-fPIC CFLAGS=-fPIC --enable-languages=c,c++
-$ make
-$ make install
-```
-
-This g++ build enables static linking of libstdc++. For more infomation on building GCC, see GCC's home page.
-
-## Building Linux s390/s390x binaries
-
-Older snapshots of snappy contain a buggy config.h.in that does not work properly on some big-endian platforms like Linux on IBM z (s390/s390x). Building snappy-java on s390/s390x requires fetching the snappy source from GitHub, and processing the source with autoconf to obtain a usable config.h. On a RHEL s390x system, these steps produced a working 64-bit snappy-java build (the process should be similar for other distributions):
-
-	$ sudo yum install java-1.7.1-ibm-devel libstdc++-static-devel
-	$ export JAVA_HOME=/usr/lib/jvm/java-1.7.1-ibm-1.7.1.2.10-1jpp.3.el7_0.s390x
-	$ make USE_GIT=1 GIT_REPO_URL=https://github.com/google/snappy.git GIT_SNAPPY_BRANCH=master IBM_JDK_7=1
-
-## Activating SSE2/AVX2 instructions in BitShuffle
-
-The most of the native libraries that snappy-java contains disable SSE2/AVX2 instructions in terms of portability (SSE2 is enabled only in Linux/x86_64 platforms). To enable AVX2 instructions, you need to compile as follows:
-
-	$ make CXXFLAGS_BITSHUFFLE=-mavx2  # -msse2 for SSE2 instructions
-
-## Cross-compiling for other platforms
-The Makefile contains rules for cross-compiling the native library for other platforms so that the snappy-java JAR can support multiple platforms. For example, to build the native libraries for x86 Linux, x86 and x86-64 Windows, and soft- and hard-float ARM:
-
-    $ make linux32 win32 win64 linux-arm linux-armhf linux-aarch64
-
-If you append `snappy` to the line above, it will also build the native library for the current platform and then build the snappy-java JAR (containing all native libraries built so far).
-
-Of course, you must first have the necessary cross-compilers and development libraries installed for each target CPU and OS. For example, on Ubuntu 12.04 for x86-64, install the following packages for each target:
-
-  * linux32: `sudo apt-get install g++-multilib libc6-dev-i386 lib32stdc++6`
-  * win32: `sudo apt-get install g++-mingw-w64-i686`
-  * win64: `sudo apt-get install g++-mingw-w64-x86-64`
-  * arm: `sudo apt-get install g++-arm-linux-gnueabi`
-  * armhf: `sudo apt-get install g++-arm-linux-gnueabihf`
-  * aarch64: `sudo apt-get install g++-aarch64-linux`
-
-Unfortunately, cross-compiling for Mac OS X is not currently possible; you must compile within OS X.
-
-If you are using Mac and openjdk7 (or higher), use the following option:
-
-    $ make native LIBNAME=libsnappyjava.dylib
 
 ## For developers
 
@@ -191,6 +121,19 @@ $ ./sbt -Dloglevel=debug
 
 For the details of sbt usage, see my blog post: [Building Java Projects with sbt](http://xerial.org/blog/2014/03/24/sbt/)
 
+### Building from the source code
+See the [build instruction](https://github.com/xerial/snappy-java/blob/master/BUILD.md). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), g++ compiler (mingw in Windows) etc.
+
+    $ git clone https://github.com/xerial/snappy-java.git
+    $ cd snappy-java
+    $ make
+
+When building on Solaris, use `gmake`:
+
+    $ gmake
+
+A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
+
 ## Miscellaneous Notes
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
@@ -198,3 +141,15 @@ Simply put the snappy-java's jar to WEB-INF/lib folder of your web application. 
 
 ----
 Snappy-java is developed by [Taro L. Saito](http://www.xerial.org/leo). Twitter  [@taroleo](http://twitter.com/#!/taroleo)
+
+
+### Configure snappy-java using property file
+
+Prepare org-xerial-snappy.properties file (under the root path of your library) in Java's property file format.
+Here is a list of the available properties:
+
+ * org.xerial.snappy.lib.path   (directory containing a snappyjava's native library)
+ * org.xerial.snappy.lib.name   (library file name)
+ * org.xerial.snappy.tempdir    (temporary directory to extract a native library bundled in snappy-java)
+ * org.xerial.snappy.use.systemlib  (if this value is true, use system installed libsnappyjava.so looking the path specified by java.library.path) 
+
