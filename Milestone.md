@@ -5,8 +5,8 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
  * Upgraded to snappy 1.1.3 (Minor compression performance improvement)
  * Added support for armv5, armv6, armv7, android-arm, aarch64, ppc64
  * Added BitShuffle class for better float value compression
- * Switched to use docker-based cross compilers for building native libraries
- * AIX, FreeBSD, SunOS, IBM s390x are still using snappy 1.1.2. Your contirbutions are welcome.
+ * Using docker-based cross compilers for building native libraries
+ * AIX, FreeBSD, SunOS, IBM s390x are still using snappy 1.1.2. Your contirbutions of native libraries are welcome. Please send a pull request that contains the changes runing `make native` in your platform.
 
 ## snappy-java-1.1.2.6 (2016-06-02)
  * Fix a bug in SnappyInputStream when reading compressed data that happened to have the same first byte with the stream magic header (#142)
