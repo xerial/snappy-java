@@ -146,7 +146,7 @@ $(TARGET)/$(snappy-jar-version).jar:
 test: $(NATIVE_DLL)
 	$(SBT) test
 
-DOCKER_RUN_OPTS=--privileged
+DOCKER_RUN_OPTS=--rm
 
 win32: jni-header
 	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86'
