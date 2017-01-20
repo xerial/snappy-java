@@ -196,19 +196,3 @@ javadoc:
 
 install-m2:
 	$(SBT) publishM2
-
-googlecode-upload: googlecode-lib-upload googlecode-src-upload
-
-googlecode-lib-upload: $(TARGET)/snappy-java-$(SNAPPY_VERSION)-lib.upload
-googlecode-src-upload: $(TARGET)/snappy-java-$(SNAPPY_VERSION)-src.upload
-
-GOOGLECODE_USER:=leo@xerial.org
-
-$(TARGET)/snappy-java-$(SNAPPY_VERSION)-lib.upload:
-	./googlecode_upload.py -s "library for all platforms" -p snappy-java -l "Type-Executable,Featured,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(SNAPPY_VERSION).jar
-	touch $@
-
-$(TARGET)/snappy-java-$(SNAPPY_VERSION)-src.upload:
-	./googlecode_upload.py -s "source code archive" -p snappy-java -l "Type-Source,OpSys-All" -u "$(GOOGLECODE_USER)" target/snappy-java-$(SNAPPY_VERSION).tar.gz
-	touch $@
-
