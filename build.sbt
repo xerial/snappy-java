@@ -47,7 +47,7 @@ pomExtra := {
 
 scalaVersion in ThisBuild := "2.11.8"
 
-javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
+javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.7", "-target", "1.7")
 
 javacOptions in doc := {
  val opts = Seq("-source", "1.6")
