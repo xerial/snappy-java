@@ -8,7 +8,12 @@ organizationName := "xerial.org"
 
 description  := "snappy-java: A fast compression/decompression library"
 
-sonatypeProfileName := "org.xerial" 
+sonatypeProfileName := "org.xerial"
+
+credentials += Credentials("Sonatype Nexus Repository Manager",
+  "oss.sonatype.org",
+  sys.env.getOrElse("SONATYPE_USERNAME", ""),
+  sys.env.getOrElse("SONATYPE_PASSWORD", ""))
 
 pomExtra := {
    <url>https://github.com/xerial/snappy-java</url>

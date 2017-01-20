@@ -17,7 +17,7 @@ jdk:
 script:
   - if [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ]; then
       if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-        make native-all && ./sbt test;
+        make native-all && ./sbt "; test; publish";
       else
         ./sbt test;
       fi;
