@@ -8,7 +8,16 @@ organizationName := "xerial.org"
 
 description  := "snappy-java: A fast compression/decompression library"
 
-sonatypeProfileName := "org.xerial" 
+sonatypeProfileName := "org.xerial"
+
+credentials ++= {
+  if(sys.env.contains("SONATYPE_USERNAME") && sys.env.contains("SONATYPE_PASSWORD")) {
+    Seq(Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", sys.env("SONATYPE_USERNAME"), sys.env("SONATYPE_PASSWORD")))
+  }
+  else {
+    Seq.empty
+  }
+}
 
 pomExtra := {
    <url>https://github.com/xerial/snappy-java</url>
@@ -45,9 +54,9 @@ pomExtra := {
     </scm>
 }
 
-scalaVersion := "2.11.6"
+scalaVersion in ThisBuild := "2.11.8"
 
-javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.6", "-target", "1.6")
+javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.7", "-target", "1.7")
 
 javacOptions in doc := {
  val opts = Seq("-source", "1.6")
@@ -112,8 +121,8 @@ OsgiKeys.additionalHeaders := Map(
 "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
 "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
 "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
-"org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64",
-"org/xerial/snappy/native/Linux/ppc64le/libsnappyjava.so;osname=linux;processor=ppc64le",
+"org/xerial/snappy/native/Linux/arm7/libsnappyjava.so;osname=linux;processor=arm_le",
+"org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64le",
 "org/xerial/snappy/native/Linux/s390x/libsnappyjava.so;osname=linux;processor=s390x",
 "org/xerial/snappy/native/AIX/ppc/libsnappyjava.a;osname=aix;processor=ppc",
 "org/xerial/snappy/native/AIX/ppc64/libsnappyjava.a;osname=aix;processor=ppc64",
