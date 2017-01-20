@@ -79,7 +79,7 @@ $(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
 	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
 	touch $@
 
-jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
