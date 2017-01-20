@@ -1,7 +1,9 @@
 sudo: required
 
-before_install:
-  - sudo apt-get install -y curl
+addons:
+  apt:
+    packages:
+    - curl
 
 services:
   - docker
