@@ -16,10 +16,10 @@ jdk:
 script:
   - if [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ]; then
       if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-        make native-all && sbt ++$TRAVIS_SCALA_VERSION "; test; publish";
+        make native-all && sbt ++$TRAVIS_SCALA_VERSION "; clean; test; publish";
       else
         make linux64 && sbt ++$TRAVIS_SCALA_VERSION "; clean; test";
       fi;
     else
-      sbt ++$TRAVIS_SCALA_VERSION test;
+      sbt ++$TRAVIS_SCALA_VERSION "; clean; test";
     fi
