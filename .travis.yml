@@ -18,7 +18,7 @@ script:
       if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         make native-all && sbt ++$TRAVIS_SCALA_VERSION "; test; publish";
       else
-        make linux64 && sbt ++$TRAVIS_SCALA_VERSION test;
+        make linux64 && sbt ++$TRAVIS_SCALA_VERSION "; clean; test";
       fi;
     else
       sbt ++$TRAVIS_SCALA_VERSION test;
