@@ -11,8 +11,9 @@ snappy-java supports Windows, Mac OS X, Linux (x86, x86_64, arm, etc...). If you
 ## Building snappy-java
 
 To build jar file of snappy-java, type:
+```
 $ make 
-
+```
 A native library for your machine environment and a jar package target/snappy-java-(version).jar are produced in the target folder.
 
 
@@ -52,6 +53,7 @@ NOTICE: Do not use the Cygwin version of MinGW-w64. It fails to build assemblies
 
 ### Mac
 * Install gcc, make, etc. included in Mac OS X install disk. (X Code). And also intall libtool:
+
 ```
 $ brew install libtool
 ```
