@@ -3,7 +3,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 ## snappy-java-1.1.3 (will be available Early 2017)
  * We are waiting contributions of native libraries for varios platforms.
    * Run `make native test` and send the result as a pull requset.
- * We also test the usability of newly added bitshuffle API before this release.
+ * We also test the usability of the newly added bitshuffle API before this release.
 
 ## snappy-java-1.1.3-M1 (2017-01-19)
  * This is a preview release. Appreciate your feedback.
