@@ -3,13 +3,13 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 ## snappy-java-1.1.3 (will be available Early 2017)
  * We are waiting contributions of native libraries for varios platforms.
    * Run `make native test` and send the result as a pull requset.
- * We also test the usability of the newly added bitshuffle API before this release.
+ * We also test the usability of the newly added BitShuffle API before this release.
 
 ## snappy-java-1.1.3-M1 (2017-01-19)
  * This is a preview release. Appreciate your feedback.
  * Upgraded to snappy 1.1.3 (Minor compression performance improvement)
  * Added support for armv5, armv6, armv7, android-arm, aarch64, ppc64
- * Added BitShuffle class for better float value compression
+ * Added BitShuffle (<https://github.com/kiyo-masui/bitshuffle>) class for better primitive array compression
  * Using docker-based cross compilers for building native libraries
  * AIX, FreeBSD, SunOS, IBM s390x are still using snappy 1.1.2. Your contirbutions of native libraries are welcome. Please send a pull request that contains the changes after runing `make native` in your platform.
 
