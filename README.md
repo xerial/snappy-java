@@ -89,7 +89,8 @@ Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` ar
 | `SnappyOutputStream`  | x | ok | x |
 | `SnappyFramedOutputStream` | x | x | ok |
 
-### BitShuffle API
+### BitShuffle API (Since 1.1.3-M1)
+
 BitShuffle is an algorithm that reorders data bits (shuffle) for efficient compression (e.g., a sequence of integers, float values, etc.). To use BitShuffle routines, import `org.xerial.snapy.BitShuffle`:
 
 ```java
