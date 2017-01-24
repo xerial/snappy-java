@@ -9,7 +9,7 @@ snappy-java is a Java port of the snappy
   * JNI-based implementation to achieve comparable performance to the native C++ version.
      * Although snappy-java uses JNI, it can be used safely with multiple class loaders (e.g. Tomcat, etc.).
   * Compression/decompression of Java primitive arrays (`float[]`, `double[]`, `int[]`, `short[]`, `long[]`, etc.)
-     * To improve the compression ratios of these arrays, you can use a fast data-rearrangement implementation ([`BitShuffle`](http://static.javadoc.io/org.xerial.snappy/snappy-java/1.1.3-M1/org/xerial/snappy/BitShuffle.html)) before compression
+     * To improve the compression ratios of these arrays, you can use a fast data-rearrangement implementation ([`BitShuffle`](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.3-M1/snappy-java-1.1.3-M1-javadoc.jar/!/org/xerial/snappy/BitShuffle.html)) before compression
   * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux (64-bit). snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`).
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`.
   * [Framing-format support](https://github.com/google/snappy/blob/master/framing_format.txt) (Since 1.1.0 version)
@@ -90,15 +90,11 @@ Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` ar
 | `SnappyFramedOutputStream` | x | x | ok |
 
 ### BitShuffle API
-To use BitShuffle routines, you need to import `org.xerial.snapy.BitShuffle` in your Java code:
+BitShuffle is an algorithm that reorders data bits (shuffle) for efficient compression (e.g., a sequence of integers, float values, etc.). To use BitShuffle routines, import `org.xerial.snapy.BitShuffle`:
 
 ```java
 import org.xerial.snappy.BitShuffle;
-```
 
-Then use them like this:
-
-```java
 int[] data = new int[] {1, 3, 34, 43, 34};
 byte[] shuffledByteArray = BitShuffle.bitShuffle(data);
 byte[] compressed = Snappy.compress(shuffledByteArray);
@@ -108,8 +104,7 @@ int[] result = BitShuffle.bitUnShuffleIntArray(uncompress);
 System.out.println(result);
 ```
 
-You can also shuffle and unshuffle the other primitive arrays (`short[]`, `long[]`,  `float[]`, and `double[]`) and
-the other routines can be found in [Javadoc](http://static.javadoc.io/org.xerial.snappy/snappy-java/1.1.3-M1/org/xerial/snappy/BitShuffle.html).
+Shuffling and unshuffling of primitive arrays (e.g., `short[]`, `long[]`,  `float[]`, `double[]`, etc.) are supported. See [Javadoc](http://static.javadoc.io/org.xerial.snappy/snappy-java/1.1.3-M1/org/xerial/snappy/BitShuffle.html) for the details.
 
 ### Setting classpath
 If you have snappy-java-(VERSION).jar in the current directory, use `-classpath` option as follows:
