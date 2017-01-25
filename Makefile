@@ -95,6 +95,7 @@ $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class: $(SRC)/org/xeria
 $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class
 	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.BitShuffleNative
 
+$(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
 $(SNAPPY_OUT)/%.o: $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
