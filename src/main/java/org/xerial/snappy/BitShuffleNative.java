@@ -25,6 +25,7 @@
 package org.xerial.snappy;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * JNI interfaces of the {@link BitShuffle} implementation. The native method in this class is
@@ -48,6 +49,12 @@ public class BitShuffleNative
     public native int bitShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
             throws IOException;
 
+    public native int bitShuffleInDirectBuffer(ByteBuffer input, int inputOffset, int typeSize, int byteLength, ByteBuffer output, int outputOffset)
+            throws IOException;
+
     public native int bitUnShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
+            throws IOException;
+
+    public native int bitUnShuffleInDirectBuffer(ByteBuffer input, int inputOffset, int typeSize, int byteLength, ByteBuffer output, int outputOffset)
             throws IOException;
 }

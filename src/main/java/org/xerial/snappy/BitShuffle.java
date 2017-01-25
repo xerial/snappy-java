@@ -25,6 +25,7 @@
 package org.xerial.snappy;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class BitShuffle
 {
@@ -41,6 +42,46 @@ public class BitShuffle
      * An instance of BitShuffleNative
      */
     private static BitShuffleNative impl;
+
+    /**
+     * Apply a bit-shuffling filter into the content in the given input buffer. After bit-shuffling,
+     * you can retrieve the shuffled data from the output buffer [pos() ...limit())
+     * (shuffled data size = limit() - pos() = remaining()).
+     *
+     * @param input buffer[pos() ... limit()) containing the input data
+     * @param type element type of the input data
+     * @param shuffled output of the shuffled data. Uses range [pos()..].
+     * @return byte size of the shuffled data.
+     * @throws SnappyError when the input is not a direct buffer
+     * @throws IllegalArgumentException when the input length is not a multiple of a given type size
+     */
+    public static int bitShuffle(ByteBuffer input, BitShuffleType type, ByteBuffer shuffled) throws IOException {
+        if (!input.isDirect()) {
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
+        }
+        if (!shuffled.isDirect()) {
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
+        }
+
+        // input: input[pos(), limit())
+        // output: shuffled
+        int uPos = input.position();
+        int uLen = input.remaining();
+        int typeSize = type.getTypeSize();
+        if (uLen % typeSize != 0) {
+            throw new IllegalArgumentException("input length must be a multiple of a given type size");
+        }
+        if (shuffled.remaining() < uLen) {
+            throw new IllegalArgumentException("not enough space for output");
+        }
+        int numProcessed = impl.bitShuffleInDirectBuffer(input, uPos, typeSize, uLen, shuffled, shuffled.position());
+        assert(numProcessed == uLen);
+
+        //         pos   limit
+        // [ ......BBBBBBB.........]
+        shuffled.limit(shuffled.position() + numProcessed);
+        return numProcessed;
+    }
 
     /**
      * Apply a bit-shuffling filter into the input short array.
@@ -110,6 +151,46 @@ public class BitShuffle
         int numProcessed = impl.bitShuffle(input, 0, 8, input.length * 8, output, 0);
         assert(numProcessed == input.length * 8);
         return output;
+    }
+
+    /**
+     * Convert the input bit-shuffled byte array into an original array. The result is dumped
+     * to the specified output buffer.
+     *
+     * @param shuffled buffer[pos() ... limit()) containing the input shuffled data
+     * @param type element type of the input data
+     * @param output output of the the original data. It uses buffer[pos()..]
+     * @return byte size of the unshuffled data.
+     * @throws IOException when failed to unshuffle the given input
+     * @throws SnappyError when the input is not a direct buffer
+     * @throws IllegalArgumentException when the length of input shuffled data is not a multiple of a given type size
+     */
+    public static int bitUnShuffle(ByteBuffer shuffled, BitShuffleType type, ByteBuffer output) throws IOException {
+        if (!shuffled.isDirect()) {
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
+        }
+        if (!output.isDirect()) {
+            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
+        }
+
+        // input: input[pos(), limit())
+        // output: shuffled
+        int uPos = shuffled.position();
+        int uLen = shuffled.remaining();
+        int typeSize = type.getTypeSize();
+        if (uLen % typeSize != 0) {
+            throw new IllegalArgumentException("length of input shuffled data must be a multiple of a given type size");
+        }
+        if (output.remaining() < uLen) {
+            throw new IllegalArgumentException("not enough space for output");
+        }
+        int numProcessed = impl.bitUnShuffleInDirectBuffer(shuffled, uPos, typeSize, uLen, output, shuffled.position());
+        assert(numProcessed == uLen);
+
+        //         pos   limit
+        // [ ......BBBBBBB.........]
+        shuffled.limit(shuffled.position() + numProcessed);
+        return numProcessed;
     }
 
     /**

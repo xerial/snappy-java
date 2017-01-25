@@ -17,10 +17,26 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitShuffle
 
 /*
  * Class:     org_xerial_snappy_BitShuffleNative
+ * Method:    bitShuffleInDirectBuffer
+ * Signature: (Ljava/nio/ByteBuffer;IIILjava/nio/ByteBuffer;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitShuffleInDirectBuffer
+  (JNIEnv *, jobject, jobject, jint, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_BitShuffleNative
  * Method:    bitUnShuffle
  * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
  */
 JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitUnShuffle
+  (JNIEnv *, jobject, jobject, jint, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_BitShuffleNative
+ * Method:    bitUnShuffleInDirectBuffer
+ * Signature: (Ljava/nio/ByteBuffer;IIILjava/nio/ByteBuffer;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitUnShuffleInDirectBuffer
   (JNIEnv *, jobject, jobject, jint, jint, jint, jobject, jint);
 
 #ifdef __cplusplus
