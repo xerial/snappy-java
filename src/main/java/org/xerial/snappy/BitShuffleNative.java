@@ -46,15 +46,15 @@ public class BitShuffleNative
     // A quick benchmark result can be found in a gist below;
     // https://gist.github.com/maropu/01103215df34b317a7a7
     // ------------------------------------------------------------------------
-    public native int bitShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
+    public native int shuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
             throws IOException;
 
-    public native int bitShuffleInDirectBuffer(ByteBuffer input, int inputOffset, int typeSize, int byteLength, ByteBuffer output, int outputOffset)
+    public native int shuffleDirectBuffer(ByteBuffer input, int inputOffset, int typeSize, int byteLength, ByteBuffer output, int outputOffset)
             throws IOException;
 
-    public native int bitUnShuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
+    public native int unshuffle(Object input, int inputOffset, int typeSize, int byteLength, Object output, int outputOffset)
             throws IOException;
 
-    public native int bitUnShuffleInDirectBuffer(ByteBuffer input, int inputOffset, int typeSize, int byteLength, ByteBuffer output, int outputOffset)
+    public native int unshuffleDirectBuffer(ByteBuffer input, int inputOffset, int typeSize, int byteLength, ByteBuffer output, int outputOffset)
             throws IOException;
 }

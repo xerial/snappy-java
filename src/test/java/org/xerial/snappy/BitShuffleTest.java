@@ -40,9 +40,9 @@ public class BitShuffleTest {
         ByteBuffer heapBuf = ByteBuffer.allocate(64);
         ByteBuffer directBuf = ByteBuffer.allocateDirect(64);
 
-        // Tests for BitShuffle.bitShuffle()
+        // Tests for BitShuffle.shuffle()
         try {
-            BitShuffle.bitShuffle(heapBuf, BitShuffleType.BYTE, directBuf);
+            BitShuffle.shuffle(heapBuf, BitShuffleType.BYTE, directBuf);
             fail("no expected exception happened");
         }
         catch (SnappyError e) {
@@ -50,7 +50,7 @@ public class BitShuffleTest {
             Assert.assertTrue(e.getMessage().contains("input is not a direct buffer"));
         }
         try {
-            BitShuffle.bitShuffle(directBuf, BitShuffleType.BYTE, heapBuf);
+            BitShuffle.shuffle(directBuf, BitShuffleType.BYTE, heapBuf);
             fail("no expected exception happened");
         }
         catch (SnappyError e) {
@@ -58,9 +58,9 @@ public class BitShuffleTest {
             Assert.assertTrue(e.getMessage().contains("destination is not a direct buffer"));
         }
 
-        // Then, tests for BitShuffle.bitUnShuffle()
+        // Then, tests for BitShuffle.unshuffle()
         try {
-            BitShuffle.bitUnShuffle(heapBuf, BitShuffleType.BYTE, directBuf);
+            BitShuffle.unshuffle(heapBuf, BitShuffleType.BYTE, directBuf);
             fail("no expected exception happened");
         }
         catch (SnappyError e) {
@@ -68,7 +68,7 @@ public class BitShuffleTest {
             Assert.assertTrue(e.getMessage().contains("input is not a direct buffer"));
         }
         try {
-            BitShuffle.bitUnShuffle(directBuf, BitShuffleType.BYTE, heapBuf);
+            BitShuffle.unshuffle(directBuf, BitShuffleType.BYTE, heapBuf);
             fail("no expected exception happened");
         }
         catch (SnappyError e) {
@@ -85,13 +85,13 @@ public class BitShuffleTest {
         ByteBuffer outputBuf = ByteBuffer.allocateDirect(8);
 
         try {
-            BitShuffle.bitShuffle(inputBuf, BitShuffleType.INT, outputBuf);
+            BitShuffle.shuffle(inputBuf, BitShuffleType.INT, outputBuf);
             fail("no expected exception happened");
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(e.getMessage().startsWith("input length must be a multiple of the given type size"));
         }
         try {
-            BitShuffle.bitUnShuffle(inputBuf, BitShuffleType.INT, outputBuf);
+            BitShuffle.unshuffle(inputBuf, BitShuffleType.INT, outputBuf);
             fail("no expected exception happened");
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(e.getMessage().startsWith("length of input shuffled data must be a multiple of the given type size"));
@@ -105,13 +105,13 @@ public class BitShuffleTest {
         ByteBuffer outputBuf = ByteBuffer.allocateDirect(3);
 
         try {
-            BitShuffle.bitShuffle(inputBuf, BitShuffleType.INT, outputBuf);
+            BitShuffle.shuffle(inputBuf, BitShuffleType.INT, outputBuf);
             fail("no expected exception happened");
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(e.getMessage().equals("not enough space for output"));
         }
         try {
-            BitShuffle.bitUnShuffle(inputBuf, BitShuffleType.INT, outputBuf);
+            BitShuffle.unshuffle(inputBuf, BitShuffleType.INT, outputBuf);
             fail("no expected exception happened");
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(e.getMessage().equals("not enough space for output"));
@@ -119,7 +119,7 @@ public class BitShuffleTest {
     }
 
     @Test
-    public void bitShuffleInDirectLongArray()
+    public void shuffleDirectLongArray()
             throws Exception
     {
         ByteBuffer testData = ByteBuffer.allocateDirect(48);
@@ -131,9 +131,9 @@ public class BitShuffleTest {
         testData.putLong(43251531412342342L);
         testData.putLong(23423422342L);
         testData.flip();
-        BitShuffle.bitShuffle(testData, BitShuffleType.LONG, shuffled);
+        BitShuffle.shuffle(testData, BitShuffleType.LONG, shuffled);
         ByteBuffer result = ByteBuffer.allocateDirect(48);
-        BitShuffle.bitUnShuffle(shuffled, BitShuffleType.LONG, result);
+        BitShuffle.unshuffle(shuffled, BitShuffleType.LONG, result);
         assertEquals(2L, result.getLong());
         assertEquals(3L, result.getLong());
         assertEquals(15L, result.getLong());
@@ -143,7 +143,7 @@ public class BitShuffleTest {
     }
 
     @Test
-    public void bitShuffleInDirectShortArray()
+    public void shuffleDirectShortArray()
             throws Exception
     {
         ByteBuffer testData = ByteBuffer.allocateDirect(18);
@@ -158,9 +158,9 @@ public class BitShuffleTest {
         testData.putShort(Short.MAX_VALUE);
         testData.putShort((short) -1);
         testData.flip();
-        BitShuffle.bitShuffle(testData, BitShuffleType.SHORT, shuffled);
+        BitShuffle.shuffle(testData, BitShuffleType.SHORT, shuffled);
         ByteBuffer result = ByteBuffer.allocateDirect(18);
-        BitShuffle.bitUnShuffle(shuffled, BitShuffleType.SHORT, result);
+        BitShuffle.unshuffle(shuffled, BitShuffleType.SHORT, result);
         assertEquals(432, result.getShort());
         assertEquals(-32267, result.getShort());
         assertEquals(1, result.getShort());
@@ -173,7 +173,7 @@ public class BitShuffleTest {
     }
 
     @Test
-    public void bitShuffleInDirectIntArray()
+    public void shuffleDirectIntArray()
             throws Exception
     {
         ByteBuffer testData = ByteBuffer.allocateDirect(48);
@@ -191,9 +191,9 @@ public class BitShuffleTest {
         testData.putInt(3424);
         testData.putInt(43);
         testData.flip();
-        BitShuffle.bitShuffle(testData, BitShuffleType.INT, shuffled);
+        BitShuffle.shuffle(testData, BitShuffleType.INT, shuffled);
         ByteBuffer result = ByteBuffer.allocateDirect(48);
-        BitShuffle.bitUnShuffle(shuffled, BitShuffleType.INT, result);
+        BitShuffle.unshuffle(shuffled, BitShuffleType.INT, result);
         assertEquals(432, result.getInt());
         assertEquals(-32267, result.getInt());
         assertEquals(1, result.getInt());
@@ -209,7 +209,7 @@ public class BitShuffleTest {
     }
 
     @Test
-    public void bitShuffleInDirectFloatArray()
+    public void shuffleDirectFloatArray()
             throws Exception
     {
         ByteBuffer testData = ByteBuffer.allocateDirect(36);
@@ -224,9 +224,9 @@ public class BitShuffleTest {
         testData.putFloat(-0.1f);
         testData.putFloat(Integer.MIN_VALUE);
         testData.flip();
-        BitShuffle.bitShuffle(testData, BitShuffleType.FLOAT, shuffled);
+        BitShuffle.shuffle(testData, BitShuffleType.FLOAT, shuffled);
         ByteBuffer result = ByteBuffer.allocateDirect(36);
-        BitShuffle.bitUnShuffle(shuffled, BitShuffleType.FLOAT, result);
+        BitShuffle.unshuffle(shuffled, BitShuffleType.FLOAT, result);
         assertEquals(100.0f, result.getFloat(), 0.0000001f);
         assertEquals(0.5f, result.getFloat(), 0.0000001f);
         assertEquals(-0.1f, result.getFloat(), 0.0000001f);
@@ -239,7 +239,7 @@ public class BitShuffleTest {
     }
 
     @Test
-    public void bitShuffleInDirectDoubleArray()
+    public void shuffleDirectDoubleArray()
             throws Exception
     {
         ByteBuffer testData = ByteBuffer.allocateDirect(72);
@@ -254,9 +254,9 @@ public class BitShuffleTest {
         testData.putDouble(-0.1);
         testData.putDouble(Integer.MIN_VALUE);
         testData.flip();
-        BitShuffle.bitShuffle(testData, BitShuffleType.DOUBLE, shuffled);
+        BitShuffle.shuffle(testData, BitShuffleType.DOUBLE, shuffled);
         ByteBuffer result = ByteBuffer.allocateDirect(72);
-        BitShuffle.bitUnShuffle(shuffled, BitShuffleType.DOUBLE, result);
+        BitShuffle.unshuffle(shuffled, BitShuffleType.DOUBLE, result);
         assertEquals(100.0, result.getDouble(), 0.0000001);
         assertEquals(0.5, result.getDouble(), 0.0000001);
         assertEquals(-0.1, result.getDouble(), 0.0000001);
@@ -269,52 +269,52 @@ public class BitShuffleTest {
     }
 
     @Test
-    public void bitShuffleLongArray()
+    public void shuffleLongArray()
             throws Exception
     {
         long[] data = new long[] {2, 3, 15, 4234, 43251531412342342L, 23423422342L};
-        byte[] shuffledData = BitShuffle.bitShuffle(data);
-        long[] result = BitShuffle.bitUnShuffleLongArray(shuffledData);
+        byte[] shuffledData = BitShuffle.shuffle(data);
+        long[] result = BitShuffle.unshuffleLongArray(shuffledData);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void bitShuffleShortArray()
+    public void shuffleShortArray()
             throws Exception
     {
         short[] data = new short[] {432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1};
-        byte[] shuffledData = BitShuffle.bitShuffle(data);
-        short[] result = BitShuffle.bitUnShuffleShortArray(shuffledData);
+        byte[] shuffledData = BitShuffle.shuffle(data);
+        short[] result = BitShuffle.unshuffleShortArray(shuffledData);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void bitShuffleIntArray()
+    public void shuffleIntArray()
             throws Exception
     {
         int[] data = new int[] {432, -32267, 1, 3, 34, 43, 34, Short.MAX_VALUE, -1, Integer.MAX_VALUE, 3424, 43};
-        byte[] shuffledData = BitShuffle.bitShuffle(data);
-        int[] result = BitShuffle.bitUnShuffleIntArray(shuffledData);
+        byte[] shuffledData = BitShuffle.shuffle(data);
+        int[] result = BitShuffle.unshuffleIntArray(shuffledData);
         assertArrayEquals(data, result);
     }
 
     @Test
-    public void bitShuffleFloatArray()
+    public void shuffleFloatArray()
             throws Exception
     {
         float[] data = new float[] {100.0f, 0.5f, -0.1f, 30.3f, Float.MIN_NORMAL, Float.MAX_EXPONENT, Float.MAX_VALUE, -0.1f, Integer.MIN_VALUE};
-        byte[] shuffledData = BitShuffle.bitShuffle(data);
-        float[] result = BitShuffle.bitUnShuffleFloatArray(shuffledData);
+        byte[] shuffledData = BitShuffle.shuffle(data);
+        float[] result = BitShuffle.unshuffleFloatArray(shuffledData);
         assertArrayEquals(data, result, 0.0000001f);
     }
 
     @Test
-    public void bitShuffleDoubleArray()
+    public void shuffleDoubleArray()
             throws Exception
     {
         double[] data = new double[] {100.0f, 0.5f, -0.1f, 30.3f, Float.MIN_NORMAL, Float.MAX_EXPONENT, Float.MAX_VALUE, -0.1f, Integer.MIN_VALUE};
-        byte[] shuffledData = BitShuffle.bitShuffle(data);
-        double[] result = BitShuffle.bitUnShuffleDoubleArray(shuffledData);
+        byte[] shuffledData = BitShuffle.shuffle(data);
+        double[] result = BitShuffle.unshuffleDoubleArray(shuffledData);
         assertArrayEquals(data, result, 0.0000001f);
     }
 }

@@ -29,10 +29,10 @@ inline void throw_exception(JNIEnv *env, jobject self, int errorCode)
 
 /*
  * Class:     org_xerial_snappy_BitShuffleNative
- * Method:    bitShuffle
+ * Method:    shuffle
  * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitShuffle
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_shuffle
   (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint typeSize, jint length, jobject output, jint outputOffset)
 {
 	char* in = (char*) env->GetPrimitiveArrayCritical((jarray) input, 0);
@@ -60,10 +60,10 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitShuffle
 
 /*
  * Class:     org_xerial_snappy_BitShuffleNative
- * Method:    bitShuffleInDirectBuffer
+ * Method:    shuffleDirectBuffer
  * Signature: (Ljava/nio/ByteBuffer;IIILjava/nio/ByteBuffer;I)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitShuffleInDirectBuffer
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_shuffleDirectBuffer
   (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint typeSize, jint length, jobject output, jint outputOffset)
 {
 	char* inputBuffer = (char*) env->GetDirectBufferAddress(input);
@@ -81,10 +81,10 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitShuffleInDirec
 
 /*
  * Class:     org_xerial_snappy_BitShuffleNative
- * Method:    bitUnShuffle
+ * Method:    unshuffle
  * Signature: (Ljava/lang/Object;IIILjava/lang/Object;I)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitUnShuffle
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_unshuffle
   (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint typeSize, jint length, jobject output, jint outputOffset)
 {
 	char* in = (char*) env->GetPrimitiveArrayCritical((jarray) input, 0);
@@ -112,10 +112,10 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitUnShuffle
 
 /*
  * Class:     org_xerial_snappy_BitShuffleNative
- * Method:    bitUnShuffleInDirectBuffer
+ * Method:    unshuffleDirectBuffer
  * Signature: (Ljava/nio/ByteBuffer;IIILjava/nio/ByteBuffer;I)I
  */
-JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_bitUnShuffleInDirectBuffer
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_BitShuffleNative_unshuffleDirectBuffer
   (JNIEnv * env, jobject self, jobject input, jint inputOffset, jint typeSize, jint length, jobject output, jint outputOffset)
 {
 	char* inputBuffer = (char*) env->GetDirectBufferAddress(input);
