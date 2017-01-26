@@ -97,10 +97,10 @@ BitShuffle is an algorithm that reorders data bits (shuffle) for efficient compr
 import org.xerial.snappy.BitShuffle;
 
 int[] data = new int[] {1, 3, 34, 43, 34};
-byte[] shuffledByteArray = BitShuffle.bitShuffle(data);
+byte[] shuffledByteArray = BitShuffle.shuffle(data);
 byte[] compressed = Snappy.compress(shuffledByteArray);
 byte[] uncompressed = Snappy.uncompress(compressed);
-int[] result = BitShuffle.bitUnShuffleIntArray(uncompress);
+int[] result = BitShuffle.unshuffleIntArray(uncompress);
 
 System.out.println(result);
 ```
