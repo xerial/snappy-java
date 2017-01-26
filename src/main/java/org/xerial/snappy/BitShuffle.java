@@ -53,7 +53,7 @@ public class BitShuffle
      * @param shuffled output of the shuffled data. Uses range [pos()..].
      * @return byte size of the shuffled data.
      * @throws SnappyError when the input is not a direct buffer
-     * @throws IllegalArgumentException when the input length is not a multiple of a given type size
+     * @throws IllegalArgumentException when the input length is not a multiple of the given type size
      */
     public static int bitShuffle(ByteBuffer input, BitShuffleType type, ByteBuffer shuffled) throws IOException {
         if (!input.isDirect()) {
@@ -69,7 +69,7 @@ public class BitShuffle
         int uLen = input.remaining();
         int typeSize = type.getTypeSize();
         if (uLen % typeSize != 0) {
-            throw new IllegalArgumentException("input length must be a multiple of a given type size");
+            throw new IllegalArgumentException("input length must be a multiple of the given type size: " + typeSize);
         }
         if (shuffled.remaining() < uLen) {
             throw new IllegalArgumentException("not enough space for output");
@@ -163,7 +163,7 @@ public class BitShuffle
      * @return byte size of the unshuffled data.
      * @throws IOException when failed to unshuffle the given input
      * @throws SnappyError when the input is not a direct buffer
-     * @throws IllegalArgumentException when the length of input shuffled data is not a multiple of a given type size
+     * @throws IllegalArgumentException when the length of input shuffled data is not a multiple of the given type size
      */
     public static int bitUnShuffle(ByteBuffer shuffled, BitShuffleType type, ByteBuffer output) throws IOException {
         if (!shuffled.isDirect()) {
@@ -179,7 +179,7 @@ public class BitShuffle
         int uLen = shuffled.remaining();
         int typeSize = type.getTypeSize();
         if (uLen % typeSize != 0) {
-            throw new IllegalArgumentException("length of input shuffled data must be a multiple of a given type size");
+            throw new IllegalArgumentException("length of input shuffled data must be a multiple of the given type size: " + typeSize);
         }
         if (output.remaining() < uLen) {
             throw new IllegalArgumentException("not enough space for output");

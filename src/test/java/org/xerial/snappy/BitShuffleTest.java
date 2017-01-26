@@ -88,13 +88,13 @@ public class BitShuffleTest {
             BitShuffle.bitShuffle(inputBuf, BitShuffleType.INT, outputBuf);
             fail("no expected exception happened");
         } catch (IllegalArgumentException e) {
-            Assert.assertTrue(e.getMessage().equals("input length must be a multiple of a given type size"));
+            Assert.assertTrue(e.getMessage().startsWith("input length must be a multiple of the given type size"));
         }
         try {
             BitShuffle.bitUnShuffle(inputBuf, BitShuffleType.INT, outputBuf);
             fail("no expected exception happened");
         } catch (IllegalArgumentException e) {
-            Assert.assertTrue(e.getMessage().equals("length of input shuffled data must be a multiple of a given type size"));
+            Assert.assertTrue(e.getMessage().startsWith("length of input shuffled data must be a multiple of the given type size"));
         }
     }
 
