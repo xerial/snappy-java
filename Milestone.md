@@ -5,6 +5,10 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
    * Run `make native test` and send the result as a pull requset.
  * We also test the usability of the newly added BitShuffle API before this release.
 
+## snappy-java-1.1.3-M2 (2017-01-25)
+ * Rename to BitShuffle.shuffle/unshuffle
+ * Add ByteBuffer based APIs for bitshffle
+
 ## snappy-java-1.1.3-M1 (2017-01-19)
  * This is a preview release. Appreciate your feedback.
  * Upgraded to snappy 1.1.3 (Minor compression performance improvement)
