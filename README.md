@@ -28,6 +28,8 @@ snappy-java is a Java port of the snappy
 
 ## Download
 
+ [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/) [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/org.xerial.snappy/snappy-java/badge.svg)](http://www.javadoc.io/doc/org.xerial.snappy/snappy-java)
+ 
  * [Release Notes](Milestone.md)
 
 The current stable version is available from here:
@@ -42,7 +44,7 @@ Add the following dependency to your pom.xml:
     <dependency>
       <groupId>org.xerial.snappy</groupId>
       <artifactId>snappy-java</artifactId>
-      <version>1.1.3-M1</version>
+      <version>(version)</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -50,7 +52,7 @@ Add the following dependency to your pom.xml:
 ### Using with sbt
 
 ```
-libraryDependencies += "org.xerial.snappy" % "snappy-java" % "1.1.3-M1"
+libraryDependencies += "org.xerial.snappy" % "snappy-java" % "(version)"
 ```
 
 
@@ -89,7 +91,7 @@ Stream-based compressor/decompressor `SnappyOutputStream`/`SnappyInputStream` ar
 | `SnappyOutputStream`  | x | ok | x |
 | `SnappyFramedOutputStream` | x | x | ok |
 
-### BitShuffle API (Since 1.1.3-M1)
+### BitShuffle API (Since 1.1.3-M2)
 
 BitShuffle is an algorithm that reorders data bits (shuffle) for efficient compression (e.g., a sequence of integers, float values, etc.). To use BitShuffle routines, import `org.xerial.snapy.BitShuffle`:
 
