@@ -75,9 +75,9 @@ Default_SNAPPY_FLAGS :=
 Linux-x86_CXX       := $(CROSS_PREFIX)g++
 Linux-x86_STRIP     := $(CROSS_PREFIX)strip
 ifeq ($(IBM_JDK_7),)
-  Linux-x86_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
+  Linux-x86_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32 -U__SSE2__  
 else
-  Linux-x86_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32
+  Linux-x86_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m32 -U__SSE2__
 endif
 Linux-x86_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_LIBNAME   := libsnappyjava.so
