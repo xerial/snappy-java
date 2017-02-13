@@ -120,7 +120,7 @@ AIX-ppc_CXX       := g++
 AIX-ppc_STRIP     := strip
 AIX-ppc_LIBNAME   := libsnappyjava.a
 ifeq ($(IBM_JDK_7),)
-  AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden
+  AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -maix32
 else
   AIX-ppc_CXXFLAGS     := -DHAVE_CONFIG_H -I$(JAVA_HOME)/include/aix -Ilib/inc_ibm -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -maix32
 endif
@@ -131,7 +131,7 @@ AIX-ppc64_CXX       := g++
 AIX-ppc64_STRIP     := strip -X64
 AIX-ppc64_LIBNAME   := libsnappyjava.a
 ifeq ($(IBM_JDK_7),)
-  AIX-ppc64_CXXFLAGS     := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
+  AIX-ppc64_CXXFLAGS     := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -maix64
 else
   AIX-ppc64_CXXFLAGS     := -DHAVE_CONFIG_H -I$(JAVA_HOME)/include/aix -Ilib/inc_ibm -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -maix64
 endif

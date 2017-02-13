@@ -56,7 +56,11 @@ endif
 ifeq ($(OS_NAME),SunOS)
 	TAR:= gtar
 else
+ifeq ($(OS_NAME),AIX)
+	TAR:= gtar
+else
 	TAR:= tar
+endif
 endif
 
 $(SNAPPY_ARCHIVE):
