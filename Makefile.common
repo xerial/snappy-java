@@ -42,7 +42,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-aarch64 Linux-ppc Linux-ppc64 Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-aarch64 Linux-ppc Linux-ppc64le Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -105,16 +105,16 @@ Linux-ppc_LINKFLAGS   := -shared -static-libgcc -static-libstdc++
 Linux-ppc_LIBNAME     := libsnappyjava.so
 Linux-ppc_SNAPPY_FLAGS  :=
 
-Linux-ppc64_CXX       := g++
-Linux-ppc64_STRIP     := strip
+Linux-ppc64le_CXX       := g++
+Linux-ppc64le_STRIP     := strip
 ifeq ($(IBM_JDK_7),)
-  Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
+  Linux-ppc64le_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
 else
-  Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2 -fPIC -m64
+  Linux-ppc64le_CXXFLAGS  := -DHAVE_CONFIG_H -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2 -fPIC -m64
 endif
-Linux-ppc64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
-Linux-ppc64_LIBNAME   := libsnappyjava.so
-Linux-ppc64_SNAPPY_FLAGS  :=
+Linux-ppc64le_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-ppc64le_LIBNAME   := libsnappyjava.so
+Linux-ppc64le_SNAPPY_FLAGS  :=
 
 AIX-ppc_CXX       := g++
 AIX-ppc_STRIP     := strip
