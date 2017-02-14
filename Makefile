@@ -135,7 +135,7 @@ snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s
 native: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64le linux-aarch64
+native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64 linux-ppc64le linux-aarch64
 
 $(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -192,6 +192,9 @@ linux-android-arm: jni-header
 
 linux-ppc64le: jni-header
 	./docker/dockcross-ppc64le -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64le'
+
+linux-ppc64: jni-header
+	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=ppc64-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
 
 linux-aarch64: jni-header
 	./docker/dockcross-aarch64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-linux-gnu- OS_NAME=Linux OS_ARCH=aarch64'
