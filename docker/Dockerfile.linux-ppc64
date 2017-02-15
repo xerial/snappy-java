@@ -25,7 +25,7 @@ RUN apt-get update && \
   make install && \
   cd .. && rm -rf qemu-2.6.0
 
-ENV CROSS_TRIPLE ppc64-linux-gnu
+ENV CROSS_TRIPLE powerpc-linux-gnu
 ENV CROSS_ROOT /usr/${CROSS_TRIPLE}
 ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
     AR=/usr/bin/${CROSS_TRIPLE}-ar \

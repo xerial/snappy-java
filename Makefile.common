@@ -105,8 +105,8 @@ Linux-ppc_LINKFLAGS   := -shared -static-libgcc -static-libstdc++
 Linux-ppc_LIBNAME     := libsnappyjava.so
 Linux-ppc_SNAPPY_FLAGS  :=
 
-Linux-ppc64le_CXX       := g++
-Linux-ppc64le_STRIP     := strip
+Linux-ppc64le_CXX       := $(CROSS_PREFIX)g++
+Linux-ppc64le_STRIP     := $(CROSS_PREFIX)strip
 ifeq ($(IBM_JDK_7),)
   Linux-ppc64le_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
 else
@@ -116,8 +116,8 @@ Linux-ppc64le_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-ppc64le_LIBNAME   := libsnappyjava.so
 Linux-ppc64le_SNAPPY_FLAGS  :=
 
-Linux-ppc64_CXX       := g++
-Linux-ppc64_STRIP     := strip
+Linux-ppc64_CXX       := $(CROSS_PREFIX)g++
+Linux-ppc64_STRIP     := $(CROSS_PREFIX)strip
 ifeq ($(IBM_JDK_7),)
   Linux-ppc64_CXXFLAGS  := -DHAVE_CONFIG_H -Ilib/inc_linux -I$(JAVA_HOME)/include -Ilib/inc_mac -O2 -fPIC -fvisibility=hidden -m64
 else
