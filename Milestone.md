@@ -7,6 +7,9 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
    * Run `make native test` and send the result as a pull requset.
  * We also test the usability of the newly added BitShuffle API before this release.
 
+## snappy-java-1.1.4-M3 (2017-02-16)
+ * Fix native libraries for ppc64 (bigendian) and ppc64le (little endian)
+
 ## snappy-java-1.1.4-M2 (2017-02-13)
  * Added s390x and AIX ppc/ppc64 support.
 
