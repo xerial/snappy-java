@@ -1,10 +1,10 @@
-Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
+Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
 ## snappy-java-1.1.4 (will be available Early 2017)
  * Upgrade to [snappy-1.1.4](https://github.com/google/snappy/releases/tag/1.1.4)
    * Improved performance compression (5%), decompression (20%) 
- * We are waiting contributions of native libraries for varios platforms.
-   * Run `make native test` and send the result as a pull requset.
+ * We are waiting contributions of native libraries for various platforms.
+   * Run `make native test` and send the result as a pull request.
  * We also test the usability of the newly added BitShuffle API before this release.
 
 ## snappy-java-1.1.4-M3 (2017-02-16)
@@ -26,7 +26,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
  * Added support for armv5, armv6, armv7, android-arm, aarch64, ppc64
  * Added BitShuffle (<https://github.com/kiyo-masui/bitshuffle>) class for better primitive array compression
  * Using docker-based cross compilers for building native libraries
- * AIX, FreeBSD, SunOS, IBM s390x are still using snappy 1.1.2. Your contirbutions of native libraries are welcome. Please send a pull request that contains the changes after runing `make native` in your platform.
+ * AIX, FreeBSD, SunOS, IBM s390x are still using snappy 1.1.2. Your contributions of native libraries are welcome. Please send a pull request that contains the changes after running `make native` in your platform.
 
 ## snappy-java-1.1.2.6 (2016-06-02)
  * Fix a bug in SnappyInputStream when reading compressed data that happened to have the same first byte with the stream magic header (#142)
@@ -55,7 +55,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
 ## snappy-java-1.1.2-RC1 (13 May 2015)
  * SnappyInputStream now supports reading concatenated compressed results of SnappyOutputStream
- * There has been no compressed format change since 1.0.5.x. So You can read the compressed results interchangeablly between these versions.
+ * There has been no compressed format change since 1.0.5.x. So You can read the compressed results interchangeably between these versions.
  * Fixes a problem when java.io.tmpdir does not exist. 
 
 ## snappy-java-1.1.1.7 (14 Apr 2015)
@@ -85,7 +85,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
   * Building with sbt
 
 # snappy-java-1.0.5.2 (25 June 2014)
-  * Maintanance release
+  * Maintenance release
   * Add PowerPC support ppc64le, ppc64 (big-endian)
 
 # snappy-java-1.1.1-M2 (12 June 2014)
@@ -139,7 +139,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
 
 ## snappy-java-1.0.3.2 (August 23rd, 2011)
   * Upgrade from the previous release is optional
-  * Add system properites to switch sytem installed native library or bundled
+  * Add system properties to switch system installed native library or bundled
   library (issue 20, issue 26)
   * source code tar ball (issue 25)
   * primitive array read/write support (issue 24)
@@ -150,7 +150,7 @@ Since vesion 1.1.0.x, Java 6 (1.6) or higher is required.
   * Rebuild win32 binary
 
 ## snappy-java-1.0.3 (July 11st, 2011) 
-  * Deprected SnappyException. Instead snappy-java uses IOException to issue
+  * Deprecated SnappyException. Instead snappy-java uses IOException to issue
   errors. This change is necessary to support JNI code injection to a parent
   class loader.
 
