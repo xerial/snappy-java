@@ -91,6 +91,12 @@ public class SnappyOutputStream
 
     public SnappyOutputStream(OutputStream out, int blockSize, BufferAllocatorFactory bufferAllocatorFactory)
     {
+        this(out, blockSize, bufferAllocatorFactory, true);
+    }
+
+    protected SnappyOutputStream(OutputStream out, int blockSize, BufferAllocatorFactory bufferAllocatorFactory,
+            boolean writeHeader)
+    {
         this.out = out;
         this.blockSize = Math.max(MIN_BLOCK_SIZE, blockSize);
         int inputSize = blockSize;
@@ -102,7 +108,9 @@ public class SnappyOutputStream
         inputBuffer = inputBufferAllocator.allocate(inputSize);
         outputBuffer = outputBufferAllocator.allocate(outputSize);
 
-        outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
+        if (writeHeader) {
+            outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
+        }
     }
 
     /* (non-Javadoc)
@@ -373,11 +381,28 @@ public class SnappyOutputStream
         if (!hasSufficientOutputBufferFor(inputCursor)) {
             dumpOutput();
         }
+
+        writeBlockPreemble();
+
         int compressedSize = Snappy.compress(inputBuffer, 0, inputCursor, outputBuffer, outputCursor + 4);
         // Write compressed data size
         writeInt(outputBuffer, outputCursor, compressedSize);
         outputCursor += 4 + compressedSize;
         inputCursor = 0;
+    }
+
+    /**
+     * Optionally write a preemble before a block. Hadoop requires the actual block data size being written. This base
+     * implementation does nothing. Derive implementation can call {@code writeCurrentDataSize()}.
+     */
+    protected void writeBlockPreemble()
+    {
+        // do nothing
+    }
+
+    protected void writeCurrentDataSize(){
+        writeInt(outputBuffer, outputCursor, inputCursor);
+        outputCursor += 4;
     }
 
     /**

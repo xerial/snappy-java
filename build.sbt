@@ -84,7 +84,8 @@ libraryDependencies ++= Seq(
    "org.xerial" % "xerial-core" % "3.2.3" % "test",
    "org.scalatest" % "scalatest_2.11" % "2.2.0" % "test",
    "org.osgi" % "org.osgi.core" % "4.3.0" % "provided",
-   "com.novocode" % "junit-interface" % "0.10" % "test"
+   "com.novocode" % "junit-interface" % "0.10" % "test",
+   "org.apache.hadoop" % "hadoop-common" % "2.8.0" % "test" exclude("org.xerial.snappy", "snappy-java")
 )
 
 osgiSettings
