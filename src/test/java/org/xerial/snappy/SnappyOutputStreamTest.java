@@ -166,9 +166,9 @@ public class SnappyOutputStreamTest
         // Hardcoding an expected compressed size here will catch regressions that lower the
         // compression quality:
         if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN)
-            assertEquals(90943, expectedCompressedData.length);
+            assertEquals(90992, expectedCompressedData.length);
         else
-            assertEquals(91013, expectedCompressedData.length);
+            assertEquals(91080, expectedCompressedData.length);
         // The chunk size should not affect the size of the compressed output:
         int[] chunkSizes = new int[] {1, 100, 1023, 1024, 10000};
         for (int chunkSize : chunkSizes) {

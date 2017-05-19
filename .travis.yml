@@ -1,14 +1,25 @@
+sudo: required
+
+services:
+  - docker
+
 language: scala
 
-sudo: false
-
 scala:
-   - 2.11.7
+  - 2.11.8
 
 jdk:
-  - openjdk6
   - openjdk7
   - oraclejdk7
   - oraclejdk8
 
-script: ./sbt test
+script:
+  - if [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ]; then
+      if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+        sbt ++$TRAVIS_SCALA_VERSION "; test; publish";
+      else
+        sbt ++$TRAVIS_SCALA_VERSION test;
+      fi;
+    else
+      sbt ++$TRAVIS_SCALA_VERSION test;
+    fi
