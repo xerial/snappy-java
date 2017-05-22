@@ -1,14 +1,19 @@
 package org.xerial.snappy;
 
-import java.io.*;
-import java.lang.reflect.Field;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.SnappyCodec;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class SnappyHadoopCompatibleOutputStreamTest
 {
@@ -19,28 +24,29 @@ public class SnappyHadoopCompatibleOutputStreamTest
     public static void loadHadoopNativeLibrary() throws Exception
     {
         final String libResourceFolder;
-
+        Map<String, String> libraryNames = new LinkedHashMap<>();
         if (SystemUtils.IS_OS_LINUX) {
             libResourceFolder = "/lib/Linux";
+            libraryNames.put("libhadoop.so", "libhadoop.so");
+            libraryNames.put("libsnappy.so", "libsnappy.so");
+            libraryNames.put("libsnappy.so.1", "libsnappy.so");
         } else if (SystemUtils.IS_OS_MAC_OSX) {
             libResourceFolder = "/lib/MacOSX";
+            libraryNames.put("libhadoop.dylib", "libhadoop.dylib");
+            libraryNames.put("libsnappy.dylib", "libsnappy.dylib");
+            libraryNames.put("libsnappy.1.dylib", "libsnappy.dylib");
         } else {
             return; // not support
         }
 
-        final String libraryName = System.mapLibraryName("hadoop");
-        final String libraryResourceName = libResourceFolder + "/" + libraryName;
-        tempNativeLibFolder = File.createTempFile(SnappyHadoopCompatibleOutputStreamTest.class.getSimpleName(),
-                ".libhadoop");
+        String testLibDir = System.getenv("XERIAL_SNAPPY_LIB");
+
+        tempNativeLibFolder = new File(testLibDir);
         tempNativeLibFolder.delete();
         tempNativeLibFolder.mkdirs();
 
-        final File libraryPath = new File(tempNativeLibFolder, libraryName);
-        try (InputStream inputStream = SnappyHadoopCompatibleOutputStream.class.getResourceAsStream(libraryResourceName);
-             OutputStream outputStream = new FileOutputStream(libraryPath)) {
-            IOUtils.copy(inputStream, outputStream);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        for (Map.Entry<String, String> entry : libraryNames.entrySet()) {
+            copyNativeLibraryToFS(libResourceFolder, entry.getValue(), entry.getKey());
         }
 
         System.setProperty("java.library.path", tempNativeLibFolder.getAbsolutePath());
@@ -50,6 +56,18 @@ public class SnappyHadoopCompatibleOutputStreamTest
         final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
         sysPathsField.setAccessible(true);
         sysPathsField.set(null, null);
+    }
+
+    private static void copyNativeLibraryToFS(String libResourceFolder, String libraryName, String toLibraryName) {
+        final String libraryResourceName = libResourceFolder + "/" + libraryName;
+        final File libraryPath = new File(tempNativeLibFolder, toLibraryName);
+        System.out.println("copying " + libraryResourceName + " => " + libraryPath);
+        try (InputStream inputStream = SnappyHadoopCompatibleOutputStream.class.getResourceAsStream(libraryResourceName);
+             OutputStream outputStream = new FileOutputStream(libraryPath)) {
+            IOUtils.copy(inputStream, outputStream);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @AfterClass

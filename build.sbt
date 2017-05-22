@@ -66,6 +66,21 @@ javacOptions in doc := {
    opts
 }
 
+fork in Test := true
+
+import java.io.File
+val libTemp = File.createTempFile("xerial-snappy-test", ".nativelib").getAbsolutePath
+
+val macOSXLibPath = s"$libTemp:${System.getenv("DYLD_LIBRARY_PATH")}"
+val linuxLibPath = s"$libTemp:${System.getenv("LD_LIBRARY_PATH")}"
+
+// have to add to system dynamic library path since hadoop native library indirectly load libsnappy.1
+// can't use javaOptions in Test because it causes the expression to eval twice yielding different temp path values
+envVars in Test := Map("XERIAL_SNAPPY_LIB" -> libTemp,
+  "DYLD_LIBRARY_PATH" -> macOSXLibPath,
+  "LD_LIBRARY_PATH" -> linuxLibPath
+)
+
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 
 concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
