@@ -72,6 +72,7 @@ public class SnappyOutputStream
     protected byte[] outputBuffer;
     private int inputCursor = 0;
     private int outputCursor = 0;
+    private boolean headerWritten;
     private boolean closed;
 
     public SnappyOutputStream(OutputStream out)
@@ -91,12 +92,6 @@ public class SnappyOutputStream
 
     public SnappyOutputStream(OutputStream out, int blockSize, BufferAllocatorFactory bufferAllocatorFactory)
     {
-        this(out, blockSize, bufferAllocatorFactory, true);
-    }
-
-    protected SnappyOutputStream(OutputStream out, int blockSize, BufferAllocatorFactory bufferAllocatorFactory,
-            boolean writeHeader)
-    {
         this.out = out;
         this.blockSize = Math.max(MIN_BLOCK_SIZE, blockSize);
         int inputSize = blockSize;
@@ -107,10 +102,6 @@ public class SnappyOutputStream
 
         inputBuffer = inputBufferAllocator.allocate(inputSize);
         outputBuffer = outputBufferAllocator.allocate(outputSize);
-
-        if (writeHeader) {
-            outputCursor = SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
-        }
     }
 
     /* (non-Javadoc)
@@ -377,6 +368,11 @@ public class SnappyOutputStream
             return; // no need to dump
         }
 
+        if (!headerWritten) {
+            outputCursor = writeHeader();
+            headerWritten = true;
+        }
+
         // Compress and dump the buffer content
         if (!hasSufficientOutputBufferFor(inputCursor)) {
             dumpOutput();
@@ -389,6 +385,10 @@ public class SnappyOutputStream
         writeInt(outputBuffer, outputCursor, compressedSize);
         outputCursor += 4 + compressedSize;
         inputCursor = 0;
+    }
+
+    protected int writeHeader(){
+        return SnappyCodec.currentHeader.writeHeader(outputBuffer, 0);
     }
 
     /**
