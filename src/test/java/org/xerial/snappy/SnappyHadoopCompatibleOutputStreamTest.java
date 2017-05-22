@@ -1,15 +1,62 @@
 package org.xerial.snappy;
 
 import java.io.*;
+import java.lang.reflect.Field;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.SnappyCodec;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 
 public class SnappyHadoopCompatibleOutputStreamTest
 {
+
+    private static File tempNativeLibFolder;
+
+    @BeforeClass
+    public static void loadHadoopNativeLibrary() throws Exception
+    {
+        final String libResourceFolder;
+
+        if (SystemUtils.IS_OS_LINUX) {
+            libResourceFolder = "/lib/Linux";
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            libResourceFolder = "/lib/MacOSX";
+        } else {
+            return; // not support
+        }
+
+        final String libraryName = System.mapLibraryName("hadoop");
+        final String libraryResourceName = libResourceFolder + "/" + libraryName;
+        tempNativeLibFolder = File.createTempFile(SnappyHadoopCompatibleOutputStreamTest.class.getSimpleName(),
+                ".libhadoop");
+        tempNativeLibFolder.delete();
+        tempNativeLibFolder.mkdirs();
+
+        final File libraryPath = new File(tempNativeLibFolder, libraryName);
+        try (InputStream inputStream = SnappyHadoopCompatibleOutputStream.class.getResourceAsStream(libraryResourceName);
+             OutputStream outputStream = new FileOutputStream(libraryPath)) {
+            IOUtils.copy(inputStream, outputStream);
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        System.setProperty("java.library.path", tempNativeLibFolder.getAbsolutePath());
+
+        // credit: https://stackoverflow.com/questions/15409223/adding-new-paths-for-native-libraries-at-runtime-in-java
+        //set sys_paths to null so that java.library.path will be reevalueted next time it is needed
+        final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
+        sysPathsField.setAccessible(true);
+        sysPathsField.set(null, null);
+    }
+
+    @AfterClass
+    public static void cleanUpLibraryFolder()
+    {
+        FileUtils.deleteQuietly(tempNativeLibFolder);
+    }
 
     @Test
     public void testXerialCompressionHadoopDecompressionCodec() throws Exception
@@ -31,7 +78,7 @@ public class SnappyHadoopCompatibleOutputStreamTest
 
             compress(inputFile, snappyFile);
 
-            try {
+            if (tempNativeLibFolder != null) {
                 SnappyCodec hadoopCodec = new SnappyCodec();
                 hadoopCodec.setConf(new Configuration());
                 snappyInput = hadoopCodec.createInputStream(new FileInputStream(snappyFile));
@@ -39,9 +86,8 @@ public class SnappyHadoopCompatibleOutputStreamTest
                 int byteRead = IOUtils.read(snappyInput, buf);
                 String decompressed = new String(buf, 0, byteRead, "UTF-8");
                 Assert.assertEquals(decompressed, text);
-            } catch (UnsatisfiedLinkError e) {
-                System.err.println("WARNING: missing hadoop native library. Hadoop decompression test skipped");
-                System.err.println("WARNING: error message: " + e.getMessage());
+            } else {
+                System.err.println("WARNING: no hadoop library for this platform. skip hadoop decompression test");
             }
         } finally {
             if (snappyInput != null) {
