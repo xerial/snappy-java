@@ -1,11 +1,9 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
-## snappy-java-1.1.4 (will be available Early 2017)
+## snappy-java-1.1.4 (2017-05-22)
  * Upgrade to [snappy-1.1.4](https://github.com/google/snappy/releases/tag/1.1.4)
    * Improved performance compression (5%), decompression (20%) 
- * We are waiting contributions of native libraries for various platforms.
-   * Run `make native test` and send the result as a pull request.
- * We also test the usability of the newly added BitShuffle API before this release.
+ * Added BitShuffle API for fast and better floating-point value compresssion
 
 ## snappy-java-1.1.4-M3 (2017-02-16)
  * Fix native libraries for ppc64 (bigendian) and ppc64le (little endian)
