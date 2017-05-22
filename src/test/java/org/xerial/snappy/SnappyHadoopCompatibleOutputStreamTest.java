@@ -61,7 +61,6 @@ public class SnappyHadoopCompatibleOutputStreamTest
     private static void copyNativeLibraryToFS(String libResourceFolder, String libraryName, String toLibraryName) {
         final String libraryResourceName = libResourceFolder + "/" + libraryName;
         final File libraryPath = new File(tempNativeLibFolder, toLibraryName);
-        System.out.println("copying " + libraryResourceName + " => " + libraryPath);
         try (InputStream inputStream = SnappyHadoopCompatibleOutputStream.class.getResourceAsStream(libraryResourceName);
              OutputStream outputStream = new FileOutputStream(libraryPath)) {
             IOUtils.copy(inputStream, outputStream);
