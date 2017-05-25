@@ -56,17 +56,11 @@ public class SnappyHadoopCompatibleOutputStreamTest
         final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
         sysPathsField.setAccessible(true);
         sysPathsField.set(null, null);
-
-        System.out.println("LD_LIBRARY_PATH = " + System.getenv("LD_LIBRARY_PATH"));
-        for (File file : tempNativeLibFolder.listFiles()) {
-            System.out.println("   copied " + file + " size: " + file.length());
-        }
     }
 
     private static void copyNativeLibraryToFS(String libResourceFolder, String libraryName, String toLibraryName) {
         final String libraryResourceName = libResourceFolder + "/" + libraryName;
         final File libraryPath = new File(tempNativeLibFolder, toLibraryName);
-        System.out.println("copying " + libraryResourceName + " => " + libraryPath);
         try (InputStream inputStream = SnappyHadoopCompatibleOutputStream.class.getResourceAsStream(libraryResourceName);
              FileOutputStream outputStream = new FileOutputStream(libraryPath)) {
             IOUtils.copy(inputStream, outputStream);
