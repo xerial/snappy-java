@@ -28,6 +28,7 @@ public class SnappyHadoopCompatibleOutputStreamTest
         if (SystemUtils.IS_OS_LINUX) {
             libResourceFolder = "/lib/Linux";
             libraryNames.put("libhadoop.so", "libhadoop.so");
+            // certain Linux systems need these shared library be copied before the JVM started, see build.sbt
             libraryNames.put("libsnappy.so", "libsnappy.so");
             libraryNames.put("libsnappy.so.1", "libsnappy.so");
         } else if (SystemUtils.IS_OS_MAC_OSX) {
@@ -42,7 +43,6 @@ public class SnappyHadoopCompatibleOutputStreamTest
         String testLibDir = System.getenv("XERIAL_SNAPPY_LIB");
 
         tempNativeLibFolder = new File(testLibDir);
-        tempNativeLibFolder.delete();
         tempNativeLibFolder.mkdirs();
 
         for (Map.Entry<String, String> entry : libraryNames.entrySet()) {
@@ -68,8 +68,10 @@ public class SnappyHadoopCompatibleOutputStreamTest
         final File libraryPath = new File(tempNativeLibFolder, toLibraryName);
         System.out.println("copying " + libraryResourceName + " => " + libraryPath);
         try (InputStream inputStream = SnappyHadoopCompatibleOutputStream.class.getResourceAsStream(libraryResourceName);
-             OutputStream outputStream = new FileOutputStream(libraryPath)) {
+             FileOutputStream outputStream = new FileOutputStream(libraryPath)) {
             IOUtils.copy(inputStream, outputStream);
+            FileDescriptor fd = outputStream.getFD();
+            fd.sync();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

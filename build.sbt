@@ -69,7 +69,15 @@ javacOptions in doc := {
 fork in Test := true
 
 import java.io.File
-val libTemp = File.createTempFile("xerial-snappy-test", ".nativelib").getAbsolutePath
+val libTemp = {
+  val path = s"${System.getProperty("java.io.tmpdir")}/snappy_test_${System.currentTimeMillis()}"
+  // certain older Linux systems (debian/trusty in Travis CI) requires the libsnappy.so, loaded by
+  // libhadoop.so, be copied to the temp path before the child JVM is forked.
+  // because of that, cannot define as an additional task in Test scope
+  IO.copyFile(file("src/test/resources/lib/Linux/libsnappy.so"), file(s"$path/libsnappy.so"))
+  IO.copyFile(file("src/test/resources/lib/Linux/libsnappy.so"), file(s"$path/libsnappy.so.1"))
+  path
+}
 
 val macOSXLibPath = s"$libTemp:${System.getenv("DYLD_LIBRARY_PATH")}"
 val linuxLibPath = s"$libTemp:${System.getenv("LD_LIBRARY_PATH")}"
