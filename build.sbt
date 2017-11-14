@@ -1,13 +1,7 @@
-import de.johoop.findbugs4sbt.ReportType
-
 name := "snappy-java"
-
 organization := "org.xerial.snappy" 
-
 organizationName := "xerial.org"
-
 description  := "snappy-java: A fast compression/decompression library"
-
 sonatypeProfileName := "org.xerial"
 
 credentials ++= {
@@ -18,6 +12,14 @@ credentials ++= {
     Seq.empty
   }
 }
+
+publishTo := Some(
+    if (isSnapshot.value) {
+      Opts.resolver.sonatypeSnapshots
+    } else {
+      Opts.resolver.sonatypeStaging
+    }
+)
 
 pomExtra := {
    <url>https://github.com/xerial/snappy-java</url>
@@ -54,7 +56,7 @@ pomExtra := {
     </scm>
 }
 
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.12.4"
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.7", "-target", "1.7")
 
@@ -67,24 +69,13 @@ javacOptions in doc := {
 }
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
-
 concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
-
 autoScalaLibrary := false
-
 crossPaths := false
-
 logBuffered in Test := false
 
-incOptions := incOptions.value.withNameHashing(true)
-
-findbugsSettings
-
-findbugsReportType := Some(ReportType.FancyHtml)
-
+findbugsReportType := Some(FindbugsReport.FancyHtml)
 findbugsReportPath := Some(crossTarget.value / "findbugs" / "report.html")
-
-jacoco.settings
 
 libraryDependencies ++= Seq(
    "junit" % "junit" % "4.8.2" % "test",
@@ -96,15 +87,11 @@ libraryDependencies ++= Seq(
    "com.novocode" % "junit-interface" % "0.10" % "test"
 )
 
-osgiSettings
-
+enablePlugins(SbtOsgi)
 
 OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer")
-
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
-
 OsgiKeys.bundleActivator := Option("org.xerial.snappy.SnappyBundleActivator")
-
 OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
 
 OsgiKeys.additionalHeaders := Map(
@@ -140,6 +127,7 @@ import ReleaseTransformations._
 import sbtrelease._
 
 releaseTagName := { (version in ThisBuild).value }
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -149,14 +137,10 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(action = Command.process("publishSigned", _)),
+  publishArtifacts,
   setNextVersion,
   commitNextVersion,
-  ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+  releaseStepCommand("sonatypeReleaseAll"),
   pushChanges
 )
 
-
-com.etsy.sbt.Checkstyle.checkstyleSettings
-
-com.etsy.sbt.Checkstyle.CheckstyleTasks.checkstyleConfig := file("src/checkstyle/checks.xml")
