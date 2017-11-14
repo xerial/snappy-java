@@ -12,7 +12,7 @@ SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
-SNAPPY_GIT_REV:=2d99bd14d471664758e4dfdf81b44f413a7353fd # 1.1.4
+SNAPPY_GIT_REV:=b02bfa754ebf27921d8da3bd2517eab445b84ff9 # 1.1.7
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 SNAPPY_SOURCE_CONFIGURED:=$(TARGET)/snappy-configure.log
@@ -80,7 +80,7 @@ $(SNAPPY_GIT_UNPACKED):
 	touch $@
 
 $(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
-	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
+	cd $(SNAPPY_SRC_DIR) && cmake . && make
 	touch $@
 
 jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
