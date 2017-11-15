@@ -72,6 +72,7 @@ $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 	touch $@
 
 $(SNAPPY_GIT_UNPACKED):
+	@mkdir -p $(SNAPPY_OUT)
 	rm -rf $(SNAPPY_SRC_DIR)
 	@mkdir -p $(SNAPPY_SRC_DIR)
 	git clone $(SNAPPY_GIT_REPO_URL) $(SNAPPY_SRC_DIR)
@@ -83,7 +84,9 @@ $(SNAPPY_CMAKE_CACHE): $(SNAPPY_GIT_UNPACKED)
 	cd $(SNAPPY_OUT) && cmake $(SNAPPY_CMAKE_OPTS) -DCMAKE_CXX_COMPILER=$(CXX) ../../$(SNAPPY_SRC_DIR)
 	touch $@
 
-jni-header: $(SNAPPY_CMAKE_CACHE) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+jni-header: $(SNAPPY_GIT_UNPACKED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+
+snappy-header: $(SNAPPY_CMAKE_CACHE)
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
@@ -101,8 +104,10 @@ $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/sn
 
 $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
-# Need to use cmake generated header stub
-SNAPPY_CXX_OPTS:=-include $(SNAPPY_OUT)/snappy-stubs-public.h
+# Need to use cmake generated header stub for Windows
+ifeq ($(OS_NAME),Windows)
+SNAPPY_CXX_OPTS:=-include$(SNAPPY_OUT)/snappy-stubs-public.h
+endif
 
 $(SNAPPY_OUT)/%.o: $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
@@ -157,10 +162,10 @@ test: $(NATIVE_DLL)
 DOCKER_RUN_OPTS:=--rm
 
 win32: jni-header
-	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
+	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 win64: jni-header
-	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
+	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 # deprecated
 mac32: jni-header
