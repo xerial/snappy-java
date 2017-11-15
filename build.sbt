@@ -67,26 +67,6 @@ javacOptions in doc := {
     opts
 }
 
-// Configuration for SnappyHadoopCompatibleOutputStream testing
-fork in Test := true
-import java.io.File
-val libTemp = {
-  val path = s"${System.getProperty("java.io.tmpdir")}/snappy_test_${System.currentTimeMillis()}"
-  // certain older Linux systems (debian/trusty in Travis CI) requires the libsnappy.so, loaded by
-  // libhadoop.so, be copied to the temp path before the child JVM is forked.
-  // because of that, cannot define as an additional task in Test scope
-  IO.copyFile(file("src/test/resources/lib/Linux/libsnappy.so"), file(s"$path/libsnappy.so"))
-  IO.copyFile(file("src/test/resources/lib/Linux/libsnappy.so"), file(s"$path/libsnappy.so.1"))
-  path
-}
-
-val macOSXLibPath = s"$libTemp:${System.getenv("DYLD_LIBRARY_PATH")}"
-val linuxLibPath  = s"$libTemp:${System.getenv("LD_LIBRARY_PATH")}"
-
-// have to add to system dynamic library path since hadoop native library indirectly load libsnappy.1
-// can't use javaOptions in Test because it causes the expression to eval twice yielding different temp path values
-envVars in Test := Map("XERIAL_SNAPPY_LIB" -> libTemp, "DYLD_LIBRARY_PATH" -> macOSXLibPath, "LD_LIBRARY_PATH" -> linuxLibPath)
-
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
 autoScalaLibrary := false
@@ -103,8 +83,7 @@ libraryDependencies ++= Seq(
   "org.wvlet.airframe"  %% "airframe-log"      % "0.25"  % "test",
   "org.scalatest"       %% "scalatest"         % "3.0.4" % "test",
   "org.osgi"            % "org.osgi.core"      % "4.3.0" % "provided",
-  "com.novocode"        % "junit-interface"    % "0.11"  % "test",
-  "org.apache.hadoop"   % "hadoop-common"      % "2.7.3" % "test" exclude ("org.xerial.snappy", "snappy-java")
+  "com.novocode"        % "junit-interface"    % "0.11"  % "test"
 )
 
 enablePlugins(SbtOsgi)
