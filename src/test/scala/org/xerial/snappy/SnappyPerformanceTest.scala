@@ -2,14 +2,11 @@ package org.xerial.snappy
 
 import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
 
-import xerial.core.log.LogLevel
-
 import scala.util.Random
 
-
 /**
- *
- */
+  *
+  */
 class SnappyPerformanceTest extends SnappySpec {
 
   lazy val data = {
@@ -21,17 +18,16 @@ class SnappyPerformanceTest extends SnappySpec {
     a
   }
 
-
   "SnappyOutputStream" should {
 
-    "improve output performance" taggedAs("out") in {
+    "improve output performance" taggedAs ("out") in {
 
       val input = data
 
-      time("compression", repeat=100, logLevel = LogLevel.INFO) {
+      time("compression", repeat = 100) {
         // 0.037 sec. => 0.026
         block("default") {
-          val out = new ByteArrayOutputStream()
+          val out  = new ByteArrayOutputStream()
           val sout = new SnappyOutputStream(out)
           sout.write(input)
           sout.close()
@@ -42,8 +38,6 @@ class SnappyPerformanceTest extends SnappySpec {
 
       //info(f"compressed size: ${compressed.length}%,d, input: ${data.length}%,d")
     }
-
-
 
   }
 

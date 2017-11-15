@@ -6,11 +6,9 @@ services:
 language: scala
 
 scala:
-  - 2.11.8
+  - 2.12.4
 
 jdk:
-  - openjdk7
-  - oraclejdk7
   - oraclejdk8
 
 script:

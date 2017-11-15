@@ -12,10 +12,10 @@ SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
-SNAPPY_GIT_REV:=2d99bd14d471664758e4dfdf81b44f413a7353fd # 1.1.4
+SNAPPY_GIT_REV:=b02bfa754ebf27921d8da3bd2517eab445b84ff9 # 1.1.7
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
-SNAPPY_SOURCE_CONFIGURED:=$(TARGET)/snappy-configure.log
+SNAPPY_CMAKE_CACHE=$(SNAPPY_OUT)/CMakeCache.txt
 
 BITSHUFFLE_ARCHIVE:=$(TARGET)/bitshuffle-$(BITSHUFFLE_VERSION).tar.gz
 BITSHUFFLE_C:=bitshuffle_core.c iochain.c
@@ -70,20 +70,23 @@ $(SNAPPY_ARCHIVE):
 $(SNAPPY_UNPACKED): $(SNAPPY_ARCHIVE)
 	$(TAR) xvfz $< -C $(TARGET)
 	touch $@
-	cd  $(SNAPPY_SRC_DIR) && ./configure
 
 $(SNAPPY_GIT_UNPACKED):
+	@mkdir -p $(SNAPPY_OUT)
 	rm -rf $(SNAPPY_SRC_DIR)
 	@mkdir -p $(SNAPPY_SRC_DIR)
 	git clone $(SNAPPY_GIT_REPO_URL) $(SNAPPY_SRC_DIR)
 	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(SNAPPY_VERSION) $(SNAPPY_GIT_REV)
 	touch $@
 
-$(SNAPPY_SOURCE_CONFIGURED): $(SNAPPY_GIT_UNPACKED)
-	cd $(SNAPPY_SRC_DIR) && ./autogen.sh && ./configure
+$(SNAPPY_CMAKE_CACHE): $(SNAPPY_GIT_UNPACKED)
+	@mkdir -p $(SNAPPY_OUT)
+	cd $(SNAPPY_OUT) && cmake $(SNAPPY_CMAKE_OPTS) -DCMAKE_CXX_COMPILER=$(CXX) ../../$(SNAPPY_SRC_DIR)
 	touch $@
 
-jni-header: $(SNAPPY_SOURCE_CONFIGURED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+jni-header: $(SNAPPY_GIT_UNPACKED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
+
+snappy-header: $(SNAPPY_CMAKE_CACHE)
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
@@ -101,13 +104,18 @@ $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/sn
 
 $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
+# Need to use cmake generated header stub for Windows
+ifeq ($(OS_NAME),Windows)
+SNAPPY_CXX_OPTS:=-include$(SNAPPY_OUT)/snappy-stubs-public.h
+endif
+
 $(SNAPPY_OUT)/%.o: $(SNAPPY_SRC_DIR)/%.cc
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(SNAPPY_CXX_OPTS) $(CXXFLAGS) -c $< -o $@
 
 $(SNAPPY_OUT)/SnappyNative.o: $(SRC)/org/xerial/snappy/SnappyNative.cpp $(SRC)/org/xerial/snappy/SnappyNative.h
 	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(SNAPPY_CXX_OPTS) $(CXXFLAGS) -c $< -o $@
 
 $(SNAPPY_OUT)/BitShuffleNative.o: $(SRC)/org/xerial/snappy/BitShuffleNative.cpp $(SRC)/org/xerial/snappy/BitShuffleNative.h
 	@mkdir -p $(@D)
@@ -137,7 +145,7 @@ snappy: native $(TARGET)/$(snappy-jar-version).jar
 
 native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64le linux-aarch64
 
-$(NATIVE_DLL): $(SNAPPY_SOURCE_CONFIGURED) $(SNAPPY_OUT)/$(LIBNAME)
+$(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
 	cp $(SNAPPY_OUT)/$(LIBNAME) $@
 	@mkdir -p $(NATIVE_TARGET_DIR)
@@ -154,10 +162,10 @@ test: $(NATIVE_DLL)
 DOCKER_RUN_OPTS:=--rm
 
 win32: jni-header
-	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86'
+	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 win64: jni-header
-	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64'
+	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 # deprecated
 mac32: jni-header
