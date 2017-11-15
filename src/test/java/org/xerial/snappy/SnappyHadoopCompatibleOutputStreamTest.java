@@ -17,7 +17,6 @@ import java.util.Map;
 
 public class SnappyHadoopCompatibleOutputStreamTest
 {
-
     private static File tempNativeLibFolder;
 
     @BeforeClass
@@ -80,6 +79,14 @@ public class SnappyHadoopCompatibleOutputStreamTest
     @Test
     public void testXerialCompressionHadoopDecompressionCodec() throws Exception
     {
+        String os = OSInfo.getOSName();
+        String arch = OSInfo.getArchName();
+        if(!((os.equals("Linux") || os.equals("Mac")) && arch.equals("x86_64"))) {
+           // This test works only in Linux/Mac x86_64
+            System.err.println("SnappyHadoopCompatibleOutputStreamTest works only in 64-bit Linux/Mac");
+            return;
+        }
+
         File inputFile = File.createTempFile("TEST_hadoop_compatibility", ".txt");
         File snappyFile = File.createTempFile("TEST_hadoop_compatibility", ".snappy");
         InputStream snappyInput = null;
@@ -97,6 +104,7 @@ public class SnappyHadoopCompatibleOutputStreamTest
 
             compress(inputFile, snappyFile);
 
+            // Test using Hadoop's Snappy Codec
             if (tempNativeLibFolder != null) {
                 SnappyCodec hadoopCodec = new SnappyCodec();
                 hadoopCodec.setConf(new Configuration());
