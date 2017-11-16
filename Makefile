@@ -39,7 +39,7 @@ $(SNAPPY_OUT)/%.o: $(BITSHUFFLE_SRC_DIR)/%.c
 
 SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsubst %.c,%.o,$(BITSHUFFLE_C)) SnappyNative.o BitShuffleNative.o)
 
-CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(BITSHUFFLE_SRC_DIR)
+CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(SNAPPY_OUT) -I$(BITSHUFFLE_SRC_DIR)
 
 ifndef CXXFLAGS_BITSHUFFLE
   ifeq ($(OS_NAME)-$(OS_ARCH),Linux-x86_64)
@@ -145,7 +145,7 @@ NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
 snappy-jar-version:=snappy-java-$(shell perl -npe "s/version in ThisBuild\s+:=\s+\"(.*)\"/\1/" version.sbt | sed -e "/^$$/d")
 
-native: jni-header $(NATIVE_DLL)
+native: jni-header snappy-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
 native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64le linux-aarch64
