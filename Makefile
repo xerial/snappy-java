@@ -81,7 +81,7 @@ $(SNAPPY_GIT_UNPACKED):
 
 $(SNAPPY_CMAKE_CACHE): $(SNAPPY_GIT_UNPACKED)
 	@mkdir -p $(SNAPPY_OUT)
-	cd $(SNAPPY_OUT) && cmake $(SNAPPY_CMAKE_OPTS) -DCMAKE_CXX_COMPILER=$(CXX) ../../$(SNAPPY_SRC_DIR)
+	cd $(SNAPPY_OUT) && cmake $(SNAPPY_CMAKE_OPTS) ../../$(SNAPPY_SRC_DIR)
 	touch $@
 
 jni-header: $(SNAPPY_GIT_UNPACKED) $(BITSHUFFLE_UNPACKED) $(SRC)/org/xerial/snappy/SnappyNative.h $(SRC)/org/xerial/snappy/BitShuffleNative.h
@@ -107,6 +107,11 @@ $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 # Need to use cmake generated header stub for Windows
 ifeq ($(OS_NAME),Windows)
 SNAPPY_CXX_OPTS:=-include$(SNAPPY_OUT)/snappy-stubs-public.h
+endif
+
+# aarch64 can use big-endian optimzied code
+ifeq ($(OS_ARCH),aarch64)
+SNAPPY_CXX_OPTS:=-DSNAPPY_IS_BIG_ENDIAN
 endif
 
 $(SNAPPY_OUT)/%.o: $(SNAPPY_SRC_DIR)/%.cc
