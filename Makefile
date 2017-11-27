@@ -104,11 +104,6 @@ $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/sn
 
 $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
-# Need to use cmake generated header stub for Windows
-ifeq ($(OS_NAME),Windows)
-SNAPPY_CXX_OPTS:=-include$(SNAPPY_OUT)/snappy-stubs-public.h
-endif
-
 # aarch64 can use big-endian optimzied code
 ifeq ($(OS_ARCH),aarch64)
 SNAPPY_CXX_OPTS:=-DSNAPPY_IS_BIG_ENDIAN
