@@ -1,7 +1,11 @@
 FROM centos:5
 MAINTAINER Taro L. Saito <leo@xerial.org>
 
-RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 curl \
+RUN sed -i 's/enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf
+RUN sed -i 's/mirrorlist/#mirrorlist/' /etc/yum.repos.d/*.repo
+RUN sed -i 's|#baseurl=http://mirror.centos.org/centos/$releasever|baseurl=http://vault.centos.org/5.11|' /etc/yum.repos.d/*.repo
+
+RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 curl cmake \
  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /tmp/work \
