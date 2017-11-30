@@ -5,8 +5,18 @@ RUN sed -i 's/enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf
 RUN sed -i 's/mirrorlist/#mirrorlist/' /etc/yum.repos.d/*.repo
 RUN sed -i 's|#baseurl=http://mirror.centos.org/centos/$releasever|baseurl=http://vault.centos.org/5.11|' /etc/yum.repos.d/*.repo
 
-RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 curl cmake \
+RUN yum -y install make gcc gcc-c++ glibc-devel perl wget bzip2 curl \
  && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /tmp/cmake \
+  && cd /tmp/cmake \
+  && wget https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz \
+  && tar xvfz cmake-3.10.0.tar.gz \
+  && cd cmakd-3.10.0 \
+  && ./bootstrap \
+  && make \
+  && make install \
+  && rm -rf /tmp/cmake 
 
 RUN mkdir /tmp/work \
   && cd /tmp/work \
