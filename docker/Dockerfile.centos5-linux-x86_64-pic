@@ -25,15 +25,15 @@ RUN cd /tmp/work/objdir \
   && make install \
   && rm -rf /tmp/work
 
-RUN mkdir /tmp/cmake \
-  && cd /tmp/cmake \
-  && wget --no-check-certificate https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz \
-  && tar xvfz cmake-3.10.0.tar.gz \
-  && cd cmake-3.10.0 \
-  && ./bootstrap CXX=/usr/local/gcc-4.8.3/bin/g++ \
-  && make \
-  && make install \
-  && rm -rf /tmp/cmake
+#RUN mkdir /tmp/cmake \
+#  && cd /tmp/cmake \
+#  && wget --no-check-certificate https://cmake.org/files/v3.10/cmake-3.10.0.tar.gz \
+#  && tar xvfz cmake-3.10.0.tar.gz \
+#  && cd cmake-3.10.0 \
+#  && CXX=/usr/local/gcc-4.8.3/bin/g++ ./bootstrap \
+#  && make \
+#  && make install \
+#  && rm -rf /tmp/cmake
 
 ENV PATH /usr/local/gcc-4.8.3/bin:$PATH
 ENV LD_LIBRARY_PATH /usr/local/gcc-4.8.3/lib64/:$LD_LIBRARY_PATH
