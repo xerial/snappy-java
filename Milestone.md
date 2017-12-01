@@ -3,6 +3,7 @@ Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 ## snappy-java-1.1.7 (2017-11-30)
  * Upgrade to [snappy-1.1.7](https://github.com/google/snappy/releases/tag/1.1.7)
    * Improved performance for big-endian architecture
+   * The other performance improvement in [snappy-1.1.5](https://github.com/google/snappy/releases/tag/1.1.5)
  * (internal) Changed to use docker + cmake for building native libraries
  * Fix android architecture resolution
  * Add hadoop compatible SnappyHadoopCompatibleOutputStream
