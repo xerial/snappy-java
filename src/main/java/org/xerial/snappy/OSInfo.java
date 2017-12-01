@@ -204,9 +204,10 @@ public class OSInfo {
         String osArch = System.getProperty("os.arch");
         // For Android
         if(isAndroid()) {
-            osArch = "android-arm";
+            return "android-arm";
         }
-        else if(osArch.startsWith("arm")) {
+
+        if(osArch.startsWith("arm")) {
             osArch = resolveArmArchType();
         }
         else {
