@@ -12,12 +12,4 @@ jdk:
   - oraclejdk8
 
 script:
-  - if [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ]; then
-      if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-        sbt ++$TRAVIS_SCALA_VERSION "; test; publish";
-      else
-        sbt ++$TRAVIS_SCALA_VERSION test;
-      fi;
-    else
-      sbt ++$TRAVIS_SCALA_VERSION test;
-    fi
+  - ./script/travis-deploy.sh
