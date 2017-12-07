@@ -1,5 +1,8 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.7.1 (2017-12-07)
+ * Fix for Android. No need to upgrade to this version if you are not using Android
+
 ## snappy-java-1.1.7 (2017-11-30)
  * Upgrade to [snappy-1.1.7](https://github.com/google/snappy/releases/tag/1.1.7)
    * Improved performance for big-endian architecture
