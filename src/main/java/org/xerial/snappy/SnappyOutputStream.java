@@ -41,6 +41,7 @@ import java.io.OutputStream;
  * The output data format is:
  * <ol>
  * <li>snappy codec header defined in {@link SnappyCodec} (8 bytes)
+ * <li>codec version (4 bytes integer, at least 1) and compatible version (4 bytes integer)
  * <li>compressed block 1 : a pair of (compressed data size [4 byte integer.
  * Big-endian], compressed data...)
  * <li>compressed block 2
