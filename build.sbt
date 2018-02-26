@@ -109,10 +109,13 @@ libraryDependencies ++= Seq(
 
 enablePlugins(SbtOsgi)
 
+osgiSettings
+
 OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer")
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
 OsgiKeys.bundleActivator := Option("org.xerial.snappy.SnappyBundleActivator")
 OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
+OsgiKeys.requireCapability := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))""""
 
 OsgiKeys.additionalHeaders := Map(
   "Bundle-NativeCode" -> Seq(
@@ -128,7 +131,7 @@ OsgiKeys.additionalHeaders := Map(
     "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
     "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
     "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
-    "org/xerial/snappy/native/Linux/arm7/libsnappyjava.so;osname=linux;processor=arm_le",
+    "org/xerial/snappy/native/Linux/armv7/libsnappyjava.so;osname=linux;processor=arm_le",
     "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64le",
     "org/xerial/snappy/native/Linux/s390x/libsnappyjava.so;osname=linux;processor=s390x",
     "org/xerial/snappy/native/AIX/ppc/libsnappyjava.a;osname=aix;processor=ppc",
