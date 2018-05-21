@@ -1,5 +1,8 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.7.2 (2018-05-21)
+ * Fix for aarch64 endian issue
+
 ## snappy-java-1.1.7.1 (2017-12-07)
  * Fix for Android. No need to upgrade to this version if you are not using Android
 
