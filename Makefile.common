@@ -11,6 +11,8 @@ JAVA  := "$$JAVA_HOME/bin/java"
 JAVAC := "$$JAVA_HOME/bin/javac"
 JAVAH := "$$JAVA_HOME/bin/javah"
 
+LITTLE_ENDIAN	:= "Little Endian"
+BIG_ENDIAN	:= "Big Endian"
 OSINFO_CLASS := org.xerial.snappy.OSInfo
 OSINFO_PROG := lib/org/xerial/snappy/OSInfo.class
 
@@ -24,6 +26,7 @@ OS_ARCH := $(shell $(JAVA) -cp lib $(OSINFO_CLASS) --arch)
 LIB_FOLDER := $(shell $(JAVA) -cp lib $(OSINFO_CLASS))
 IBM_JDK_LIB := lib/inc_ibm
 
+ENDIANESS=$(shell lscpu | grep "Byte Order" |cut -d ":" -f2)
 # Windows uses different path separators
 ifeq ($(OS_NAME),Windows)
 	sep := ;

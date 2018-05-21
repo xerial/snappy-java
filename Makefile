@@ -106,7 +106,9 @@ $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
 # aarch64 can use big-endian optimzied code
 ifeq ($(OS_ARCH),aarch64)
+ifeq ($(ENDIANESS),$(BIG_ENDIAN))
 SNAPPY_CXX_OPTS:=-DSNAPPY_IS_BIG_ENDIAN
+endif
 endif
 
 $(SNAPPY_OUT)/%.o: $(SNAPPY_SRC_DIR)/%.cc
