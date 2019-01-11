@@ -63,6 +63,10 @@ public class SnappyNative
             int outputOffset)
             throws IOException;
 
+    public native int rawUncompressDirectToHeap(ByteBuffer compressed, int inputOffset, int inputLength,
+                                                Object uncompressed, int outputOffset)
+            throws IOException;
+
     public native int rawUncompress(Object input, int inputOffset, int inputLength, Object output, int outputOffset)
             throws IOException;
 

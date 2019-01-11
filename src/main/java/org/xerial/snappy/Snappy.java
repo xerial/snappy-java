@@ -535,17 +535,19 @@ public class Snappy
         if (!compressed.isDirect()) {
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "input is not a direct buffer");
         }
-        if (!uncompressed.isDirect()) {
-            throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
-        }
 
         int cPos = compressed.position();
         int cLen = compressed.remaining();
 
         //         pos  limit
         // [ ......UUUUUU.........]
-        int decompressedSize = impl.rawUncompress(compressed, cPos, cLen, uncompressed,
-                uncompressed.position());
+        final int decompressedSize;
+        if (uncompressed.isDirect()) {
+            decompressedSize = impl.rawUncompress(compressed, cPos, cLen, uncompressed, uncompressed.position());
+        } else {
+            decompressedSize = impl.rawUncompressDirectToHeap(compressed, cPos, cLen,
+                    uncompressed.array(), uncompressed.position());
+        }
         uncompressed.limit(uncompressed.position() + decompressedSize);
 
         return decompressedSize;

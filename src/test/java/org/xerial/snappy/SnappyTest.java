@@ -113,6 +113,51 @@ public class SnappyTest
         assertEquals(origStr, decompressed);
     }
 
+
+    @Test
+    public void directBufferToHeapBuffer() throws Exception
+    {
+
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < 20; ++i) {
+            s.append("Hello world!");
+        }
+        String origStr = s.toString();
+        byte[] orig = origStr.getBytes();
+        ByteBuffer src = ByteBuffer.allocateDirect(orig.length);
+        src.put(orig);
+        src.flip();
+        _logger.debug("input size: " + src.remaining());
+        int maxCompressedLen = Snappy.maxCompressedLength(src.remaining());
+        _logger.debug("max compressed length:" + maxCompressedLen);
+
+        ByteBuffer compressed = ByteBuffer.allocateDirect(maxCompressedLen);
+        int compressedSize = Snappy.compress(src, compressed);
+        _logger.debug("compressed length: " + compressedSize);
+
+        assertEquals(0, src.position());
+        assertEquals(orig.length, src.remaining());
+        assertEquals(orig.length, src.limit());
+
+        assertEquals(0, compressed.position());
+        assertEquals(compressedSize, compressed.limit());
+        assertEquals(compressedSize, compressed.remaining());
+
+        int uncompressedLen = Snappy.uncompressedLength(compressed);
+        _logger.debug("uncompressed length: " + uncompressedLen);
+        ByteBuffer extract = ByteBuffer.allocate(uncompressedLen);
+        int uncompressedLen2 = Snappy.uncompress(compressed, extract);
+        assertEquals(uncompressedLen, uncompressedLen2);
+        assertEquals(uncompressedLen, extract.remaining());
+
+        byte[] b = new byte[uncompressedLen];
+        extract.get(b);
+        String decompressed = new String(b);
+        _logger.debug(decompressed);
+
+        assertEquals(origStr, decompressed);
+    }
+
     @Test
     public void bufferOffset()
             throws Exception
