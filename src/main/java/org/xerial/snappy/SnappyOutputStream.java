@@ -365,7 +365,6 @@ public class SnappyOutputStream
     protected void compressInput()
             throws IOException
     {
-        //  generate header
         if (!headerWritten) {
             outputCursor = writeHeader();
             headerWritten = true;
@@ -375,10 +374,6 @@ public class SnappyOutputStream
             return; // no need to dump
         }
 
-//        if (!headerWritten) {
-//            outputCursor = writeHeader();
-//            headerWritten = true;
-//        }
 
         // Compress and dump the buffer content
         if (!hasSufficientOutputBufferFor(inputCursor)) {
