@@ -1,5 +1,10 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.7.3 (2019-03-25)
+ * Minor release
+ * Output the snappy header even for the empty input to address Spark's [issue](https://issues.apache.org/jira/browse/SPARK-27267)
+ * Fixed SnappyFramed stream to support Java 9
+
 ## snappy-java-1.1.7.2 (2018-05-21)
  * Fix for aarch64 endian issue
 
