@@ -369,19 +369,14 @@ public class SnappyOutputStream
             outputCursor = writeHeader();
             headerWritten = true;
         }
-
         if (inputCursor <= 0) {
             return; // no need to dump
         }
-
-
         // Compress and dump the buffer content
         if (!hasSufficientOutputBufferFor(inputCursor)) {
             dumpOutput();
         }
-
         writeBlockPreemble();
-
         int compressedSize = Snappy.compress(inputBuffer, 0, inputCursor, outputBuffer, outputCursor + 4);
         // Write compressed data size
         writeInt(outputBuffer, outputCursor, compressedSize);
