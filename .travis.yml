@@ -6,10 +6,11 @@ services:
 language: scala
 
 scala:
-  - 2.12.4
+  - 2.12.8
 
 jdk:
-  - oraclejdk8
+  - openjdk8
+  - openjdk11
 
 script:
   - ./script/travis-deploy.sh
