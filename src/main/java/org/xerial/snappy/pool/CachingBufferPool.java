@@ -6,8 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
 
-import com.google.common.annotations.VisibleForTesting;
-
 /**
  * A {@link BufferPool} implementation which caches values at fixed sizes.
  * <p>
@@ -127,7 +125,9 @@ public final class CachingBufferPool implements BufferPool {
         return creator.create(adjustedSize);
     }
 
-    @VisibleForTesting
+    /*
+     * This is package scope to allow direct unit testing.
+     */
     static int adjustSize(int size) {
         assert size > 0;
 
