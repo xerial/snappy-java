@@ -7,7 +7,6 @@ import static org.xerial.snappy.SnappyFramed.COMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
 import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.maskedCrc32c;
-import static org.xerial.snappy.SnappyFramed.releaseDirectByteBuffer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +17,9 @@ import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+
+import org.xerial.snappy.pool.BufferPool;
+import org.xerial.snappy.pool.DefaultPoolFactory;
 
 /**
  * Implements the <a
@@ -59,6 +61,8 @@ public final class SnappyFramedOutputStream
 
     private final ByteBuffer headerBuffer = ByteBuffer.allocate(8).order(
             ByteOrder.LITTLE_ENDIAN);
+    private final BufferPool bufferPool;
+    private final int blockSize;
     private final ByteBuffer buffer;
     private final ByteBuffer directInputBuffer;
     private final ByteBuffer outputBuffer;
@@ -83,6 +87,12 @@ public final class SnappyFramedOutputStream
         this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO);
     }
 
+    public SnappyFramedOutputStream(OutputStream out, BufferPool bufferPool)
+            throws IOException
+    {
+        this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO, bufferPool);
+    }
+
     /**
      * Creates a new {@link SnappyFramedOutputStream} instance.
      *
@@ -102,6 +112,13 @@ public final class SnappyFramedOutputStream
         this(Channels.newChannel(out), blockSize, minCompressionRatio);
     }
 
+    public SnappyFramedOutputStream(OutputStream out, int blockSize,
+            double minCompressionRatio, BufferPool bufferPool)
+            throws IOException
+    {
+        this(Channels.newChannel(out), blockSize, minCompressionRatio, bufferPool);
+    }
+
     /**
      * Creates a new {@link SnappyFramedOutputStream} using the
      * {@link #DEFAULT_BLOCK_SIZE} and {@link #DEFAULT_MIN_COMPRESSION_RATIO}.
@@ -115,6 +132,12 @@ public final class SnappyFramedOutputStream
             throws IOException
     {
         this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO);
+    }
+
+    public SnappyFramedOutputStream(WritableByteChannel out, BufferPool bufferPool)
+            throws IOException
+    {
+        this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO, bufferPool);
     }
 
     /**
@@ -134,8 +157,32 @@ public final class SnappyFramedOutputStream
             double minCompressionRatio)
             throws IOException
     {
+        this(out, blockSize, minCompressionRatio, DefaultPoolFactory.getDefaultPool());
+    }
+
+    /**
+     * Creates a new {@link SnappyFramedOutputStream} instance.
+     *
+     * @param out The underlying {@link WritableByteChannel} to write to. Must
+     * not be {@code null}.
+     * @param blockSize The block size (of raw data) to compress before writing frames
+     * to <i>out</i>. Must be in (0, 65536].
+     * @param minCompressionRatio Defines the minimum compression ratio (
+     * {@code compressedLength / rawLength}) that must be achieved to
+     * write the compressed data. This must be in (0, 1.0].
+     * @throws IOException
+     * @since 1.1.1
+     */
+    public SnappyFramedOutputStream(WritableByteChannel out, int blockSize,
+            double minCompressionRatio, BufferPool bufferPool)
+            throws IOException
+    {
         if (out == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("out is null");
+        }
+
+        if (bufferPool == null) {
+            throw new NullPointerException("buffer pool is null");
         }
 
         if (minCompressionRatio <= 0 || minCompressionRatio > 1.0) {
@@ -147,12 +194,14 @@ public final class SnappyFramedOutputStream
             throw new IllegalArgumentException("block size " + blockSize
                     + " must be in (0, 65536]");
         }
-
+        this.blockSize = blockSize;
         this.out = out;
         this.minCompressionRatio = minCompressionRatio;
-        buffer = ByteBuffer.allocate(blockSize);
-        directInputBuffer = ByteBuffer.allocateDirect(blockSize);
-        outputBuffer = ByteBuffer.allocateDirect(Snappy
+
+        this.bufferPool = bufferPool;
+        buffer = ByteBuffer.wrap(bufferPool.allocateArray(blockSize), 0, blockSize);
+        directInputBuffer = bufferPool.allocateDirect(blockSize);
+        outputBuffer = bufferPool.allocateDirect(Snappy
                 .maxCompressedLength(blockSize));
 
         writeHeader(out);
@@ -370,9 +419,9 @@ public final class SnappyFramedOutputStream
         }
         finally {
             closed = true;
-
-            releaseDirectByteBuffer(directInputBuffer);
-            releaseDirectByteBuffer(outputBuffer);
+            bufferPool.releaseArray(buffer.array());
+            bufferPool.releaseDirect(directInputBuffer);
+            bufferPool.releaseDirect(outputBuffer);
         }
     }
 
@@ -389,6 +438,7 @@ public final class SnappyFramedOutputStream
             buffer.flip();
             writeCompressed(buffer);
             buffer.clear();
+            buffer.limit(blockSize);
         }
     }
 
