@@ -83,8 +83,12 @@ public final class SnappyFramedInputStream
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * input stream.
-     *
-     * @param in the underlying input stream. Must not be {@code null}.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
+     * 
+     * @param in the underlying input stream. Must not be {@code null}. 
+     * @throws IOException
      */
     public SnappyFramedInputStream(InputStream in)
             throws IOException
@@ -97,6 +101,8 @@ public final class SnappyFramedInputStream
      * input stream.
      *
      * @param in the underlying input stream. Must not be {@code null}.
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
+     * @throws IOException 
      */
     public SnappyFramedInputStream(InputStream in, BufferPool bufferPool)
             throws IOException
@@ -107,9 +113,13 @@ public final class SnappyFramedInputStream
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * input stream.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param in the underlying input stream. Must not be {@code null}.
      * @param verifyChecksums if true, checksums in input stream will be verified
+     * @throws IOException
      */
     public SnappyFramedInputStream(InputStream in, boolean verifyChecksums)
             throws IOException
@@ -123,6 +133,8 @@ public final class SnappyFramedInputStream
      *
      * @param in the underlying input stream. Must not be {@code null}.
      * @param verifyChecksums if true, checksums in input stream will be verified
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
+     * @throws IOException
      */
     public SnappyFramedInputStream(InputStream in, boolean verifyChecksums, 
             BufferPool bufferPool)
@@ -136,6 +148,8 @@ public final class SnappyFramedInputStream
      * channel.
      *
      * @param in the underlying readable channel. Must not be {@code null}.
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
+     * @throws IOException
      */
     public SnappyFramedInputStream(ReadableByteChannel in, BufferPool bufferPool)
             throws IOException
@@ -146,8 +160,12 @@ public final class SnappyFramedInputStream
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * channel.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param in the underlying readable channel. Must not be {@code null}.
+     * @throws IOException
      */
     public SnappyFramedInputStream(ReadableByteChannel in)
             throws IOException
@@ -158,9 +176,13 @@ public final class SnappyFramedInputStream
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * channel.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param in the underlying readable channel. Must not be {@code null}.
      * @param verifyChecksums if true, checksums in input stream will be verified
+     * @throws IOException
      */
     public SnappyFramedInputStream(ReadableByteChannel in,
             boolean verifyChecksums)
@@ -175,6 +197,8 @@ public final class SnappyFramedInputStream
      *
      * @param in the underlying readable channel. Must not be {@code null}.
      * @param verifyChecksums if true, checksums in input stream will be verified
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}. 
+     * @throws IOException
      */
     public SnappyFramedInputStream(ReadableByteChannel in,
             boolean verifyChecksums, BufferPool bufferPool)

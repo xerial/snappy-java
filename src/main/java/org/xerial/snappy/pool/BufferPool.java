@@ -4,6 +4,11 @@ import java.nio.ByteBuffer;
 
 /**
  * Makes various types of buffers available for use and potential re-use.
+ * 
+ * <p>
+ * Implementations must be safe for concurrent use by multiple threads.
+ * </p>
+ *
  * @author Brett Okken
  */
 public interface BufferPool {

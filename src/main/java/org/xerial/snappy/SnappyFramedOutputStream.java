@@ -76,6 +76,9 @@ public final class SnappyFramedOutputStream
     /**
      * Creates a new {@link SnappyFramedOutputStream} using the {@link #DEFAULT_BLOCK_SIZE}
      * and {@link #DEFAULT_MIN_COMPRESSION_RATIO}.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param out The underlying {@link OutputStream} to write to. Must not be
      * {@code null}.
@@ -84,9 +87,18 @@ public final class SnappyFramedOutputStream
     public SnappyFramedOutputStream(OutputStream out)
             throws IOException
     {
-        this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO);
+        this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO, DefaultPoolFactory.getDefaultPool());
     }
 
+    /**
+     * Creates a new {@link SnappyFramedOutputStream} using the {@link #DEFAULT_BLOCK_SIZE}
+     * and {@link #DEFAULT_MIN_COMPRESSION_RATIO}.
+     *
+     * @param out The underlying {@link OutputStream} to write to. Must not be
+     * {@code null}.
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}. 
+     * @throws IOException
+     */
     public SnappyFramedOutputStream(OutputStream out, BufferPool bufferPool)
             throws IOException
     {
@@ -95,6 +107,9 @@ public final class SnappyFramedOutputStream
 
     /**
      * Creates a new {@link SnappyFramedOutputStream} instance.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param out The underlying {@link OutputStream} to write to. Must not be
      * {@code null}.
@@ -109,9 +124,22 @@ public final class SnappyFramedOutputStream
             double minCompressionRatio)
             throws IOException
     {
-        this(Channels.newChannel(out), blockSize, minCompressionRatio);
+        this(Channels.newChannel(out), blockSize, minCompressionRatio, DefaultPoolFactory.getDefaultPool());
     }
 
+    /**
+     * Creates a new {@link SnappyFramedOutputStream} instance.
+     *
+     * @param out The underlying {@link OutputStream} to write to. Must not be
+     * {@code null}.
+     * @param blockSize The block size (of raw data) to compress before writing frames
+     * to <i>out</i>. Must be in (0, 65536].
+     * @param minCompressionRatio Defines the minimum compression ratio (
+     * {@code compressedLength / rawLength}) that must be achieved to
+     * write the compressed data. This must be in (0, 1.0].
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}. 
+     * @throws IOException
+     */
     public SnappyFramedOutputStream(OutputStream out, int blockSize,
             double minCompressionRatio, BufferPool bufferPool)
             throws IOException
@@ -122,6 +150,9 @@ public final class SnappyFramedOutputStream
     /**
      * Creates a new {@link SnappyFramedOutputStream} using the
      * {@link #DEFAULT_BLOCK_SIZE} and {@link #DEFAULT_MIN_COMPRESSION_RATIO}.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param out The underlying {@link WritableByteChannel} to write to. Must
      * not be {@code null}.
@@ -131,9 +162,21 @@ public final class SnappyFramedOutputStream
     public SnappyFramedOutputStream(WritableByteChannel out)
             throws IOException
     {
-        this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO);
+        this(out, DEFAULT_BLOCK_SIZE, DEFAULT_MIN_COMPRESSION_RATIO, DefaultPoolFactory.getDefaultPool());
     }
 
+    /**
+     * Creates a new {@link SnappyFramedOutputStream} using the
+     * {@link #DEFAULT_BLOCK_SIZE} and {@link #DEFAULT_MIN_COMPRESSION_RATIO}.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
+     *
+     * @param out The underlying {@link WritableByteChannel} to write to. Must
+     * not be {@code null}.
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}. 
+     * @throws IOException
+     */
     public SnappyFramedOutputStream(WritableByteChannel out, BufferPool bufferPool)
             throws IOException
     {
@@ -170,6 +213,7 @@ public final class SnappyFramedOutputStream
      * @param minCompressionRatio Defines the minimum compression ratio (
      * {@code compressedLength / rawLength}) that must be achieved to
      * write the compressed data. This must be in (0, 1.0].
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
      * @throws IOException
      * @since 1.1.1
      */
