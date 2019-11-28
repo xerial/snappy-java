@@ -115,7 +115,8 @@ ifeq ($(IBM_JDK_7),)
 else
   Linux-ppc64le_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2 -fPIC -m64
 endif
-Linux-ppc64le_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+# ppcle64 GLIBC is at 2.17; so disable __tls_get_addr_opt which is dependent on 2.22;
+Linux-ppc64le_LINKFLAGS := -shared -static-libgcc -static-libstdc++ -Wl,--no-tls-optimize,--no-tls-get-addr-optimize
 Linux-ppc64le_LIBNAME   := libsnappyjava.so
 Linux-ppc64le_SNAPPY_FLAGS  :=
 

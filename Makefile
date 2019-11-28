@@ -41,12 +41,6 @@ SNAPPY_OBJ:=$(addprefix $(SNAPPY_OUT)/,$(patsubst %.cc,%.o,$(SNAPPY_CC)) $(patsu
 
 CXXFLAGS:=$(CXXFLAGS) -I$(SNAPPY_SRC_DIR) -I$(SNAPPY_OUT) -I$(BITSHUFFLE_SRC_DIR)
 
-ifeq ($(OS_NAME)-$(OS_ARCH),Linux-ppc64le)
-  # ppcle64 GLIBC is at 2.17; so disable __tls_get_addr_opt which is dependent on 2.22;
-  LDFLAGS:=-Wl,--no-tls-optimize,--no-tls-get-addr-optimize
-  CXXFLAGS:=$(CXXFLAGS) $(LDFLAGS)
-endif
-
 ifndef CXXFLAGS_BITSHUFFLE
   ifeq ($(OS_NAME)-$(OS_ARCH),Linux-x86_64)
 	# SSE2 is supported in all the x86_64 platforms and AVX2 is only supported
