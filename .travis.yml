@@ -1,16 +1,27 @@
 sudo: required
 
+matrix:
+  include:
+    - os: linux
+      jdk: openjdk8
+      language: scala
+    - os: linux
+      jdk: openjdk8
+      arch: s390x
+      language: java
+    - os: linux
+      jdk: openjdk11
+      language: scala
+    - os: linux
+      jdk: openjdk11
+      arch: s390x
+      language: java
+
 services:
   - docker
 
-language: scala
-
 scala:
   - 2.12.8
-
-jdk:
-  - openjdk8
-  - openjdk11
 
 script:
   - ./script/travis-deploy.sh
