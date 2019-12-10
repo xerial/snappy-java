@@ -22,4 +22,4 @@ project/plugins/project/
 .scala_dependencies
 atlassian-ide-plugin.xml
 
-
+src/main/java/**/*.h

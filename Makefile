@@ -90,17 +90,15 @@ snappy-header: $(SNAPPY_CMAKE_CACHE)
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
-	$(JAVAC) -source 1.7 -target 1.7 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+	$(JAVAC) -source 1.7 -target 1.7 -h $(SRC)/org/xerial/snappy/ -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
-	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.SnappyNative
 
 $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class: $(SRC)/org/xerial/snappy/BitShuffleNative.java
 	@mkdir -p $(TARGET)/jni-classes
-	$(JAVAC) -source 1.7 -target 1.7 -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+	$(JAVAC) -source 1.7 -target 1.7 -h $(SRC)/org/xerial/snappy/ -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class
-	$(JAVAH) -force -classpath $(TARGET)/jni-classes -o $@ org.xerial.snappy.BitShuffleNative
 
 $(SNAPPY_SRC): $(SNAPPY_GIT_UNPACKED)
 
