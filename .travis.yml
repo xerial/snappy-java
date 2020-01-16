@@ -6,10 +6,6 @@ matrix:
       jdk: openjdk8
       language: scala
     - os: linux
-      jdk: openjdk8
-      arch: s390x
-      language: java
-    - os: linux
       jdk: openjdk11
       language: scala
     - os: linux
