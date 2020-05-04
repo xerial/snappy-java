@@ -9,7 +9,6 @@ import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
 import static org.xerial.snappy.SnappyFramed.STREAM_IDENTIFIER_FLAG;
 import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.readBytes;
-import static org.xerial.snappy.SnappyFramed.releaseDirectByteBuffer;
 import static org.xerial.snappy.SnappyFramedOutputStream.MAX_BLOCK_SIZE;
 
 import java.io.EOFException;
@@ -22,6 +21,9 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
+
+import org.xerial.snappy.pool.BufferPool;
+import org.xerial.snappy.pool.DefaultPoolFactory;
 
 /**
  * Implements the <a
@@ -41,6 +43,7 @@ public final class SnappyFramedInputStream
     private final ReadableByteChannel rbc;
     private final ByteBuffer frameHeader;
     private final boolean verifyChecksums;
+    private final BufferPool bufferPool;
 
     /**
      * A single frame read from the underlying {@link InputStream}.
@@ -80,13 +83,48 @@ public final class SnappyFramedInputStream
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * input stream.
-     *
-     * @param in the underlying input stream. Must not be {@code null}.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
+     * 
+     * @param in the underlying input stream. Must not be {@code null}. 
+     * @throws IOException
      */
     public SnappyFramedInputStream(InputStream in)
             throws IOException
     {
-        this(in, true);
+        this(in, true, DefaultPoolFactory.getDefaultPool());
+    }
+
+    /**
+     * Creates a Snappy input stream to read data from the specified underlying
+     * input stream.
+     *
+     * @param in the underlying input stream. Must not be {@code null}.
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
+     * @throws IOException 
+     */
+    public SnappyFramedInputStream(InputStream in, BufferPool bufferPool)
+            throws IOException
+    {
+        this(in, true, bufferPool);
+    }
+
+    /**
+     * Creates a Snappy input stream to read data from the specified underlying
+     * input stream.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
+     *
+     * @param in the underlying input stream. Must not be {@code null}.
+     * @param verifyChecksums if true, checksums in input stream will be verified
+     * @throws IOException
+     */
+    public SnappyFramedInputStream(InputStream in, boolean verifyChecksums)
+            throws IOException
+    {
+        this(in, verifyChecksums, DefaultPoolFactory.getDefaultPool());
     }
 
     /**
@@ -95,11 +133,14 @@ public final class SnappyFramedInputStream
      *
      * @param in the underlying input stream. Must not be {@code null}.
      * @param verifyChecksums if true, checksums in input stream will be verified
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
+     * @throws IOException
      */
-    public SnappyFramedInputStream(InputStream in, boolean verifyChecksums)
+    public SnappyFramedInputStream(InputStream in, boolean verifyChecksums, 
+            BufferPool bufferPool)
             throws IOException
     {
-        this(Channels.newChannel(in), verifyChecksums);
+        this(Channels.newChannel(in), verifyChecksums, bufferPool);
     }
 
     /**
@@ -107,6 +148,24 @@ public final class SnappyFramedInputStream
      * channel.
      *
      * @param in the underlying readable channel. Must not be {@code null}.
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}.
+     * @throws IOException
+     */
+    public SnappyFramedInputStream(ReadableByteChannel in, BufferPool bufferPool)
+            throws IOException
+    {
+        this(in, true, bufferPool);
+    }
+
+    /**
+     * Creates a Snappy input stream to read data from the specified underlying
+     * channel.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
+     *
+     * @param in the underlying readable channel. Must not be {@code null}.
+     * @throws IOException
      */
     public SnappyFramedInputStream(ReadableByteChannel in)
             throws IOException
@@ -117,18 +176,43 @@ public final class SnappyFramedInputStream
     /**
      * Creates a Snappy input stream to read data from the specified underlying
      * channel.
+     * <p>
+     * Uses {@link DefaultPoolFactory} to obtain {@link BufferPool} for buffers.
+     * </p>
      *
      * @param in the underlying readable channel. Must not be {@code null}.
      * @param verifyChecksums if true, checksums in input stream will be verified
+     * @throws IOException
      */
     public SnappyFramedInputStream(ReadableByteChannel in,
             boolean verifyChecksums)
+            throws IOException
+    {
+        this(in, verifyChecksums, DefaultPoolFactory.getDefaultPool());
+    }
+
+    /**
+     * Creates a Snappy input stream to read data from the specified underlying
+     * channel.
+     *
+     * @param in the underlying readable channel. Must not be {@code null}.
+     * @param verifyChecksums if true, checksums in input stream will be verified
+     * @param bufferPool Used to obtain buffer instances. Must not be {@code null}. 
+     * @throws IOException
+     */
+    public SnappyFramedInputStream(ReadableByteChannel in,
+            boolean verifyChecksums, BufferPool bufferPool)
             throws IOException
     {
         if (in == null) {
             throw new NullPointerException("in is null");
         }
 
+        if (bufferPool == null) {
+            throw new NullPointerException("bufferPool is null");
+        }
+
+        this.bufferPool = bufferPool;
         this.rbc = in;
         this.verifyChecksums = verifyChecksums;
 
@@ -155,19 +239,22 @@ public final class SnappyFramedInputStream
      */
     private void allocateBuffersBasedOnSize(int size)
     {
-
         if (input != null) {
-            releaseDirectByteBuffer(input);
+            bufferPool.releaseDirect(input);
         }
 
         if (uncompressedDirect != null) {
-            releaseDirectByteBuffer(uncompressedDirect);
+            bufferPool.releaseDirect(uncompressedDirect);
         }
 
-        input = ByteBuffer.allocateDirect(size);
+        if (buffer != null) {
+            bufferPool.releaseArray(buffer);
+        }
+
+        input = bufferPool.allocateDirect(size);
         final int maxCompressedLength = Snappy.maxCompressedLength(size);
-        uncompressedDirect = ByteBuffer.allocateDirect(maxCompressedLength);
-        buffer = new byte[maxCompressedLength];
+        uncompressedDirect = bufferPool.allocateDirect(maxCompressedLength);
+        buffer = bufferPool.allocateArray(maxCompressedLength);
     }
 
     @Override
@@ -359,14 +446,21 @@ public final class SnappyFramedInputStream
         finally {
             if (!closed) {
                 closed = true;
-            }
 
-            if (input != null) {
-                releaseDirectByteBuffer(input);
-            }
+                if (input != null) {
+                    bufferPool.releaseDirect(input);
+                    input = null;
+                }
 
-            if (uncompressedDirect != null) {
-                releaseDirectByteBuffer(uncompressedDirect);
+                if (uncompressedDirect != null) {
+                    bufferPool.releaseDirect(uncompressedDirect);
+                    uncompressedDirect = null;
+                }
+
+                if (buffer != null) {
+                    bufferPool.releaseArray(buffer);
+                    buffer = null;
+                }
             }
         }
     }
@@ -456,9 +550,10 @@ public final class SnappyFramedInputStream
             final int uncompressedLength = Snappy.uncompressedLength(input);
 
             if (uncompressedLength > uncompressedDirect.capacity()) {
-                uncompressedDirect = ByteBuffer
-                        .allocateDirect(uncompressedLength);
-                buffer = new byte[Math.max(input.capacity(), uncompressedLength)];
+                bufferPool.releaseDirect(uncompressedDirect);
+                bufferPool.releaseArray(buffer);
+                uncompressedDirect = bufferPool.allocateDirect(uncompressedLength);
+                buffer = bufferPool.allocateArray(uncompressedLength);
             }
 
             uncompressedDirect.clear();
