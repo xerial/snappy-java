@@ -19,10 +19,12 @@
 // SnappyLoader.java
 // Since: 2011/03/29
 //
-// $URL$ 
+// $URL$
 // $Author$
 //--------------------------------------
 package org.xerial.snappy;
+
+import org.xerial.snappy.pure.PureJavaSnappy;
 
 import java.io.*;
 import java.net.URL;
@@ -75,13 +77,14 @@ public class SnappyLoader
     public static final String SNAPPY_SYSTEM_PROPERTIES_FILE = "org-xerial-snappy.properties";
     public static final String KEY_SNAPPY_LIB_PATH = "org.xerial.snappy.lib.path";
     public static final String KEY_SNAPPY_LIB_NAME = "org.xerial.snappy.lib.name";
+    public static final String KEY_SNAPPY_PUREJAVA = "org.xerial.snappy.purejava";
     public static final String KEY_SNAPPY_TEMPDIR = "org.xerial.snappy.tempdir";
     public static final String KEY_SNAPPY_USE_SYSTEMLIB = "org.xerial.snappy.use.systemlib";
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
 
     private static boolean isLoaded = false;
 
-    private static volatile SnappyNative snappyApi = null;
+    private static volatile SnappyApi snappyApi = null;
     private static volatile BitShuffleNative bitshuffleApi = null;
 
     private static File nativeLibFile = null;
@@ -101,11 +104,11 @@ public class SnappyLoader
     /**
      * Set the `snappyApi` instance.
      *
-     * @param nativeCode
+     * @param apiImpl
      */
-    static synchronized void setSnappyApi(SnappyNative nativeCode)
+    static synchronized void setSnappyApi(SnappyApi apiImpl)
     {
-        snappyApi = nativeCode;
+        snappyApi = apiImpl;
     }
 
     /**
@@ -146,13 +149,29 @@ public class SnappyLoader
         loadSnappySystemProperties();
     }
 
-    static synchronized SnappyNative loadSnappyApi()
+    static synchronized boolean isPureJava() {
+        return snappyApi != null && PureJavaSnappy.class.isAssignableFrom(snappyApi.getClass());
+    }
+
+    static synchronized SnappyApi loadSnappyApi()
     {
         if (snappyApi != null) {
             return snappyApi;
         }
-        loadNativeLibrary();
-        setSnappyApi(new SnappyNative());
+        try {
+            if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
+                // Use pure-java Snappy implementation
+                setSnappyApi(new PureJavaSnappy());
+            }
+            else {
+                loadNativeLibrary();
+                setSnappyApi(new SnappyNative());
+            }
+        }
+        catch(Exception e) {
+            // Fall-back to pure-java Snappy implementation
+            setSnappyApi(new PureJavaSnappy());
+        }
         return snappyApi;
     }
 
@@ -311,7 +330,7 @@ public class SnappyLoader
         String snappyNativeLibraryPath = System.getProperty(KEY_SNAPPY_LIB_PATH);
         String snappyNativeLibraryName = System.getProperty(KEY_SNAPPY_LIB_NAME);
 
-        // Resolve the library file name with a suffix (e.g., dll, .so, etc.) 
+        // Resolve the library file name with a suffix (e.g., dll, .so, etc.)
         if (snappyNativeLibraryName == null) {
             snappyNativeLibraryName = System.mapLibraryName("snappyjava");
         }
