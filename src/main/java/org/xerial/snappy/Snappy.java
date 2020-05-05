@@ -45,12 +45,7 @@ import java.util.Properties;
 public class Snappy
 {
     static {
-        try {
-            impl = SnappyLoader.loadSnappyApi();
-        }
-        catch (Exception e) {
-            throw new ExceptionInInitializerError(e);
-        }
+        init();
     }
 
     /**
@@ -69,6 +64,15 @@ public class Snappy
     {
         SnappyLoader.cleanUpExtractedNativeLib();
         SnappyLoader.setSnappyApi(null);
+    }
+
+    static void init() {
+        try {
+            impl = SnappyLoader.loadSnappyApi();
+        }
+        catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
     }
 
     /**

@@ -1,4 +1,3 @@
-
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,5 +23,7 @@ final class SnappyConstants
     static final int COPY_1_BYTE_OFFSET = 1;  // 3 bit length + 3 bits of offset in opcode
     static final int COPY_2_BYTE_OFFSET = 2;
 
-    private SnappyConstants() {}
+    private SnappyConstants()
+    {
+    }
 }

@@ -20,14 +20,14 @@ public class PureJavaSnappy implements SnappyApi
     public long rawCompress(long inputAddr, long inputSize, long destAddr)
             throws IOException
     {
-        throw new UnsupportedOperationException("pure-java Snappy doesn't support raw memory compression");
+        return SnappyRawCompressor.compress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH, table);
     }
 
     @Override
     public long rawUncompress(long inputAddr, long inputSize, long destAddr)
             throws IOException
     {
-        throw new UnsupportedOperationException("pure-java Snappy doesn't support raw memory decompression");
+        return SnappyRawDecompressor.decompress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH);
     }
 
     @Override
@@ -211,7 +211,7 @@ public class PureJavaSnappy implements SnappyApi
     public long uncompressedLength(long inputAddr, long len)
             throws IOException
     {
-        throw new UnsupportedOperationException("pure-java Snappy doesn't support raw memory address");
+        return SnappyRawDecompressor.getUncompressedLength(null, inputAddr, inputAddr + len);
     }
 
     @Override

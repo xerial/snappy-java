@@ -13,22 +13,24 @@
  */
 package org.xerial.snappy.pure;
 
-        import org.xerial.snappy.SnappyError;
-        import org.xerial.snappy.SnappyErrorCode;
-        import sun.misc.Unsafe;
+import org.xerial.snappy.SnappyError;
+import org.xerial.snappy.SnappyErrorCode;
+import sun.misc.Unsafe;
 
-        import java.lang.reflect.Field;
-        import java.nio.Buffer;
-        import java.nio.ByteOrder;
+import java.lang.reflect.Field;
+import java.nio.Buffer;
+import java.nio.ByteOrder;
 
-        import static java.lang.String.format;
+import static java.lang.String.format;
 
 final class UnsafeUtil
 {
     public static final Unsafe UNSAFE;
     private static final Field ADDRESS_ACCESSOR;
 
-    private UnsafeUtil() {}
+    private UnsafeUtil()
+    {
+    }
 
     static {
         ByteOrder order = ByteOrder.nativeOrder();

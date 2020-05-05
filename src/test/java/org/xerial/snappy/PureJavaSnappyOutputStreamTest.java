@@ -6,8 +6,8 @@ import org.junit.BeforeClass;
 /**
  *
  */
-public class PureJavaSnappyTest
-        extends SnappyTest
+public class PureJavaSnappyOutputStreamTest
+        extends SnappyOutputStreamTest
 {
     @BeforeClass
     public static void setUp()
