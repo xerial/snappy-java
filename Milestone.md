@@ -1,7 +1,7 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
 ## snapy-java-1.1.7.4 (2020-05-05)
- * Caching internal buffers for SnappyFramed streams (#234)[https://github.com/xerial/snappy-java/pull/234]
+ * Caching internal buffers for SnappyFramed streams [#234](https://github.com/xerial/snappy-java/pull/234)
  * Fixed the native lib for ppc64le to work with glibc 2.17 (Previously it depended on 2.22)
 
 ## snappy-java-1.1.7.3 (2019-03-25)
