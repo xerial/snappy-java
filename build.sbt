@@ -111,7 +111,7 @@ enablePlugins(SbtOsgi)
 
 osgiSettings
 
-OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer", "org.xerial.snappy.pool")
+OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer", "org.xerial.snappy.pool", "org.xerial.snappy.pure")
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
 OsgiKeys.bundleActivator := Option("org.xerial.snappy.SnappyBundleActivator")
 OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
