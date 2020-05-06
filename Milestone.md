@@ -1,6 +1,10 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.7.5 (2020-05-06)
+ * Fixes java.lang.NoClassDefFoundError: org/xerial/snappy/pool/DefaultPoolFactory in 1.1.7.4
+
 ## snapy-java-1.1.7.4 (2020-05-05)
+ * __DO NOT USE THIS VERSION__ 1.1.7.4 misses a package for using SnappyFramed streams. 
  * Caching internal buffers for SnappyFramed streams [#234](https://github.com/xerial/snappy-java/pull/234)
  * Fixed the native lib for ppc64le to work with glibc 2.17 (Previously it depended on 2.22)
 
