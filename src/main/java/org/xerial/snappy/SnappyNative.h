@@ -57,6 +57,14 @@ JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompress__Ljava_
 
 /*
  * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawUncompressDirectToHeap
+ * Signature: (Ljava/nio/ByteBuffer;IILjava/lang/Object;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompressDirectToHeap
+  (JNIEnv *, jobject, jobject, jint, jint, jobject, jint);
+
+/*
+ * Class:     org_xerial_snappy_SnappyNative
  * Method:    rawUncompress
  * Signature: (Ljava/lang/Object;IILjava/lang/Object;I)I
  */

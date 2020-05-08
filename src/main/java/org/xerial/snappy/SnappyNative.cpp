@@ -297,3 +297,35 @@ JNIEXPORT void JNICALL Java_org_xerial_snappy_SnappyNative_arrayCopy
 	env->ReleasePrimitiveArrayCritical((jarray) output, dest, 0);
 }
 
+/*
+ * Class:     org_xerial_snappy_SnappyNative
+ * Method:    rawUncompressDirectToHeap
+ * Signature: (Ljava/nio/ByteBuffer;IILjava/lang/Object;I)I
+ */
+JNIEXPORT jint JNICALL Java_org_xerial_snappy_SnappyNative_rawUncompressDirectToHeap
+  (JNIEnv* env, jobject self, jobject compressedBuffer, jint inputPos, jint inputLength,
+  jobject uncompressedArray, jint outputOffset)
+{
+    char* in = (char*) env->GetDirectBufferAddress(compressedBuffer);
+    if (in == 0) {
+        throw_exception(env, self, 3);
+        return (jint) 0;
+    }
+    char* out = (char*) env->GetPrimitiveArrayCritical((jarray) uncompressedArray, 0);
+    if (out == 0) {
+        // out of memory
+        throw_exception(env, self, 4);
+        return (jint) 0;
+    }
+    size_t decompressedLength;
+    snappy::GetUncompressedLength(in + inputPos, (size_t) inputLength, &decompressedLength);
+    bool ret = snappy::RawUncompress(in + inputPos, (size_t) inputLength, out + outputOffset);
+    env->ReleasePrimitiveArrayCritical((jarray) uncompressedArray, out, 0);
+    if(!ret) {
+        // failed to decompress
+        throw_exception(env, self, 5);
+        return (jint) 0;
+    }
+    return (jint) decompressedLength;
+}
+
