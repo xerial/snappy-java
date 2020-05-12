@@ -41,7 +41,8 @@ public enum SnappyErrorCode
     FAILED_TO_UNCOMPRESS(5),
     EMPTY_INPUT(6),
     INCOMPATIBLE_VERSION(7),
-    INVALID_CHUNK_SIZE(8);
+    INVALID_CHUNK_SIZE(8),
+    UNSUPPORTED_PLATFORM(9);
 
     public final int id;
 
