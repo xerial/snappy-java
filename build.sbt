@@ -4,14 +4,6 @@ organizationName := "xerial.org"
 description := "snappy-java: A fast compression/decompression library"
 sonatypeProfileName := "org.xerial"
 
-credentials ++= {
-  if (sys.env.contains("SONATYPE_USERNAME") && sys.env.contains("SONATYPE_PASSWORD")) {
-    Seq(Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", sys.env("SONATYPE_USERNAME"), sys.env("SONATYPE_PASSWORD")))
-  } else {
-    Seq.empty
-  }
-}
-
 publishTo := sonatypePublishToBundle.value
 
 pomExtra := {
