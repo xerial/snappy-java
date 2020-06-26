@@ -37,9 +37,8 @@ The current stable version is available from here:
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
 
 ### Using with Maven
-  * Snappy-java is available from Maven's central repository:  <http://central.maven.org/maven2/org/xerial/snappy/snappy-java>
-
-Add the following dependency to your pom.xml:
+  
+Snappy-java is available from Maven's central repository. Add the following dependency to your pom.xml:
 
     <dependency>
       <groupId>org.xerial.snappy</groupId>
