@@ -1,5 +1,10 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.7.6 (2020-06-26)
+ * Added an experimental support of pure-java Snappy https://github.com/xerial/snappy-java#using-pure-java-snappy-implementation
+    * Pure-java snappy doesn't support Snappy.isValidCompressedBuffer methods, but the other methods, Snappy.compress, uncompress, SnappyInput/OutputStream, SnappyFramedInput/OutputStream, etc., should work as expected.
+ * Changed the minimum JVM requirement to JDK 1.8
+
 ## snappy-java-1.1.7.5 (2020-05-06)
  * Fixes java.lang.NoClassDefFoundError: org/xerial/snappy/pool/DefaultPoolFactory in 1.1.7.4
 
