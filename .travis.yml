@@ -1,31 +1,18 @@
-sudo: required
+branches:
+  only:
+  - master
 
-language: scala
+language: java
 
-matrix:
-  include:
-    - os: linux
-      jdk: openjdk8
-    - os: linux
-      jdk: openjdk11
-    - os: linux
-      jdk: openjdk11
-      arch: s390x
-      dist: bionic
+jdk:
+  - openjdk11
 
-services:
-  - docker
+os: linux
 
-scala:
-  - 2.12.8
-
-before_script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then 
-      if [ "$TRAVIS_ARCH" = "s390x" ]; then 
-        sudo apt-get install -y openjdk-11-jdk;
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-s390x && export PATH=$JAVA_HOME/bin:$PATH; 
-      fi;
-    fi
+arch:
+  - s390x
 
 script:
-  - ./script/travis-deploy.sh
+#  - sudo apt-get install -y openjdk-11-jdk;
+#  - export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-s390x && export PATH=$JAVA_HOME/bin:$PATH;
+  - ./sbt test

@@ -250,7 +250,7 @@ java_version() {
 default_jvm_opts() {
   local -r v="$(java_version)"
   if [[ $v -ge 10 ]]; then
-    echo "$default_jvm_opts_common -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler"
+    echo "$default_jvm_opts_common -XX:+UnlockExperimentalVMOptions"
   elif [[ $v -ge 8 ]]; then
     echo "$default_jvm_opts_common"
   else
