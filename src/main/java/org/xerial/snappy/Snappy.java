@@ -24,8 +24,6 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import org.xerial.snappy.pure.PureJavaSnappy;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
