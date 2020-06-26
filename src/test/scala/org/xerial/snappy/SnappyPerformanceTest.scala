@@ -5,7 +5,6 @@ import java.io.{ByteArrayOutputStream, ByteArrayInputStream}
 import scala.util.Random
 
 /**
-  *
   */
 class SnappyPerformanceTest extends SnappySpec {
 
