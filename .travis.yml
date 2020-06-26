@@ -13,13 +13,13 @@ services:
   - docker
 
 scala:
-  - 2.12.8
+  - 2.12.11
 
 before_script:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then 
-      if [ "$TRAVIS_ARCH" = "s390x" ]; then 
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      if [ "$TRAVIS_ARCH" = "s390x" ]; then
         sudo apt-get install -y openjdk-11-jdk;
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-s390x && export PATH=$JAVA_HOME/bin:$PATH; 
+        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-s390x && export PATH=$JAVA_HOME/bin:$PATH;
       fi;
     fi
 
