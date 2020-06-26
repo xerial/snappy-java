@@ -55,7 +55,7 @@ pomExtra := {
     </scm>
 }
 
-scalaVersion in ThisBuild := "2.12.8"
+scalaVersion in ThisBuild := "2.12.11"
 
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation", "-source", "1.7", "-target", "1.7")
 
@@ -93,14 +93,11 @@ autoScalaLibrary := false
 crossPaths := false
 logBuffered in Test := false
 
-findbugsReportType := Some(FindbugsReport.FancyHtml)
-findbugsReportPath := Some(crossTarget.value / "findbugs" / "report.html")
-
 libraryDependencies ++= Seq(
   "junit"               % "junit"              % "4.8.2" % "test",
   "org.codehaus.plexus" % "plexus-classworlds" % "2.4"   % "test",
   "org.xerial.java"     % "xerial-core"        % "2.1"   % "test",
-  "org.wvlet.airframe"  %% "airframe-log"      % "0.25"  % "test",
+  "org.wvlet.airframe"  %% "airframe-log"      % "20.6.1"  % "test",
   "org.scalatest"       %% "scalatest"         % "3.0.4" % "test",
   "org.osgi"            % "org.osgi.core"      % "4.3.0" % "provided",
   "com.novocode"        % "junit-interface"    % "0.11"  % "test",
