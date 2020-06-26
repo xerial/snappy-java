@@ -2,44 +2,20 @@ name := "snappy-java"
 organization := "org.xerial.snappy"
 organizationName := "xerial.org"
 description := "snappy-java: A fast compression/decompression library"
+
 sonatypeProfileName := "org.xerial"
-
-publishTo := sonatypePublishToBundle.value
-
-pomExtra := {
-  <url>https://github.com/xerial/snappy-java</url>
-   <licenses>
-       <license>
-           <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <id>leo</id>
-            <name>Taro L. Saito</name>
-            <email>leo@xerial.org</email>
-            <organization>Xerial Project</organization>
-            <roles>
-                <role>Architect</role>
-                <role>Project Manager</role>
-                <role>Chief Developer</role>
-            </roles>
-            <timezone>+9</timezone>
-        </developer>
-    </developers>
-    <issueManagement>
-        <system>GitHub</system>
-        <url>http://github.com/xerial/snappy-java/issues/list</url>
-    </issueManagement>
-    <inceptionYear>2011</inceptionYear>
-    <scm>
-        <connection>scm:git@github.com:xerial/snappy-java.git</connection>
-        <developerConnection>scm:git:git@github.com:xerial/snappy-java.git</developerConnection>
-        <url>git@github.com:xerial/snappy-java.git</url>
-    </scm>
-}
+publishTo in ThisBuild := sonatypePublishToBundle.value
+licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+homepage := Some(url("https://github.com/xerial/snappy-java"))
+scmInfo := Some(
+  ScmInfo(
+    browseUrl = url("https://github.com/xerial/snappy-java"),
+    connection = "scm:git@github.com:xerial/snappy-java.git"
+  )
+)
+developers := List(
+  Developer(id = "leo", name = "Taro L. Saito", email = "leo@xerial.org", url = url("http://xerial.org/leo"))
+)
 
 scalaVersion in ThisBuild := "2.12.11"
 
@@ -57,7 +33,6 @@ javacOptions in doc := {
 
 // Configuration for SnappyHadoopCompatibleOutputStream testing
 fork in Test := true
-import java.io.File
 val libTemp = {
   val path = s"${System.getProperty("java.io.tmpdir")}/snappy_test_${System.currentTimeMillis()}"
   // certain older Linux systems (debian/trusty in Travis CI) requires the libsnappy.so, loaded by
@@ -132,7 +107,6 @@ OsgiKeys.additionalHeaders := Map(
 )
 
 import ReleaseTransformations._
-import sbtrelease._
 
 releaseTagName := { (version in ThisBuild).value }
 
