@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: scalafmt test
-        run: ./sbt scalafmtCheckAl
+        run: ./sbt scalafmtCheckAll
   test:
     name: test jdk11
     runs-on: ubuntu-latest
