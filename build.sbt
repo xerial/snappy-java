@@ -12,13 +12,7 @@ credentials ++= {
   }
 }
 
-publishTo := Some(
-  if (isSnapshot.value) {
-    Opts.resolver.sonatypeSnapshots
-  } else {
-    Opts.resolver.sonatypeStaging
-  }
-)
+publishTo := sonatypePublishToBundle.value
 
 pomExtra := {
   <url>https://github.com/xerial/snappy-java</url>
@@ -58,11 +52,11 @@ pomExtra := {
 scalaVersion in ThisBuild := "2.12.11"
 
 // For building jars for JDK7
-javacOptions ++= Seq("-source", "1.7", "-target", "1.7")
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
 
 javacOptions in doc := {
-  val opts = Seq("-source", "1.6")
+  val opts = Seq("-source", "1.8")
   if (scala.util.Properties.isJavaAtLeast("1.8"))
     opts ++ Seq("-Xdoclint:none")
   else
@@ -149,7 +143,6 @@ import ReleaseTransformations._
 import sbtrelease._
 
 releaseTagName := { (version in ThisBuild).value }
-releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -159,9 +152,9 @@ releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  publishArtifacts,
+  releaseStepCommand("publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  releaseStepCommand("sonatypeReleaseAll"),
   pushChanges
 )
