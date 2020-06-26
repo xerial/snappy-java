@@ -33,7 +33,7 @@ snappy-java is a Java port of the snappy
  * [Release Notes](Milestone.md)
 
 The current stable version is available from here:
-  * Release version: http://central.maven.org/maven2/org/xerial/snappy/snappy-java/
+  * Release version: https://repo1.maven.org/maven2/org/xerial/snappy/snappy-java/
   * Snapshot version (the latest beta version): https://oss.sonatype.org/content/repositories/snapshots/org/xerial/snappy/snappy-java/
 
 ### Using with Maven
