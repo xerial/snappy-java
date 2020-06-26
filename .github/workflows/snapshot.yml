@@ -1,0 +1,36 @@
+name: Snapshot Release
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.scala'
+      - '**.java'
+      - '**.sbt'
+    tag:
+      - '!*'
+
+jobs:
+  publish_snapshots:
+    name: Publish snapshots
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 10000
+       # Fetch all tags so that sbt-dynver can find the previous release version
+      - run: git fetch --tags
+      - uses: olafurpg/setup-scala@v5
+        with:
+          java-version: adopt@1.11
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache
+          key: ${{ runner.os }}-snapshot-${{ hashFiles('**/*.sbt') }}
+          restore-keys: ${{ runner.os }}-snapshot-
+      - name: Publish snapshots
+        env:
+          SONATYPE_USERNAME: '${{ secrets.SONATYPE_USER }}'
+          SONATYPE_PASSWORD: '${{ secrets.SONATYPE_PASS }}'
+        run: ./sbt publish
