@@ -20,7 +20,7 @@ developers := List(
 scalaVersion in ThisBuild := "2.12.11"
 
 // For building jars for JDK7
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
+javacOptions in ThisBuild ++= Seq("-source", "1.8", "-target", "1.8")
 javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
 
 javacOptions in doc := {
