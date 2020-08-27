@@ -89,7 +89,7 @@ public final class SnappyRawDecompressor
             int trailerBytes = entry >>> 11;
             int trailer = 0;
             if (input + SIZE_OF_INT < inputLimit) {
-                trailer = UNSAFE.getInt(inputBase, input) & wordmask[trailerBytes];
+                trailer = UnsafeUtil.getInt(inputBase, input) & wordmask[trailerBytes];
             }
             else {
                 if (input + trailerBytes > inputLimit) {
@@ -134,7 +134,7 @@ public final class SnappyRawDecompressor
                 else {
                     // fast copy. We may over-copy but there's enough room in input and output to not overrun them
                     do {
-                        UNSAFE.putLong(outputBase, output, UNSAFE.getLong(inputBase, input));
+                        UnsafeUtil.putLong(outputBase, output, UnsafeUtil.getLong(inputBase, input));
                         input += SIZE_OF_LONG;
                         output += SIZE_OF_LONG;
                     }
@@ -176,12 +176,12 @@ public final class SnappyRawDecompressor
                         output += SIZE_OF_INT;
                         matchAddress += increment32;
 
-                        UNSAFE.putInt(outputBase, output, UNSAFE.getInt(outputBase, matchAddress));
+                        UnsafeUtil.putInt(outputBase, output, UnsafeUtil.getInt(outputBase, matchAddress));
                         output += SIZE_OF_INT;
                         matchAddress -= decrement64;
                     }
                     else {
-                        UNSAFE.putLong(outputBase, output, UNSAFE.getLong(outputBase, matchAddress));
+                        UnsafeUtil.putLong(outputBase, output, UnsafeUtil.getLong(outputBase, matchAddress));
                         matchAddress += SIZE_OF_LONG;
                         output += SIZE_OF_LONG;
                     }
@@ -192,7 +192,7 @@ public final class SnappyRawDecompressor
                         }
 
                         while (output < fastOutputLimit) {
-                            UNSAFE.putLong(outputBase, output, UNSAFE.getLong(outputBase, matchAddress));
+                            UnsafeUtil.putLong(outputBase, output, UnsafeUtil.getLong(outputBase, matchAddress));
                             matchAddress += SIZE_OF_LONG;
                             output += SIZE_OF_LONG;
                         }
@@ -203,7 +203,7 @@ public final class SnappyRawDecompressor
                     }
                     else {
                         while (output < matchOutputLimit) {
-                            UNSAFE.putLong(outputBase, output, UNSAFE.getLong(outputBase, matchAddress));
+                            UnsafeUtil.putLong(outputBase, output, UnsafeUtil.getLong(outputBase, matchAddress));
                             matchAddress += SIZE_OF_LONG;
                             output += SIZE_OF_LONG;
                         }
