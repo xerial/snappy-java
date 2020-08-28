@@ -25,9 +25,11 @@
 package org.xerial.snappy;
 
 import org.xerial.snappy.pure.PureJavaSnappy;
+import org.xerial.snappy.pure.PureJavaSnappyBE;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.ByteOrder;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.UUID;
@@ -158,10 +160,15 @@ public class SnappyLoader
         if (snappyApi != null) {
             return snappyApi;
         }
+        
+        ByteOrder order = ByteOrder.nativeOrder();
         try {
             if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
                 // Use pure-java Snappy implementation
-                setSnappyApi(new PureJavaSnappy());
+            	if (order.equals(ByteOrder.LITTLE_ENDIAN))
+            		setSnappyApi(new PureJavaSnappy());
+            	else
+            		setSnappyApi(new PureJavaSnappyBE());
             }
             else {
                 loadNativeLibrary();
@@ -170,7 +177,10 @@ public class SnappyLoader
         }
         catch(Exception e) {
             // Fall-back to pure-java Snappy implementation
-            setSnappyApi(new PureJavaSnappy());
+            if (order.equals(ByteOrder.LITTLE_ENDIAN))
+        		setSnappyApi(new PureJavaSnappy());
+        	else
+        		setSnappyApi(new PureJavaSnappyBE());
         }
         return snappyApi;
     }
