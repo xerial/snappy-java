@@ -20,8 +20,11 @@ import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_INT;
 import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_LONG;
 import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_SHORT;
 import static org.xerial.snappy.pure.UnsafeUtil.UNSAFE;
+import static java.lang.Short.reverseBytes;
+import static java.lang.Integer.reverseBytes;
+import static java.lang.Long.reverseBytes;
 
-public final class SnappyRawCompressor
+public final class SnappyRawCompressorBE
 {
     // The size of a compression block. Note that many parts of the compression
     // code assumes that BLOCK_SIZE <= 65536; in particular, the hash table
@@ -40,7 +43,7 @@ public final class SnappyRawCompressor
     private static final int MAX_HASH_TABLE_BITS = 14;
     public static final int MAX_HASH_TABLE_SIZE = 1 << MAX_HASH_TABLE_BITS;
 
-    private SnappyRawCompressor() {}
+    private SnappyRawCompressorBE() {}
 
     public static int maxCompressedLength(int sourceLength)
     {
@@ -138,7 +141,7 @@ public final class SnappyRawCompressor
                 long candidateIndex = 0;
                 for (input += 1; input + (skip >>> 5) <= fastInputLimit; input += ((skip++) >>> 5)) {
                     // hash the 4 bytes starting at the input pointer
-                	int currentInt = UNSAFE.getInt(inputBase, input);
+                	int currentInt = reverseBytes(UNSAFE.getInt(inputBase, input));
                     int hash = hashBytes(currentInt, shift);
 
                     // get the position of a 4 bytes sequence with the same hash
@@ -151,7 +154,7 @@ public final class SnappyRawCompressor
 
                     // if the 4 byte sequence a the candidate index matches the sequence at the
                     // current position, proceed to the next phase
-                    if (currentInt == UNSAFE.getInt(inputBase, candidateIndex)) {
+                    if (currentInt == reverseBytes(UNSAFE.getInt(inputBase, candidateIndex))) {
                         break;
                     }
                 }
@@ -201,7 +204,7 @@ public final class SnappyRawCompressor
 
                     // We could immediately start working at input now, but to improve
                     // compression we first update table[Hash(ip - 1, ...)].
-                    long longValue = UNSAFE.getLong(inputBase, input - 1);
+                    long longValue = reverseBytes(UNSAFE.getLong(inputBase, input - 1));
                     int prevInt = (int) longValue;
                     inputBytes = (int) (longValue >>> 8);
 
@@ -214,7 +217,7 @@ public final class SnappyRawCompressor
 
                     candidateIndex = blockAddress + (table[curHash] & 0xFFFF);
                     table[curHash] = (short) (input - blockAddress);
-                } while (inputBytes == UNSAFE.getInt(inputBase, candidateIndex));
+                } while (inputBytes == reverseBytes(UNSAFE.getInt(inputBase, candidateIndex)));
                 nextEmitAddress = input;
             }
 
@@ -236,7 +239,7 @@ public final class SnappyRawCompressor
 
         // first, compare long at a time
         while (current < matchLimit - (SIZE_OF_LONG - 1)) {
-            long diff = UNSAFE.getLong(inputBase, matchStart) ^ UNSAFE.getLong(inputBase, current);
+            long diff = reverseBytes(UNSAFE.getLong(inputBase, matchStart)) ^ reverseBytes(UNSAFE.getLong(inputBase, current));
             if (diff != 0) {
                 current += Long.numberOfTrailingZeros(diff) >> 3;
                 return (int) (current - start);
@@ -246,12 +249,12 @@ public final class SnappyRawCompressor
             matchStart += SIZE_OF_LONG;
         }
 
-        if (current < matchLimit - (SIZE_OF_INT - 1) && UNSAFE.getInt(inputBase, matchStart) == UNSAFE.getInt(inputBase, current)) {
+        if (current < matchLimit - (SIZE_OF_INT - 1) && reverseBytes(UNSAFE.getInt(inputBase, matchStart)) == reverseBytes(UNSAFE.getInt(inputBase, current))) {
             current += SIZE_OF_INT;
             matchStart += SIZE_OF_INT;
         }
 
-        if (current < matchLimit - (SIZE_OF_SHORT - 1) && UNSAFE.getShort(inputBase, matchStart) == UNSAFE.getShort(inputBase, current)) {
+        if (current < matchLimit - (SIZE_OF_SHORT - 1) && reverseBytes(UNSAFE.getShort(inputBase, matchStart)) == reverseBytes(UNSAFE.getShort(inputBase, current))) {
             current += SIZE_OF_SHORT;
             matchStart += SIZE_OF_SHORT;
         }
@@ -289,7 +292,7 @@ public final class SnappyRawCompressor
                 bytes = 4;
             }
             // System is assumed to be little endian, so low bytes will be zero for the smaller numbers
-            UNSAFE.putInt(outputBase, output, n);
+            UNSAFE.putInt(outputBase, output, reverseBytes(n));
             output += bytes;
         }
         return output;
@@ -299,7 +302,7 @@ public final class SnappyRawCompressor
     {
         final long outputLimit = output + literalLength;
         do {
-            UNSAFE.putLong(outputBase, output, UNSAFE.getLong(inputBase, input));
+        	UNSAFE.putLong(outputBase, output, UNSAFE.getLong(inputBase, input));
             input += SIZE_OF_LONG;
             output += SIZE_OF_LONG;
         }
@@ -314,7 +317,7 @@ public final class SnappyRawCompressor
         // Emit 64 byte copies but make sure to keep at least four bytes reserved
         while (matchLength >= 68) {
             UNSAFE.putByte(outputBase, output++, (byte) (COPY_2_BYTE_OFFSET + ((64 - 1) << 2)));
-            UNSAFE.putShort(outputBase, output, (short) offset);
+            UNSAFE.putShort(outputBase, output, reverseBytes((short) offset));
             output += SIZE_OF_SHORT;
             matchLength -= 64;
         }
@@ -323,7 +326,7 @@ public final class SnappyRawCompressor
         // length < 68
         if (matchLength > 64) {
             UNSAFE.putByte(outputBase, output++, (byte) (COPY_2_BYTE_OFFSET + ((60 - 1) << 2)));
-            UNSAFE.putShort(outputBase, output, (short) offset);
+            UNSAFE.putShort(outputBase, output, reverseBytes((short) offset));
             output += SIZE_OF_SHORT;
             matchLength -= 60;
         }
@@ -336,7 +339,7 @@ public final class SnappyRawCompressor
         }
         else {
             UNSAFE.putByte(outputBase, output++, (byte) (COPY_2_BYTE_OFFSET + ((matchLength - 1) << 2)));
-            UNSAFE.putShort(outputBase, output, (short) offset);
+            UNSAFE.putShort(outputBase, output, reverseBytes((short) offset));
             output += SIZE_OF_SHORT;
         }
         return output;

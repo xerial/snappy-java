@@ -4,6 +4,7 @@ import org.xerial.snappy.SnappyApi;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 import static org.xerial.snappy.pure.UnsafeUtil.getAddress;
 import static sun.misc.Unsafe.ARRAY_BYTE_BASE_OFFSET;
@@ -15,19 +16,26 @@ public class PureJavaSnappy implements SnappyApi
 {
     private final short[] table = new short[SnappyRawCompressor.MAX_HASH_TABLE_SIZE];
     private final static int MAX_OUTPUT_LENGTH = Integer.MAX_VALUE;
+    ByteOrder order = ByteOrder.nativeOrder();
 
     @Override
     public long rawCompress(long inputAddr, long inputSize, long destAddr)
             throws IOException
     {
-        return SnappyRawCompressor.compress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH, table);
+    	if (order.equals(ByteOrder.LITTLE_ENDIAN)) 
+    		return SnappyRawCompressor.compress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH, table);
+    	else
+    		return SnappyRawCompressorBE.compress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH, table);
     }
 
     @Override
     public long rawUncompress(long inputAddr, long inputSize, long destAddr)
             throws IOException
     {
-        return SnappyRawDecompressor.decompress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH);
+    	if (order.equals(ByteOrder.LITTLE_ENDIAN)) 
+    		return SnappyRawDecompressor.decompress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH);
+    	else
+    		return SnappyRawDecompressorBE.decompress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH);
     }
 
     @Override
@@ -76,7 +84,9 @@ public class PureJavaSnappy implements SnappyApi
         // collected in a block, and technically, the JVM is allowed to eliminate these locks.
         synchronized (input) {
             synchronized (compressed) {
-                int written = SnappyRawCompressor.compress(
+            	int written;
+            	if (order.equals(ByteOrder.LITTLE_ENDIAN)) 
+            		written = SnappyRawCompressor.compress(
                         inputBase,
                         inputAddress,
                         inputLimit,
@@ -84,6 +94,17 @@ public class PureJavaSnappy implements SnappyApi
                         outputAddress,
                         outputLimit,
                         table);
+            	
+            	else 
+                    written = SnappyRawCompressorBE.compress(
+                        inputBase,
+                        inputAddress,
+                        inputLimit,
+                        outputBase,
+                        outputAddress,
+                        outputLimit,
+                        table);
+            	
                 compressed.position(compressed.position() + written);
                 return written;
             }
@@ -99,7 +120,10 @@ public class PureJavaSnappy implements SnappyApi
         long outputAddress = ARRAY_BYTE_BASE_OFFSET + outputOffset;
         long outputLimit = outputAddress + MAX_OUTPUT_LENGTH;
 
-        return SnappyRawCompressor.compress(input, inputAddress, inputLimit, output, outputAddress, outputLimit, table);
+        if (order.equals(ByteOrder.LITTLE_ENDIAN)) 
+        	return SnappyRawCompressor.compress(input, inputAddress, inputLimit, output, outputAddress, outputLimit, table);
+        else
+        	return SnappyRawCompressorBE.compress(input, inputAddress, inputLimit, output, outputAddress, outputLimit, table);
     }
 
     @Override
@@ -148,7 +172,12 @@ public class PureJavaSnappy implements SnappyApi
         // collected in a block, and technically, the JVM is allowed to eliminate these locks.
         synchronized (compressed) {
             synchronized (uncompressed) {
-                int written = SnappyRawDecompressor.decompress(inputBase, inputAddress, inputLimit, outputBase, outputAddress, outputLimit);
+                int written;
+                if (order.equals(ByteOrder.LITTLE_ENDIAN))
+                	written = SnappyRawDecompressor.decompress(inputBase, inputAddress, inputLimit, outputBase, outputAddress, outputLimit);
+                else
+                	written = SnappyRawDecompressorBE.decompress(inputBase, inputAddress, inputLimit, outputBase, outputAddress, outputLimit);
+                	
                 uncompressed.position(uncompressed.position() + written);
                 return written;
             }
@@ -164,13 +193,19 @@ public class PureJavaSnappy implements SnappyApi
         long outputAddress = ARRAY_BYTE_BASE_OFFSET + outputOffset;
         long outputLimit = outputAddress + MAX_OUTPUT_LENGTH;
 
-        return SnappyRawDecompressor.decompress(input, inputAddress, inputLimit, output, outputAddress, outputLimit);
+        if (order.equals(ByteOrder.LITTLE_ENDIAN))
+        	return SnappyRawDecompressor.decompress(input, inputAddress, inputLimit, output, outputAddress, outputLimit);
+        else
+        	return SnappyRawDecompressorBE.decompress(input, inputAddress, inputLimit, output, outputAddress, outputLimit);
     }
 
     @Override
     public int maxCompressedLength(int source_bytes)
     {
-        return SnappyRawCompressor.maxCompressedLength(source_bytes);
+    	if (order.equals(ByteOrder.LITTLE_ENDIAN))
+    		return SnappyRawCompressor.maxCompressedLength(source_bytes);
+    	else
+    		return SnappyRawCompressorBE.maxCompressedLength(source_bytes);
     }
 
     @Override
@@ -194,7 +229,10 @@ public class PureJavaSnappy implements SnappyApi
         else {
             throw new IllegalArgumentException("Unsupported input ByteBuffer implementation: " + compressed.getClass().getName());
         }
-        return SnappyRawDecompressor.getUncompressedLength(inputBase, inputAddress, inputLimit);
+        if (order.equals(ByteOrder.LITTLE_ENDIAN))
+        	return SnappyRawDecompressor.getUncompressedLength(inputBase, inputAddress, inputLimit);
+        else
+        	return SnappyRawDecompressorBE.getUncompressedLength(inputBase, inputAddress, inputLimit);
     }
 
     @Override
@@ -204,14 +242,20 @@ public class PureJavaSnappy implements SnappyApi
         long compressedAddress = ARRAY_BYTE_BASE_OFFSET + offset;
         long compressedLimit = ARRAY_BYTE_BASE_OFFSET + len;
 
-        return SnappyRawDecompressor.getUncompressedLength(input, compressedAddress, compressedLimit);
+        if (order.equals(ByteOrder.LITTLE_ENDIAN))
+        	return SnappyRawDecompressor.getUncompressedLength(input, compressedAddress, compressedLimit);
+        else
+        	return SnappyRawDecompressorBE.getUncompressedLength(input, compressedAddress, compressedLimit);
     }
 
     @Override
     public long uncompressedLength(long inputAddr, long len)
             throws IOException
     {
-        return SnappyRawDecompressor.getUncompressedLength(null, inputAddr, inputAddr + len);
+    	if (order.equals(ByteOrder.LITTLE_ENDIAN))
+    		return SnappyRawDecompressor.getUncompressedLength(null, inputAddr, inputAddr + len);
+    	else
+    		return SnappyRawDecompressorBE.getUncompressedLength(null, inputAddr, inputAddr + len);
     }
 
     @Override

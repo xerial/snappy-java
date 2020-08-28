@@ -20,13 +20,14 @@ import static org.xerial.snappy.pure.SnappyConstants.LITERAL;
 import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_INT;
 import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_LONG;
 import static org.xerial.snappy.pure.UnsafeUtil.UNSAFE;
+import static java.lang.Integer.reverseBytes;
 
-public final class SnappyRawDecompressor
+public final class SnappyRawDecompressorBE
 {
     private static final int[] DEC_32_TABLE = {4, 1, 2, 1, 4, 4, 4, 4};
     private static final int[] DEC_64_TABLE = {0, 0, 0, -1, 0, 1, 2, 3};
 
-    private SnappyRawDecompressor() {}
+    private SnappyRawDecompressorBE() {}
 
     public static int getUncompressedLength(Object compressed, long compressedAddress, long compressedLimit)
     {
@@ -89,7 +90,7 @@ public final class SnappyRawDecompressor
             int trailerBytes = entry >>> 11;
             int trailer = 0;
             if (input + SIZE_OF_INT < inputLimit) {
-                trailer = UNSAFE.getInt(inputBase, input) & wordmask[trailerBytes];
+                trailer = reverseBytes(UNSAFE.getInt(inputBase, input)) & wordmask[trailerBytes];
             }
             else {
                 if (input + trailerBytes > inputLimit) {
