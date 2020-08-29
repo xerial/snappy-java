@@ -315,3 +315,4 @@ public final class SnappyRawDecompressorBE
         return UNSAFE.getByte(base, address) & 0xFF;
     }
 }
+

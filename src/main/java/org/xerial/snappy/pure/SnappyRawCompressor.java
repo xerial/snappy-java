@@ -138,7 +138,7 @@ public final class SnappyRawCompressor
                 long candidateIndex = 0;
                 for (input += 1; input + (skip >>> 5) <= fastInputLimit; input += ((skip++) >>> 5)) {
                     // hash the 4 bytes starting at the input pointer
-                	int currentInt = UNSAFE.getInt(inputBase, input);
+                    int currentInt = UNSAFE.getInt(inputBase, input);
                     int hash = hashBytes(currentInt, shift);
 
                     // get the position of a 4 bytes sequence with the same hash

@@ -20,14 +20,14 @@ public class PureJavaSnappy implements SnappyApi
     public long rawCompress(long inputAddr, long inputSize, long destAddr)
             throws IOException
     {
-    	return SnappyRawCompressor.compress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH, table);
+        return SnappyRawCompressor.compress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH, table);
     }
 
     @Override
     public long rawUncompress(long inputAddr, long inputSize, long destAddr)
             throws IOException
     {
-    	return SnappyRawDecompressor.decompress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH);
+        return SnappyRawDecompressor.decompress(null, inputAddr, inputSize, null, destAddr, MAX_OUTPUT_LENGTH);
     }
 
     @Override
