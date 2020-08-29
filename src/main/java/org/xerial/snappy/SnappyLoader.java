@@ -423,3 +423,4 @@ public class SnappyLoader
         return version;
     }
 }
+
