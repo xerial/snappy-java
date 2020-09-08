@@ -259,14 +259,14 @@ FreeBSD-x86_64_SNAPPY_FLAGS :=
 
 Windows-x86_CXX          := $(CROSS_PREFIX)g++
 Windows-x86_STRIP        := $(CROSS_PREFIX)strip
-Windows-x86_CXXFLAGS     := -Ilib/inc_win -O2
+Windows-x86_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
 Windows-x86_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_LIBNAME      := snappyjava.dll
 Windows-x86_SNAPPY_FLAGS :=
 
 Windows-x86_64_CXX          := $(CROSS_PREFIX)g++
 Windows-x86_64_STRIP        := $(CROSS_PREFIX)strip
-Windows-x86_64_CXXFLAGS     := -Ilib/inc_win -O2
+Windows-x86_64_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
 Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_64_LIBNAME      := snappyjava.dll
 Windows-x86_64_SNAPPY_FLAGS :=

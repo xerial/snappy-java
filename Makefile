@@ -8,11 +8,11 @@ all: snappy
 
 SNAPPY_OUT:=$(TARGET)/snappy-$(SNAPPY_VERSION)-$(os_arch)
 SNAPPY_ARCHIVE:=$(TARGET)/snappy-$(SNAPPY_VERSION).tar.gz
-SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy.cc
+SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy-c.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
-SNAPPY_GIT_REV:=b02bfa754ebf27921d8da3bd2517eab445b84ff9 # 1.1.7
+SNAPPY_GIT_REV:=537f4ad6240e586970fe554614542e9717df7902 # 1.1.8
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 SNAPPY_CMAKE_CACHE=$(SNAPPY_OUT)/CMakeCache.txt
