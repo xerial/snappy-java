@@ -223,7 +223,7 @@ public final class SnappyRawCompressor
 
                     // We could immediately start working at input now, but to improve
                     // compression we first update table[Hash(ip - 1, ...)].
-                    long longValue = littleEndian((UNSAFE.getLong(inputBase, input - 1));
+                    long longValue = littleEndian((UNSAFE.getLong(inputBase, input - 1);
                     int prevInt = (int) longValue;
                     inputBytes = (int) (longValue >>> 8);
 
