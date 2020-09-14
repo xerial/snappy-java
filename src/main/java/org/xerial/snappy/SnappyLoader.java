@@ -162,7 +162,7 @@ public class SnappyLoader
         try {
             if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
                 // Use pure-java Snappy implementation
-            	setSnappyApi(new PureJavaSnappy());
+                setSnappyApi(new PureJavaSnappy());
             }
             else {
                 loadNativeLibrary();
