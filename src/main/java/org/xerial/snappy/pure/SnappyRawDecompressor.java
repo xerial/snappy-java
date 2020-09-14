@@ -13,6 +13,8 @@
  */
 package org.xerial.snappy.pure;
 
+import java.nio.ByteOrder;
+
 import org.xerial.snappy.SnappyError;
 import org.xerial.snappy.SnappyErrorCode;
 
@@ -20,6 +22,7 @@ import static org.xerial.snappy.pure.SnappyConstants.LITERAL;
 import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_INT;
 import static org.xerial.snappy.pure.SnappyConstants.SIZE_OF_LONG;
 import static org.xerial.snappy.pure.UnsafeUtil.UNSAFE;
+import static java.lang.Integer.reverseBytes;
 
 public final class SnappyRawDecompressor
 {
@@ -27,6 +30,12 @@ public final class SnappyRawDecompressor
     private static final int[] DEC_64_TABLE = {0, 0, 0, -1, 0, 1, 2, 3};
 
     private SnappyRawDecompressor() {}
+
+    private static final ByteOrder byteOrder = ByteOrder.nativeOrder();
+
+    private static int littleEndian(int i) {
+        return (byteOrder == ByteOrder.LITTLE_ENDIAN) ? i : reverseBytes(i);
+    }
 
     public static int getUncompressedLength(Object compressed, long compressedAddress, long compressedLimit)
     {
@@ -89,7 +98,7 @@ public final class SnappyRawDecompressor
             int trailerBytes = entry >>> 11;
             int trailer = 0;
             if (input + SIZE_OF_INT < inputLimit) {
-                trailer = UNSAFE.getInt(inputBase, input) & wordmask[trailerBytes];
+                trailer = littleEndian(UNSAFE.getInt(inputBase, input)) & wordmask[trailerBytes];
             }
             else {
                 if (input + trailerBytes > inputLimit) {
