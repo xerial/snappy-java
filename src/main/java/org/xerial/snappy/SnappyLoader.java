@@ -158,7 +158,6 @@ public class SnappyLoader
         if (snappyApi != null) {
             return snappyApi;
         }
-        
         try {
             if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
                 // Use pure-java Snappy implementation
@@ -414,4 +413,3 @@ public class SnappyLoader
         return version;
     }
 }
-
