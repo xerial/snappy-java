@@ -144,7 +144,7 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: win32 win64 mac64 native-arm linux32 linux64 linux-ppc64le linux-arm4
+native-all: win32 win64 native-arm linux32 linux64 linux-ppc64le mac64
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -185,7 +185,7 @@ freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
 
 # For ARM
-native-arm: linux-arm linux-armv6 linux-armv7 linux-android-arm
+native-arm: linux-arm linux-armv6 linux-armv7 linux-android-arm linux-arm64
 
 linux-arm: jni-header
 	./docker/dockcross-armv5 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/armv5-unknown-linux-gnueabi/bin//armv5-unknown-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm'
