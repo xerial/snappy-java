@@ -173,7 +173,7 @@ mac32: jni-header
 	$(MAKE) native OS_NAME=Mac OS_ARCH=x86
 
 mac64: jni-header
-	docker run -it $(DOCKER_RUN_OPTS) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin multiarch/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
+	docker run -it $(DOCKER_RUN_OPTS) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin xerial/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 
 linux32: jni-header
 	docker run $(DOCKER_RUN_OPTS) -ti -v $$PWD:/work xerial/centos5-linux-x86_64-pic bash -c 'make clean-native native-nocmake OS_NAME=Linux OS_ARCH=x86'
