@@ -1,5 +1,8 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.8 (2020-10-20)
+ * Upgrade to [Snappy 1.1.8](https://github.com/google/snappy/releases/tag/1.1.8) with small performance improvements. 
+
 ## snappy-java-1.1.7.8 (2020-10-20)
  * Big-endian support for pure-java Snappy implementation
  * linux-aarch64 (arm64) binary embeds libstdc++ for portability
