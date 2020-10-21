@@ -19,24 +19,17 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.nio.Buffer;
-import java.nio.ByteOrder;
-
-import static java.lang.String.format;
 
 final class UnsafeUtil
 {
     public static final Unsafe UNSAFE;
     private static final Field ADDRESS_ACCESSOR;
-
+ 
     private UnsafeUtil()
     {
     }
 
     static {
-        ByteOrder order = ByteOrder.nativeOrder();
-        if (!order.equals(ByteOrder.LITTLE_ENDIAN)) {
-            throw new SnappyError(SnappyErrorCode.UNSUPPORTED_PLATFORM, format("pure-java snappy requires a little endian platform (found %s)", order));
-        }
 
         try {
             Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
@@ -66,4 +59,6 @@ final class UnsafeUtil
             throw new RuntimeException(e);
         }
     }
+ 
 }
+
