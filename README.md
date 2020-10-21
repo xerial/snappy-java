@@ -1,7 +1,7 @@
 snappy-java [![Build Status](https://travis-ci.org/xerial/snappy-java.svg?branch=master)](https://travis-ci.org/xerial/snappy-java) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/) [![Javadoc](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java.svg?label=javadoc)](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java) 
 === 
 snappy-java is a Java port of the snappy
-<http://code.google.com/p/snappy/>, a fast C++ compresser/decompresser developed by Google.
+[https://github.com/google/snappy], a fast C++ compresser/decompresser developed by Google.
 
 ## Features
   * Fast compression/decompression around 200~400MB/sec.
