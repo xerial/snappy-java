@@ -1,5 +1,10 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.7.8 (2020-10-20)
+ * Big-endian support for pure-java Snappy implementation
+ * linux-aarch64 (arm64) binary embeds libstdc++ for portability
+ * internal: Fix make native-all target to support the latest version of dockcross 
+
 ## snappy-java-1.1.7.7 (2020-08-25)
  * Built snappy-java with jdk8 to resolve #251 (java.lang.NoSuchMethodError)
 
