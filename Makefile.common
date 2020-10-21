@@ -224,7 +224,7 @@ Linux-armv7_SNAPPY_FLAGS:=
 
 Linux-android-arm_CXX       := $(CROSS_PREFIX)g++
 Linux-android-arm_STRIP     := $(CROSS_PREFIX)strip
-Linux-android-arm_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden
+Linux-android-arm_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -isystem /usr/arm-linux-androideabi/include/c++/4.9.x
 Linux-android-arm_LINKFLAGS := -shared -static-libgcc
 Linux-android-arm_LIBNAME   := libsnappyjava.so
 Linux-android-arm_SNAPPY_FLAGS:=
