@@ -144,7 +144,7 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: win32 win64 native-arm linux32 linux64 linux-ppc64le mac64
+native-all: native win32 win64 native-arm linux32 linux64 linux-ppc64le
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -172,6 +172,7 @@ win64: jni-header
 mac32: jni-header
 	$(MAKE) native OS_NAME=Mac OS_ARCH=x86
 
+# TODO: This command no longer works as the crossbuild docker image contains no cross compiler for Mac OS X (Darwin)
 mac64: jni-header
 	docker run -it $(DOCKER_RUN_OPTS) -v $$PWD:/workdir -e CROSS_TRIPLE=x86_64-apple-darwin xerial/crossbuild make clean-native native OS_NAME=Mac OS_ARCH=x86_64
 
