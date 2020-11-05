@@ -28,8 +28,8 @@ DLL_DIR=src/main/resources/org/xerial/snappy/native
 
 DLL_WIN=$(DLL_DIR)/Windows/x86/snappyjava.dll
 DLL_WIN64=$(DLL_DIR)/Windows/amd64/snappyjava.dll
-DLL_MAC=$(DLL_DIR)/Mac/x86_64/libsnappyjava.jnilib
-DLL_TIGER_MAC=$(DLL_DIR)/Mac/i386/libsnappyjava.jnilib
+DLL_MAC=$(DLL_DIR)/Mac/x86_64/libsnappyjava.dylib
+DLL_TIGER_MAC=$(DLL_DIR)/Mac/i386/libsnappyjava.dylib
 DLL_LINUX=$(DLL_DIR)/Linux/i386/libsnappyjava.so
 DLL_AMD64=$(DLL_DIR)/Linux/amd64/libsnappyjava.so
 

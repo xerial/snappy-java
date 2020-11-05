@@ -348,7 +348,7 @@ public class SnappyLoader
         if (!hasNativeLib) {
             if (OSInfo.getOSName().equals("Mac")) {
                 // Fix for openjdk7 for Mac
-                String altName = "libsnappyjava.jnilib";
+                String altName = "libsnappyjava.dylib";
                 if (hasResource(snappyNativeLibraryPath + "/" + altName)) {
                     snappyNativeLibraryName = altName;
                     hasNativeLib = true;
