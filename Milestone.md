@@ -1,5 +1,8 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.8.1 (2020-11-09)
+ * Fixed an initialization issue when using a recent Mac OS X version [#265](https://github.com/xerial/snappy-java/pull/265)
+
 ## snappy-java-1.1.8 (2020-10-20)
  * Upgrade to [Snappy 1.1.8](https://github.com/google/snappy/releases/tag/1.1.8) with small performance improvements. 
 
