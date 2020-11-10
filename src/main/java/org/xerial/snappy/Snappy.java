@@ -24,9 +24,7 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -278,6 +276,43 @@ public class Snappy
     {
         byte[] data = s.getBytes(encoding);
         return compress(data);
+    }
+
+    /**
+     * High-level API for compressing the input byte array with x-snappy-framed Format
+     * @param input the input data
+     * @return the compressed byte array in x-snappy-framed Format
+     * @throws IOException
+     */
+    public static byte[] compressFrame(byte[] input)
+            throws IOException
+    {
+        try(ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(input.length)) {
+            try(SnappyFramedOutputStream snappyFramedOutputStream = new SnappyFramedOutputStream(byteArrayOutputStream)) {
+                snappyFramedOutputStream.write(input);
+                snappyFramedOutputStream.flush();
+                return byteArrayOutputStream.toByteArray();
+            }
+        }
+    }
+
+    /**
+     * High-level API for uncompressing the input byte array with the x-snappy-framed Format
+     * @param input the input x-snappy-framed byte array
+     * @return the uncompressed byte array from SnappyFramed Format
+     * @throws IOException
+     */
+    public static byte[] uncompressFrames(byte[] input)
+            throws IOException
+    {
+        try(ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(input)) {
+            try(SnappyFramedInputStream snappyFramedInputStream = new SnappyFramedInputStream(byteArrayInputStream)) {
+                try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                    snappyFramedInputStream.transferTo(byteArrayOutputStream);
+                    return byteArrayInputStream.readAllBytes();
+                }
+            }
+        }
     }
 
     /**
