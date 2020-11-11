@@ -24,6 +24,8 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import sun.security.util.IOUtils;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -309,7 +311,7 @@ public class Snappy
             try(SnappyFramedInputStream snappyFramedInputStream = new SnappyFramedInputStream(byteArrayInputStream)) {
                 try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                     snappyFramedInputStream.transferTo(byteArrayOutputStream);
-                    return byteArrayInputStream.readAllBytes();
+                    return byteArrayOutputStream.toByteArray();
                 }
             }
         }
