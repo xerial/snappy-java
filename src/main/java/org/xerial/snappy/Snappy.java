@@ -24,7 +24,6 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import sun.security.util.IOUtils;
 
 import java.io.*;
 import java.net.URL;
