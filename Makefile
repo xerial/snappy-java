@@ -1,6 +1,8 @@
 
 include Makefile.common
 
+$(info OS_NAME:$(OS_NAME), OS_ARCH:$(OS_ARCH))
+
 MVN:=mvn
 SBT:=./sbt
 
