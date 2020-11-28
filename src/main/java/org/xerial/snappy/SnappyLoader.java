@@ -168,7 +168,7 @@ public class SnappyLoader
                 setSnappyApi(new SnappyNative());
             }
         }
-        catch(Exception e) {
+        catch(Throwable e) {
             // Fall-back to pure-java Snappy implementation
             setSnappyApi(new PureJavaSnappy());
         }
