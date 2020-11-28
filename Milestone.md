@@ -1,5 +1,9 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.8.2 (2020-11-28)
+ * Support Apple Silicon (M1, Mac-aarch64)
+ * Fixed the pure-java Snappy fallback logic when no native library for your platform is found.
+
 ## snappy-java-1.1.8.1 (2020-11-09)
  * Fixed an initialization issue when using a recent Mac OS X version [#265](https://github.com/xerial/snappy-java/pull/265)
 
