@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 10000
        # Fetch all tags so that sbt-dynver can find the previous release version
       - run: git fetch --tags
-      - uses: olafurpg/setup-scala@v5
+      - uses: olafurpg/setup-scala@v10
         with:
           java-version: adopt@1.11
       - uses: actions/cache@v1
