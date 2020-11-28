@@ -23,3 +23,7 @@ project/plugins/project/
 atlassian-ide-plugin.xml
 
 src/main/java/**/*.h
+
+.metals
+.vscode
+.bloop
