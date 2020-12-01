@@ -4,8 +4,15 @@
 package org.xerial.snappy;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.Checksum;
 
 /**
  * Constants and utilities for implementing x-snappy-framed.
@@ -23,6 +30,39 @@ final class SnappyFramed
 
     private static final int MASK_DELTA = 0xa282ead8;
 
+    private static final Supplier<Checksum> CHECKSUM_SUPPLIER;
+    
+    static
+    {
+        Supplier<Checksum> supplier = null;
+        try
+        {
+            final Class crc32cClazz = Class.forName("java.util.zip.CRC32C");
+            final MethodHandles.Lookup lookup = MethodHandles.publicLookup();
+            
+            final MethodHandle conHandle = lookup.findConstructor(crc32cClazz, MethodType.methodType(void.class))
+                                                 .asType(MethodType.methodType(Checksum.class));
+            supplier = () -> {
+                try
+                {
+                    return (Checksum) conHandle.invokeExact();
+                }
+                catch (Throwable e)
+                {
+                    throw new IllegalStateException(e);
+                }
+            };
+        }
+        catch(Throwable t)
+        {
+            Logger.getLogger(SnappyFramed.class.getName())
+                  .log(Level.FINE, "java.util.zip.CRC32C not loaded, using PureJavaCrc32C", t);
+            supplier = null;
+        }
+        
+        CHECKSUM_SUPPLIER = supplier != null ? supplier : PureJavaCrc32C::new;
+    }
+
     /**
      * The header consists of the stream identifier flag, 3 bytes indicating a
      * length of 6, and "sNaPpY" in ASCII.
@@ -31,16 +71,16 @@ final class SnappyFramed
             (byte) STREAM_IDENTIFIER_FLAG, 0x06, 0x00, 0x00, 0x73, 0x4e, 0x61,
             0x50, 0x70, 0x59};
 
-    public static int maskedCrc32c(byte[] data)
+    public static Checksum getCRC32C()
     {
-        return maskedCrc32c(data, 0, data.length);
+        return CHECKSUM_SUPPLIER.get();
     }
 
-    public static int maskedCrc32c(byte[] data, int offset, int length)
+    public static int maskedCrc32c(Checksum crc32c, byte[] data, int offset, int length)
     {
-        final PureJavaCrc32C crc32c = new PureJavaCrc32C();
+        crc32c.reset();
         crc32c.update(data, offset, length);
-        return mask(crc32c.getIntegerValue());
+        return mask((int) crc32c.getValue());
     }
 
     /**

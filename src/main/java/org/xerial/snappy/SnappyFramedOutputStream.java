@@ -17,6 +17,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.zip.Checksum;
 
 import org.xerial.snappy.pool.BufferPool;
 import org.xerial.snappy.pool.DefaultPoolFactory;
@@ -59,6 +60,7 @@ public final class SnappyFramedOutputStream
      */
     public static final double DEFAULT_MIN_COMPRESSION_RATIO = 0.85d;
 
+    private final Checksum crc32 = SnappyFramed.getCRC32C();
     private final ByteBuffer headerBuffer = ByteBuffer.allocate(8).order(
             ByteOrder.LITTLE_ENDIAN);
     private final BufferPool bufferPool;
@@ -503,7 +505,7 @@ public final class SnappyFramedOutputStream
         final int length = buffer.remaining();
 
         // crc is based on the user supplied input data
-        final int crc32c = maskedCrc32c(input, 0, length);
+        final int crc32c = maskedCrc32c(crc32, input, 0, length);
 
         directInputBuffer.clear();
         directInputBuffer.put(buffer);

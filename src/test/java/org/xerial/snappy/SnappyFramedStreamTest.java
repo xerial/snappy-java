@@ -9,7 +9,6 @@ import static org.junit.Assert.fail;
 import static org.xerial.snappy.SnappyFramed.COMPRESSED_DATA_FLAG;
 import static org.xerial.snappy.SnappyFramed.HEADER_BYTES;
 import static org.xerial.snappy.SnappyFramed.UNCOMPRESSED_DATA_FLAG;
-import static org.xerial.snappy.SnappyFramed.maskedCrc32c;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -417,5 +416,10 @@ public class SnappyFramedStreamTest
         byte[] random = Arrays.copyOf(gen.data, length);
         assertEquals(random.length, length);
         return random;
+    }
+
+    public static int maskedCrc32c(byte[] data)
+    {
+        return SnappyFramed.maskedCrc32c(new PureJavaCrc32C(), data, 0, data.length);
     }
 }
