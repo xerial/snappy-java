@@ -21,6 +21,7 @@ import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
+import java.util.zip.Checksum;
 
 import org.xerial.snappy.pool.BufferPool;
 import org.xerial.snappy.pool.DefaultPoolFactory;
@@ -40,6 +41,7 @@ public final class SnappyFramedInputStream
         ReadableByteChannel
 {
 
+    private final Checksum crc32 = SnappyFramed.getCRC32C();
     private final ReadableByteChannel rbc;
     private final ByteBuffer frameHeader;
     private final boolean verifyChecksums;
@@ -572,7 +574,7 @@ public final class SnappyFramedInputStream
         }
 
         if (verifyChecksums) {
-            final int actualCrc32c = SnappyFramed.maskedCrc32c(buffer,
+            final int actualCrc32c = SnappyFramed.maskedCrc32c(crc32, buffer,
                     position, valid - position);
             if (frameData.checkSum != actualCrc32c) {
                 throw new IOException("Corrupt input: invalid checksum");

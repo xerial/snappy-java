@@ -48,8 +48,7 @@ public class PureJavaCrc32C
     /** {@inheritDoc} */
     public long getValue()
     {
-        long ret = crc;
-        return (~ret) & 0xffffffffL;
+        return (~crc) & 0xffffffffL;
     }
 
     /** {@inheritDoc} */
