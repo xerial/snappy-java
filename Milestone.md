@@ -1,5 +1,9 @@
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
+## snappy-java-1.1.8.3 (2021-01-20)
+ * Make pure-java Snappy thread-safe [#271](https://github.com/xerial/snappy-java/pull/271)
+ * Improved SnappyFramedInput/OutputStream performance by using java.util.zip.CRC32C [#269](https://github.com/xerial/snappy-java/pull/269)
+
 ## snappy-java-1.1.8.2 (2020-11-28)
  * Support Apple Silicon (M1, Mac-aarch64)
  * Fixed the pure-java Snappy fallback logic when no native library for your platform is found.
