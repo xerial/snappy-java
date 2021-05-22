@@ -45,7 +45,7 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-aarch64 Linux-ppc Linux-ppc64 Linux-ppc64le Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 Mac-aarch64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-aarch64 Linux-ppc Linux-ppc64 Linux-ppc64le Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 Mac-aarch64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64 Linux-riscv Linux-riscv64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -276,6 +276,20 @@ Windows-x86_64_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
 Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_64_LIBNAME      := snappyjava.dll
 Windows-x86_64_SNAPPY_FLAGS :=
+
+Linux-riscv_CXX       := $(CROSS_PREFIX)g++
+Linux-riscv_STRIP     := $(CROSS_PREFIX)strip
+Linux-riscv_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -std=c++11
+Linux-riscv_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-riscv_LIBNAME   := libsnappyjava.so
+Linux-riscv_SNAPPY_FLAGS:=
+
+Linux-riscv64_CXX       := $(CROSS_PREFIX)g++
+Linux-riscv64_STRIP     := $(CROSS_PREFIX)strip
+Linux-riscv64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -std=c++11
+Linux-riscv64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-riscv64_LIBNAME   := libsnappyjava.so
+Linux-riscv64_SNAPPY_FLAGS:=
 
 
 CXX        := $($(os_arch)_CXX)
