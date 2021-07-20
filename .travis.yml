@@ -11,6 +11,7 @@ os: linux
 
 arch:
   - s390x
+  - ppc64le
 
 script:
 #  - sudo apt-get install -y openjdk-11-jdk;
