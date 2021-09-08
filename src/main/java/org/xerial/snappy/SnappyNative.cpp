@@ -20,7 +20,7 @@
 
 inline void throw_exception(JNIEnv *env, jobject self, int errorCode)
 {
-	jclass c = env->FindClass("org/xerial/snappy/SnappyNative");
+	jclass c = env->GetObjectClass(self);
 	if(c==0)
 		return;
 	jmethodID mth_throwex = env->GetMethodID(c, "throw_error", "(I)V");
