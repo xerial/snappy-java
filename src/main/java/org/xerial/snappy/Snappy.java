@@ -148,12 +148,13 @@ public class Snappy
         // output: compressed
         int uPos = uncompressed.position();
         int uLen = uncompressed.remaining();
+        int cPos = compressed.position();
         int compressedSize = impl.rawCompress(uncompressed, uPos, uLen, compressed,
-                compressed.position());
+                cPos);
 
         //         pos  limit
         // [ ......BBBBBBB.........]
-        compressed.limit(compressed.position() + compressedSize);
+        compressed.limit(cPos + compressedSize);
 
         return compressedSize;
     }
@@ -545,12 +546,13 @@ public class Snappy
 
         int cPos = compressed.position();
         int cLen = compressed.remaining();
+        int uPos = uncompressed.position();
 
         //         pos  limit
         // [ ......UUUUUU.........]
         int decompressedSize = impl.rawUncompress(compressed, cPos, cLen, uncompressed,
-                uncompressed.position());
-        uncompressed.limit(uncompressed.position() + decompressedSize);
+                uPos);
+        uncompressed.limit(uPos + decompressedSize);
 
         return decompressedSize;
     }
