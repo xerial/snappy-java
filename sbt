@@ -34,11 +34,11 @@
 
 set -o pipefail
 
-declare -r sbt_release_version="1.3.12"
-declare -r sbt_unreleased_version="1.4.0-M1"
+declare -r sbt_release_version="1.5.5"
+declare -r sbt_unreleased_version="1.6.0-M1"
 
-declare -r latest_213="2.13.2"
-declare -r latest_212="2.12.11"
+declare -r latest_213="2.13.7"
+declare -r latest_212="2.12.15"
 declare -r latest_211="2.11.12"
 declare -r latest_210="2.10.7"
 declare -r latest_29="2.9.3"
@@ -48,7 +48,7 @@ declare -r buildProps="project/build.properties"
 
 declare -r sbt_launch_ivy_release_repo="https://repo.typesafe.com/typesafe/ivy-releases"
 declare -r sbt_launch_ivy_snapshot_repo="https://repo.scala-sbt.org/scalasbt/ivy-snapshots"
-declare -r sbt_launch_mvn_release_repo="https://repo.scala-sbt.org/scalasbt/maven-releases"
+declare -r sbt_launch_mvn_release_repo="https://repo1.maven.org/maven2"
 declare -r sbt_launch_mvn_snapshot_repo="https://repo.scala-sbt.org/scalasbt/maven-snapshots"
 
 declare -r default_jvm_opts_common="-Xms512m -Xss2m -XX:MaxInlineLevel=18"
@@ -127,6 +127,7 @@ init_default_option_file() {
 }
 
 sbt_opts_file="$(init_default_option_file SBT_OPTS .sbtopts)"
+sbtx_opts_file="$(init_default_option_file SBTX_OPTS .sbtxopts)"
 jvm_opts_file="$(init_default_option_file JVM_OPTS .jvmopts)"
 
 build_props_sbt() {
@@ -215,7 +216,8 @@ getJavaVersion() {
   # but on 9 and 10 it's 9.x.y and 10.x.y.
   if [[ "$str" =~ ^1\.([0-9]+)(\..*)?$ ]]; then
     echo "${BASH_REMATCH[1]}"
-  elif [[ "$str" =~ ^([0-9]+)(\..*)?$ ]]; then
+  # Fixes https://github.com/dwijnand/sbt-extras/issues/326
+  elif [[ "$str" =~ ^([0-9]+)(\..*)?(-ea)?$ ]]; then
     echo "${BASH_REMATCH[1]}"
   elif [[ -n "$str" ]]; then
     echoerr "Can't parse java version from: $str"
@@ -246,11 +248,20 @@ java_version() {
   echo "$version"
 }
 
+is_apple_silicon() { [[ "$(uname -s)" == "Darwin" && "$(uname -m)" == "arm64" ]]; }
+
 # MaxPermSize critical on pre-8 JVMs but incurs noisy warning on 8+
 default_jvm_opts() {
   local -r v="$(java_version)"
-  if [[ $v -ge 10 ]]; then
-    echo "$default_jvm_opts_common -XX:+UnlockExperimentalVMOptions"
+  if [[ $v -ge 17 ]]; then
+    echo "$default_jvm_opts_common"
+  elif [[ $v -ge 10 ]]; then
+    if is_apple_silicon; then
+      # As of Dec 2020, JVM for Apple Silicon (M1) doesn't support JVMCI
+      echo "$default_jvm_opts_common"
+    else
+      echo "$default_jvm_opts_common -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler"
+    fi
   elif [[ $v -ge 8 ]]; then
     echo "$default_jvm_opts_common"
   else
@@ -439,6 +450,12 @@ are not special.
                     Note: "@"-file is overridden by local '.sbtopts' or '-sbt-opts' argument.
   -sbt-opts <path>  file containing sbt args (if not given, .sbtopts in project root is used if present)
   -S-X              add -X to sbt's scalacOptions (-S is stripped)
+
+  # passing options exclusively to this runner
+  SBTX_OPTS         environment variable holding either the sbt-extras args directly, or
+                    the reference to a file containing sbt-extras args if given path is prepended by '@' (e.g. '@/etc/sbtxopts')
+                    Note: "@"-file is overridden by local '.sbtxopts' or '-sbtx-opts' argument.
+  -sbtx-opts <path> file containing sbt-extras args (if not given, .sbtxopts in project root is used if present)
 EOM
   exit 0
 }
@@ -464,7 +481,7 @@ process_args() {
       -trace)       require_arg integer "$1" "$2" && trace_level="$2" && shift 2 ;;
       -debug-inc)   addJava "-Dxsbt.inc.debug=true" && shift ;;
 
-      -no-colors)   addJava "-Dsbt.log.noformat=true" && shift ;;
+      -no-colors)   addJava "-Dsbt.log.noformat=true" && addJava "-Dsbt.color=false" && shift ;;
       -sbt-create)  sbt_create=true && shift ;;
       -sbt-dir)     require_arg path "$1" "$2" && sbt_dir="$2" && shift 2 ;;
       -sbt-boot)    require_arg path "$1" "$2" && addJava "-Dsbt.boot.directory=$2" && shift 2 ;;
@@ -495,6 +512,7 @@ process_args() {
       -scala-home)  require_arg path "$1" "$2" && setThisBuild scalaHome "_root_.scala.Some(file(\"$2\"))" && shift 2 ;;
       -java-home)   require_arg path "$1" "$2" && setJavaHome "$2" && shift 2 ;;
       -sbt-opts)    require_arg path "$1" "$2" && sbt_opts_file="$2" && shift 2 ;;
+      -sbtx-opts) require_arg path "$1" "$2" && sbtx_opts_file="$2" && shift 2 ;;
       -jvm-opts)    require_arg path "$1" "$2" && jvm_opts_file="$2" && shift 2 ;;
 
       -D*)          addJava "$1" && shift ;;
@@ -528,6 +546,18 @@ if [[ -r "$sbt_opts_file" ]]; then
 elif [[ -n "$SBT_OPTS" && ! ("$SBT_OPTS" =~ ^@.*) ]]; then
   vlog "Using sbt options defined in variable \$SBT_OPTS"
   IFS=" " read -r -a extra_sbt_opts <<<"$SBT_OPTS"
+else
+  vlog "No extra sbt options have been defined"
+fi
+
+# if there are file/environment sbtx_opts, process again so we
+# can supply args to this runner
+if [[ -r "$sbtx_opts_file" ]]; then
+  vlog "Using sbt options defined in file $sbtx_opts_file"
+  while read -r opt; do extra_sbt_opts+=("$opt"); done < <(readConfigFile "$sbtx_opts_file")
+elif [[ -n "$SBTX_OPTS" && ! ("$SBTX_OPTS" =~ ^@.*) ]]; then
+  vlog "Using sbt options defined in variable \$SBTX_OPTS"
+  IFS=" " read -r -a extra_sbt_opts <<<"$SBTX_OPTS"
 else
   vlog "No extra sbt options have been defined"
 fi
