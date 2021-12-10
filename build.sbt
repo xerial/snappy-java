@@ -1,10 +1,12 @@
+Global / onChangedBuildSource := ReloadOnSourceChanges
+
 name := "snappy-java"
 organization := "org.xerial.snappy"
 organizationName := "xerial.org"
 description := "snappy-java: A fast compression/decompression library"
 
 sonatypeProfileName := "org.xerial"
-publishTo in ThisBuild := sonatypePublishToBundle.value
+ThisBuild / publishTo := sonatypePublishToBundle.value
 licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 homepage := Some(url("https://github.com/xerial/snappy-java"))
 scmInfo := Some(
@@ -17,13 +19,13 @@ developers := List(
   Developer(id = "leo", name = "Taro L. Saito", email = "leo@xerial.org", url = url("http://xerial.org/leo"))
 )
 
-scalaVersion in ThisBuild := "2.12.11"
+ThisBuild / scalaVersion := "2.12.11"
 
 // For building jars for JDK8
-javacOptions in ThisBuild ++= Seq("-source", "1.8", "-target", "1.8")
-javacOptions in (Compile, compile) ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
+ThisBuild / javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
+Compile / compile / javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
 
-javacOptions in doc := {
+doc / javacOptions := {
   val opts = Seq("-source", "1.8")
   if (scala.util.Properties.isJavaAtLeast("1.8"))
     opts ++ Seq("-Xdoclint:none")
@@ -32,7 +34,9 @@ javacOptions in doc := {
 }
 
 // Configuration for SnappyHadoopCompatibleOutputStream testing
-fork in Test := true
+Test / fork := true
+
+
 val libTemp = {
   val path = s"${System.getProperty("java.io.tmpdir")}/snappy_test_${System.currentTimeMillis()}"
   // certain older Linux systems (debian/trusty in Travis CI) requires the libsnappy.so, loaded by
@@ -48,22 +52,21 @@ val linuxLibPath  = s"$libTemp:${System.getenv("LD_LIBRARY_PATH")}"
 
 // have to add to system dynamic library path since hadoop native library indirectly load libsnappy.1
 // can't use javaOptions in Test because it causes the expression to eval twice yielding different temp path values
-envVars in Test := Map("XERIAL_SNAPPY_LIB" -> libTemp, "DYLD_LIBRARY_PATH" -> macOSXLibPath, "LD_LIBRARY_PATH" -> linuxLibPath)
+Test / envVars := Map("XERIAL_SNAPPY_LIB" -> libTemp, "DYLD_LIBRARY_PATH" -> macOSXLibPath, "LD_LIBRARY_PATH" -> linuxLibPath)
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
-concurrentRestrictions in Global := Seq(Tags.limit(Tags.Test, 1))
+Test / parallelExecution := false
+
 autoScalaLibrary := false
 crossPaths := false
-logBuffered in Test := false
 
 libraryDependencies ++= Seq(
-  "junit"               % "junit"              % "4.8.2" % "test",
+  "junit"               % "junit"              % "4.13.2" % "test",
   "org.codehaus.plexus" % "plexus-classworlds" % "2.4"   % "test",
   "org.xerial.java"     % "xerial-core"        % "2.1"   % "test",
-  "org.wvlet.airframe"  %% "airframe-log"      % "20.6.1"  % "test",
-  "org.scalatest"       %% "scalatest"         % "3.0.4" % "test",
+  "org.wvlet.airframe"  %% "airframe-log"      % "21.12.0"  % "test",
   "org.osgi"            % "org.osgi.core"      % "4.3.0" % "provided",
-  "com.novocode"        % "junit-interface"    % "0.11"  % "test",
+  "com.github.sbt"      % "junit-interface"    % "0.13.2" % "test",
   "org.apache.hadoop"   % "hadoop-common"      % "2.7.3" % "test" exclude ("org.xerial.snappy", "snappy-java")
 )
 
@@ -108,7 +111,7 @@ OsgiKeys.additionalHeaders := Map(
 
 import ReleaseTransformations._
 
-releaseTagName := { (version in ThisBuild).value }
+releaseTagName := { (ThisBuild / version).value }
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
