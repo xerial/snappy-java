@@ -51,7 +51,9 @@ public class SnappyBundleActivator
             throws Exception
     {
         String library = System.mapLibraryName(LIBRARY_NAME);
-        if (library.toLowerCase().endsWith(".dylib")) {
+        String osArch = System.getProperty("os.arch");
+
+        if (library.toLowerCase().endsWith(".dylib") && "x86".equals(osArch)) {
             // some MacOS JDK7+ vendors map to dylib instead of jnilib
             library = library.replace(".dylib", ".jnilib");
         }
