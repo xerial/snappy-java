@@ -66,7 +66,7 @@ libraryDependencies ++= Seq(
   "org.wvlet.airframe" %% "airframe-log"       % "21.12.0" % "test",
   "org.osgi"            % "org.osgi.core"      % "4.3.0"   % "provided",
   "com.github.sbt"      % "junit-interface"    % "0.13.3"  % "test",
-  "org.apache.hadoop"   % "hadoop-common"      % "2.7.3"   % "test" exclude ("org.xerial.snappy", "snappy-java")
+  "org.apache.hadoop"   % "hadoop-common"      % "2.7.7"   % "test" exclude ("org.xerial.snappy", "snappy-java")
 )
 
 enablePlugins(SbtOsgi)
