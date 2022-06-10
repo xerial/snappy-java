@@ -27,6 +27,8 @@ package org.xerial.snappy;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.xerial.util.FileResource;
 import org.xerial.util.log.Logger;
 
@@ -35,8 +37,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class SnappyLoaderTest
 {
@@ -126,6 +127,53 @@ public class SnappyLoaderTest
             throws Exception
     {
         _logger.debug(Snappy.maxCompressedLength(1024));
+    }
+
+    @Test
+    public void loadSnappySimulateLoadingFailedCheckIfFallbackIsDisabledThrowsException()
+    {
+        try(MockedStatic<SnappyLoader> mock = Mockito.mockStatic(SnappyLoader.class, Mockito.CALLS_REAL_METHODS)) {
+            String mockedErrorMessage = "The static method loadNativeLibrary is mocked and throws an exception";
+            mock.when(() -> SnappyLoader.loadNativeLibrary()).thenThrow(new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, mockedErrorMessage));
+
+            try {
+                SnappyLoader.setSnappyApi(null); // force reload
+                System.setProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA, "false");
+                System.setProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA_FALLBACK, "false");
+
+                SnappyLoader.loadSnappyApi();
+
+                fail("Code should have thrown an exception");
+            } catch (SnappyError e) {
+                assertEquals(SnappyError.class, e.getClass());
+                assertTrue(e.getMessage().contains(mockedErrorMessage));
+            } finally {
+                System.clearProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA);
+                System.clearProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA_FALLBACK);
+            }
+        }
+    }
+
+    @Test
+    public void loadSnappySimulateLoadingFailedCheckIfFallbackIsUsed()
+    {
+        try(MockedStatic<SnappyLoader> mock = Mockito.mockStatic(SnappyLoader.class, Mockito.CALLS_REAL_METHODS)) {
+            String mockedErrorMessage = "The static method loadNativeLibrary is mocked and throws an exception";
+            mock.when(() -> SnappyLoader.loadNativeLibrary()).thenThrow(new SnappyError(SnappyErrorCode.FAILED_TO_LOAD_NATIVE_LIBRARY, mockedErrorMessage));
+
+            try {
+                SnappyLoader.setSnappyApi(null); // force reload
+                System.setProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA, "false");
+                System.clearProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA_FALLBACK); // default is true
+
+                SnappyLoader.loadSnappyApi();
+
+                assertTrue("Fallback to pure java implementation did not work!", SnappyLoader.isPureJava());
+            } finally {
+                System.clearProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA);
+                System.clearProperty(SnappyLoader.KEY_SNAPPY_PUREJAVA_FALLBACK);
+            }
+        }
     }
 
     public static void main(String[] args)

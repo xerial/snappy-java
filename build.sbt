@@ -61,6 +61,7 @@ crossPaths := false
 
 libraryDependencies ++= Seq(
   "junit"               % "junit"              % "4.13.2"  % "test",
+  "org.mockito"         % "mockito-inline"     % "4.6.1"   % "test",
   "org.codehaus.plexus" % "plexus-classworlds" % "2.4"     % "test",
   "org.xerial.java"     % "xerial-core"        % "2.1"     % "test",
   "org.wvlet.airframe" %% "airframe-log"       % "21.12.1" % "test",
