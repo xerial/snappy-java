@@ -78,6 +78,7 @@ public class SnappyLoader
     public static final String KEY_SNAPPY_LIB_PATH = "org.xerial.snappy.lib.path";
     public static final String KEY_SNAPPY_LIB_NAME = "org.xerial.snappy.lib.name";
     public static final String KEY_SNAPPY_PUREJAVA = "org.xerial.snappy.purejava";
+    public static final String KEY_SNAPPY_PUREJAVA_FALLBACK = "org.xerial.snappy.purejava.fallback";
     public static final String KEY_SNAPPY_TEMPDIR = "org.xerial.snappy.tempdir";
     public static final String KEY_SNAPPY_USE_SYSTEMLIB = "org.xerial.snappy.use.systemlib";
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
@@ -170,7 +171,11 @@ public class SnappyLoader
         }
         catch(Throwable e) {
             // Fall-back to pure-java Snappy implementation
-            setSnappyApi(new PureJavaSnappy());
+            if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA_FALLBACK, "true"))) {
+                setSnappyApi(new PureJavaSnappy());
+            } else {
+                throw e;
+            }
         }
         return snappyApi;
     }
