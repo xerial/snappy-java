@@ -172,7 +172,7 @@ A file `target/snappy-java-$(version).jar` is the product additionally containin
 ### Using pure-java Snappy implementation
 
 snappy-java can optionally use a pure-java implementation of Snappy based on [aircompressor](https://github.com/airlift/aircompressor/tree/master/src/main/java/io/airlift/compress/snappy). This implementation is selected when no native Snappy library for your platform is found. You can also force using this pure-java implementation by setting a JVM property `org.xerial.snappy.purejava=true` before loading any class of Snappy (e.g., using `-Dorg.xerial.snappy.purejava=true` option when launching JVM).
-
+The pure-java implementation is also used as a fallback when no native Snappy library can be loaded. You can disable this fallback by setting the JVM property `org.xerial.snappy.purejava.fallback=false`
 
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
