@@ -78,6 +78,7 @@ public class SnappyLoader
     public static final String KEY_SNAPPY_LIB_PATH = "org.xerial.snappy.lib.path";
     public static final String KEY_SNAPPY_LIB_NAME = "org.xerial.snappy.lib.name";
     public static final String KEY_SNAPPY_PUREJAVA = "org.xerial.snappy.purejava";
+    public static final String KEY_SNAPPY_ALLOW_PUREJAVA = "org.xerial.snappy.allow.purejava";
     public static final String KEY_SNAPPY_TEMPDIR = "org.xerial.snappy.tempdir";
     public static final String KEY_SNAPPY_USE_SYSTEMLIB = "org.xerial.snappy.use.systemlib";
     public static final String KEY_SNAPPY_DISABLE_BUNDLED_LIBS = "org.xerial.snappy.disable.bundled.libs"; // Depreciated, but preserved for backward compatibility
@@ -158,8 +159,9 @@ public class SnappyLoader
         if (snappyApi != null) {
             return snappyApi;
         }
+        boolean allowPureJava = Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_ALLOW_PUREJAVA, "true"));
         try {
-            if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
+            if(allowPureJava && Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
                 // Use pure-java Snappy implementation
                 setSnappyApi(new PureJavaSnappy());
             }
@@ -170,6 +172,9 @@ public class SnappyLoader
         }
         catch(Throwable e) {
             // Fall-back to pure-java Snappy implementation
+            if (!allowPureJava) {
+                throw new RuntimeException("Native Snappy could not be loaded and Java Snappy not allowed.", e);
+            }
             setSnappyApi(new PureJavaSnappy());
         }
         return snappyApi;
