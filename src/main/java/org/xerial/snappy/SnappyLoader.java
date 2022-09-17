@@ -51,13 +51,13 @@ import java.util.UUID;
  * <li>(System property: <i>org.xerial.snappy.lib.path</i>)/(System property:
  * <i>org.xerial.lib.name</i>)
  * <li>One of the libraries embedded in snappy-java-(version).jar extracted into
- * (System property: <i>java.io.tempdir</i>). If
+ * (System property: <i>java.io.tmpdir</i>). If
  * <i>org.xerial.snappy.tempdir</i> is set, use this folder instead of
- * <i>java.io.tempdir</i>.
+ * <i>java.io.tmpdir</i>.
  * </ol>
  * <p/>
  * <p>
- * If you do not want to use folder <i>java.io.tempdir</i>, set the System
+ * If you do not want to use folder <i>java.io.tmpdir</i>, set the System
  * property <i>org.xerial.snappy.tempdir</i>. For example, to use
  * <i>/tmp/leo</i> as a temporary folder to copy native libraries, use -D option
  * of JVM:
