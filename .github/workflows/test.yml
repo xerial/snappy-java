@@ -54,3 +54,18 @@ jobs:
           restore-keys: ${{ runner.os }}-jdk8-
       - name: Test
         run: ./sbt test
+  test_jdk17:
+    name: test jdk17
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: olafurpg/setup-scala@v10
+      with:
+        java-version: 17
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache
+        key: ${{ runner.os }}-jdk17-${{ hashFiles('**/*.sbt') }}
+        restore-keys: ${{ runner.os }}-jdk17-
+    - name: Test
+      run: ./sbt test
