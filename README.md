@@ -1,4 +1,7 @@
-snappy-java [![Build Status](https://travis-ci.org/xerial/snappy-java.svg?branch=master)](https://travis-ci.org/xerial/snappy-java) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/) [![Javadoc](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java.svg?label=javadoc)](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java) 
+snappy-java
+[![Build Status](https://travis-ci.org/xerial/snappy-java.svg?branch=master)](https://travis-ci.org/xerial/snappy-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/)
+[![Javadoc](https://javadoc.io/badge2/org.xerial.snappy/snappy-java/javadoc.svg)](https://javadoc.io/doc/org.xerial.snappy/snappy-java)
 === 
 snappy-java is a Java port of the [snappy](https://github.com/google/snappy), a fast C++ compresser/decompresser developed by Google.
 
@@ -28,7 +31,8 @@ snappy-java is a Java port of the [snappy](https://github.com/google/snappy), a 
 
 ## Download
 
- [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/) [![Javadoc](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java.svg?label=javadoc)](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/)
+[![Javadoc](https://javadoc.io/badge2/org.xerial.snappy/snappy-java/javadoc.svg)](https://javadoc.io/doc/org.xerial.snappy/snappy-java)
  
  * [Release Notes](Milestone.md)
 
