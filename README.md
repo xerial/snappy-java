@@ -1,4 +1,7 @@
-snappy-java [![Build Status](https://travis-ci.org/xerial/snappy-java.svg?branch=master)](https://travis-ci.org/xerial/snappy-java) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/) [![Javadoc](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java.svg?label=javadoc)](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java) 
+snappy-java
+[![Build Status](https://travis-ci.org/xerial/snappy-java.svg?branch=master)](https://travis-ci.org/xerial/snappy-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/)
+[![Javadoc](https://javadoc.io/badge2/org.xerial.snappy/snappy-java/javadoc.svg)](https://javadoc.io/doc/org.xerial.snappy/snappy-java)
 === 
 snappy-java is a Java port of the [snappy](https://github.com/google/snappy), a fast C++ compresser/decompresser developed by Google.
 
@@ -22,13 +25,14 @@ snappy-java is a Java port of the [snappy](https://github.com/google/snappy), a 
   * Here are some [benchmark results](https://github.com/ning/jvm-compressor-benchmark/wiki), comparing
  snappy-java and the other compressors
  `LZO-java`/`LZF`/`QuickLZ`/`Gzip`/`Bzip2`. Thanks [Tatu Saloranta @cotowncoder](http://twitter.com/#!/cowtowncoder) for providing the benchmark suite.
-  * The benchmark result indicates snappy-java is the fastest compressor/decompressor in Java: http://ning.github.com/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html
- * The decompression speed is twice as fast as the others: http://ning.github.com/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html
+  * The benchmark result indicates snappy-java is the fastest compressor/decompressor in Java: https://ning.github.io/jvm-compressor-benchmark/results/canterbury-roundtrip-2011-07-28/index.html
+ * The decompression speed is twice as fast as the others: https://ning.github.io/jvm-compressor-benchmark/results/canterbury-uncompress-2011-07-28/index.html
 
 
 ## Download
 
- [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/) [![Javadoc](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java.svg?label=javadoc)](http://javadoc-badge.appspot.com/org.xerial.snappy/snappy-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.xerial.snappy/snappy-java/)
+[![Javadoc](https://javadoc.io/badge2/org.xerial.snappy/snappy-java/javadoc.svg)](https://javadoc.io/doc/org.xerial.snappy/snappy-java)
  
  * [Release Notes](Milestone.md)
 
