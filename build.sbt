@@ -95,6 +95,7 @@ OsgiKeys.additionalHeaders := Map(
     "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
     "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
     "org/xerial/snappy/native/Linux/armv7/libsnappyjava.so;osname=linux;processor=arm_le",
+    "org/xerial/snappy/native/Linux/loongarch64/libsnappyjava.so;osname=linux;processor=loongarch64",
     "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64le",
     "org/xerial/snappy/native/Linux/s390x/libsnappyjava.so;osname=linux;processor=s390x",
     "org/xerial/snappy/native/AIX/ppc/libsnappyjava.a;osname=aix;processor=ppc",
