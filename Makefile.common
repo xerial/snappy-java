@@ -306,7 +306,7 @@ SNAPPY_FLAGS := $($(os_arch)_SNAPPY_FLAGS)
 
 
 
-CXXFLAGS := $(CXXFLAGS) -DHAVE_CONFIG_H
+CXXFLAGS := $(CXXFLAGS) -DHAVE_CONFIG_H -DNDEBUG
 ifneq ($(jni_include),)
 CXXFLAGS := $(CXXFLAGS) -I"$(jni_include)"
 endif
