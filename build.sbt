@@ -1,14 +1,14 @@
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
-name := "snappy-java"
-organization := "org.xerial.snappy"
+name             := "snappy-java"
+organization     := "org.xerial.snappy"
 organizationName := "xerial.org"
-description := "snappy-java: A fast compression/decompression library"
+description      := "snappy-java: A fast compression/decompression library"
 
-sonatypeProfileName := "org.xerial"
+sonatypeProfileName   := "org.xerial"
 ThisBuild / publishTo := sonatypePublishToBundle.value
-licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
-homepage := Some(url("https://github.com/xerial/snappy-java"))
+licenses              := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+homepage              := Some(url("https://github.com/xerial/snappy-java"))
 scmInfo := Some(
   ScmInfo(
     browseUrl = url("https://github.com/xerial/snappy-java"),
@@ -18,6 +18,11 @@ scmInfo := Some(
 developers := List(
   Developer(id = "leo", name = "Taro L. Saito", email = "leo@xerial.org", url = url("http://xerial.org/leo"))
 )
+
+// Use dynamic snapshot version strings for non tagged versions
+ThisBuild / dynverSonatypeSnapshots := true
+// Use coursier friendly version separator
+ThisBuild / dynverSeparator := "-"
 
 ThisBuild / scalaVersion := "2.12.11"
 
@@ -57,15 +62,15 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 Test / parallelExecution := false
 
 autoScalaLibrary := false
-crossPaths := false
+crossPaths       := false
 
 libraryDependencies ++= Seq(
-  "junit"               % "junit"              % "4.13.2" % "test",
-  "org.codehaus.plexus" % "plexus-classworlds" % "2.7.0"  % "test",
-  "org.xerial.java"     % "xerial-core"        % "2.1"    % "test",
+  "junit"               % "junit"              % "4.13.2"  % "test",
+  "org.codehaus.plexus" % "plexus-classworlds" % "2.7.0"   % "test",
+  "org.xerial.java"     % "xerial-core"        % "2.1"     % "test",
   "org.wvlet.airframe" %% "airframe-log"       % "22.12.6" % "test",
-  "org.osgi"            % "org.osgi.core"      % "4.3.0"  % "provided",
-  "com.github.sbt"      % "junit-interface"    % "0.13.3" % "test",
+  "org.osgi"            % "org.osgi.core"      % "4.3.0"   % "provided",
+  "com.github.sbt"      % "junit-interface"    % "0.13.3"  % "test",
   "org.apache.hadoop"   % "hadoop-common"      % "2.10.2"  % "test" exclude ("org.xerial.snappy", "snappy-java")
 )
 
@@ -73,11 +78,11 @@ enablePlugins(SbtOsgi)
 
 osgiSettings
 
-OsgiKeys.exportPackage := Seq("org.xerial.snappy", "org.xerial.snappy.buffer", "org.xerial.snappy.pool", "org.xerial.snappy.pure")
+OsgiKeys.exportPackage      := Seq("org.xerial.snappy", "org.xerial.snappy.buffer", "org.xerial.snappy.pool", "org.xerial.snappy.pure")
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
-OsgiKeys.bundleActivator := Option("org.xerial.snappy.SnappyBundleActivator")
-OsgiKeys.importPackage := Seq("""org.osgi.framework;version="[1.5,2)"""")
-OsgiKeys.requireCapability := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))""""
+OsgiKeys.bundleActivator    := Option("org.xerial.snappy.SnappyBundleActivator")
+OsgiKeys.importPackage      := Seq("""org.osgi.framework;version="[1.5,2)"""")
+OsgiKeys.requireCapability  := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))""""
 
 OsgiKeys.additionalHeaders := Map(
   "Bundle-NativeCode" -> Seq(
@@ -107,23 +112,4 @@ OsgiKeys.additionalHeaders := Map(
   "Bundle-License"          -> "http://www.apache.org/licenses/LICENSE-2.0.txt",
   "Bundle-ActivationPolicy" -> "lazy",
   "Bundle-Name"             -> "snappy-java: A fast compression/decompression library"
-)
-
-import ReleaseTransformations._
-
-releaseTagName := { (ThisBuild / version).value }
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  releaseStepCommand("publishSigned"),
-  releaseStepCommand("sonatypeBundleRelease"),
-  setNextVersion,
-  commitNextVersion,
-  pushChanges
 )
