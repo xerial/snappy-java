@@ -598,9 +598,24 @@ public class Snappy
     public static double[] uncompressDoubleArray(byte[] input)
             throws IOException
     {
-        int uncompressedLength = Snappy.uncompressedLength(input, 0, input.length);
+        return uncompressDoubleArray(input, 0, input.length);
+    }
+
+    /**
+     * Uncompress the input as a double array
+     *
+     * @param input
+     * @param offset
+     * @param length
+     * @return the uncompressed data
+     * @throws IOException
+     */
+    public static double[] uncompressDoubleArray(byte[] input, int offset, int length)
+            throws IOException
+    {
+        int uncompressedLength = Snappy.uncompressedLength(input, offset, length);
         double[] result = new double[uncompressedLength / 8];
-        impl.rawUncompress(input, 0, input.length, result, 0);
+        impl.rawUncompress(input, offset, length, result, 0);
         return result;
     }
 
