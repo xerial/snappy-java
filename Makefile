@@ -193,7 +193,7 @@ linux-arm: jni-header
 	./docker/dockcross-armv5 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/armv5-unknown-linux-gnueabi/bin//armv5-unknown-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm'
 
 linux-armv6: jni-header
-	./docker/dockcross-armv6 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=arm-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
+	./docker/dockcross-armv6 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=armv6-unknown-linux-gnueabihf- OS_NAME=Linux OS_ARCH=armv6'
 
 linux-armv7: jni-header
 	./docker/dockcross-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/armv7-unknown-linux-gnueabi/bin/armv7-unknown-linux-gnueabi- OS_NAME=Linux OS_ARCH=armv7'
@@ -202,10 +202,10 @@ linux-android-arm: jni-header
 	./docker/dockcross-android-arm -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/arm-linux-androideabi/bin/arm-linux-androideabi- OS_NAME=Linux OS_ARCH=android-arm'
 
 linux-ppc64le: jni-header
-	./docker/dockcross-ppc64le -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64le'
+	./docker/dockcross-ppc64le -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64le'
 
 linux-ppc64: jni-header
-	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
+	./docker/dockcross-ppc64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64'
 
 linux-arm64: jni-header
 	./docker/dockcross-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/aarch64-unknown-linux-gnueabi/bin/aarch64-unknown-linux-gnueabi- OS_NAME=Linux OS_ARCH=aarch64'
