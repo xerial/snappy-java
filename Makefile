@@ -140,7 +140,10 @@ NATIVE_DIR:=src/main/resources/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_TARGET_DIR:=$(TARGET)/classes/org/xerial/snappy/native/$(OS_NAME)/$(OS_ARCH)
 NATIVE_DLL:=$(NATIVE_DIR)/$(LIBNAME)
 
-snappy-jar-version:=snappy-java-$(shell cat version.sbt | cut -d'=' -f2 | sed 's/[ \"]//g')
+snappy-jar-version:=snappy-java-$(shell ./script/dynver.sh | cut -d'=' -f2 | sed 's/[ \"]//g')
+
+jar-version:
+	echo $(snappy-jar-version)
 
 native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
