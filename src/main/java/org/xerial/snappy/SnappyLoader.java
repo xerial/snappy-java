@@ -24,8 +24,6 @@
 //--------------------------------------
 package org.xerial.snappy;
 
-import org.xerial.snappy.pure.PureJavaSnappy;
-
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
@@ -149,29 +147,13 @@ public class SnappyLoader
         loadSnappySystemProperties();
     }
 
-    static synchronized boolean isPureJava() {
-        return snappyApi != null && PureJavaSnappy.class.isAssignableFrom(snappyApi.getClass());
-    }
-
     static synchronized SnappyApi loadSnappyApi()
     {
         if (snappyApi != null) {
             return snappyApi;
         }
-        try {
-            if(Boolean.parseBoolean(System.getProperty(KEY_SNAPPY_PUREJAVA, "false"))) {
-                // Use pure-java Snappy implementation
-                setSnappyApi(new PureJavaSnappy());
-            }
-            else {
-                loadNativeLibrary();
-                setSnappyApi(new SnappyNative());
-            }
-        }
-        catch(Throwable e) {
-            // Fall-back to pure-java Snappy implementation
-            setSnappyApi(new PureJavaSnappy());
-        }
+        loadNativeLibrary();
+        setSnappyApi(new SnappyNative());
         return snappyApi;
     }
 

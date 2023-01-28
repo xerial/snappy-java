@@ -13,7 +13,6 @@ snappy-java is a Java port of the [snappy](https://github.com/google/snappy), a 
   * Compression/decompression of Java primitive arrays (`float[]`, `double[]`, `int[]`, `short[]`, `long[]`, etc.)
      * To improve the compression ratios of these arrays, you can use a fast data-rearrangement implementation ([`BitShuffle`](https://oss.sonatype.org/service/local/repositories/releases/archive/org/xerial/snappy/snappy-java/1.1.8/snappy-java-1.1.8-javadoc.jar/!/org/xerial/snappy/BitShuffle.html)) before compression
   * Portable across various operating systems; Snappy-java contains native libraries built for Window/Mac/Linux, etc. snappy-java loads one of these libraries according to your machine environment (It looks system properties, `os.name` and `os.arch`).
-     * If no native library for your platform is found, snappy-java will fallback to [pure-java implementation](#using-pure-java-snappy-implementation).
   * Simple usage. Add the snappy-java-(version).jar file to your classpath. Then call compression/decompression methods in `org.xerial.snappy.Snappy`.
   * [Framing-format support](https://github.com/google/snappy/blob/master/framing_format.txt) (Since 1.1.0 version)
   * OSGi support
@@ -172,11 +171,6 @@ When building on Solaris, use `gmake`:
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
 
 ## Miscellaneous Notes
-
-### Using pure-java Snappy implementation
-
-snappy-java can optionally use a pure-java implementation of Snappy based on [aircompressor](https://github.com/airlift/aircompressor/tree/master/src/main/java/io/airlift/compress/snappy). This implementation is selected when no native Snappy library for your platform is found. You can also force using this pure-java implementation by setting a JVM property `org.xerial.snappy.purejava=true` before loading any class of Snappy (e.g., using `-Dorg.xerial.snappy.purejava=true` option when launching JVM).
-
 
 ### Using snappy-java with Tomcat 6 (or higher) Web Server
 
