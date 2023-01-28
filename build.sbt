@@ -64,7 +64,7 @@ libraryDependencies ++= Seq(
   "org.codehaus.plexus" % "plexus-classworlds" % "2.4"    % "test",
   "org.xerial.java"     % "xerial-core"        % "2.1"    % "test",
   "org.wvlet.airframe" %% "airframe-log"       % "22.9.2" % "test",
-  "org.osgi"            % "org.osgi.core"      % "4.3.1"  % "provided",
+  "org.osgi"            % "org.osgi.core"      % "4.3.0"  % "provided",
   "com.github.sbt"      % "junit-interface"    % "0.13.3" % "test",
   "org.apache.hadoop"   % "hadoop-common"      % "2.7.3"  % "test" exclude ("org.xerial.snappy", "snappy-java")
 )
