@@ -21,18 +21,18 @@ jobs:
     name: code format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: scalafmt test
         run: ./sbt scalafmtCheckAll
   test:
     name: test jdk11
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v10
+      - uses: actions/checkout@v3
+      - uses: olafurpg/setup-scala@v13
         with:
           java-version: adopt@1.11
-      - uses: actions/cache@v1
+      - uses: actions/cache@v3
         with:
           path: ~/.cache
           key: ${{ runner.os }}-jdk11-${{ hashFiles('**/*.sbt') }}
@@ -43,11 +43,11 @@ jobs:
     name: test jdk8
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v10
+      - uses: actions/checkout@v3
+      - uses: olafurpg/setup-scala@v13
         with:
           java-version: adopt@1.8
-      - uses: actions/cache@v1
+      - uses: actions/cache@v3
         with:
           path: ~/.cache
           key: ${{ runner.os }}-jdk8-${{ hashFiles('**/*.sbt') }}
@@ -58,11 +58,11 @@ jobs:
     name: test jdk17
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: olafurpg/setup-scala@v10
+    - uses: actions/checkout@v3
+    - uses: olafurpg/setup-scala@v13
       with:
         java-version: 17
-    - uses: actions/cache@v1
+    - uses: actions/cache@v3
       with:
         path: ~/.cache
         key: ${{ runner.os }}-jdk17-${{ hashFiles('**/*.sbt') }}
