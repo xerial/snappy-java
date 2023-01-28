@@ -8,6 +8,7 @@ jobs:
     name: Build native libraries
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Build native libraries
         run: make clean-native native-all
         env:
