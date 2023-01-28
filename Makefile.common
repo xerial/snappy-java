@@ -228,7 +228,7 @@ Linux-armv7_LIBNAME   := libsnappyjava.so
 Linux-armv7_SNAPPY_FLAGS:=
 
 Linux-android-arm_CXX       := $(CROSS_PREFIX)g++
-Linux-android-arm_STRIP     := $(CROSS_PREFIX)strip
+Linux-android-arm_STRIP     := $(CROSS_ROOT)/bin/llvm-strip
 Linux-android-arm_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -std=c++11
 Linux-android-arm_LINKFLAGS := -shared -static-libgcc
 Linux-android-arm_LIBNAME   := libsnappyjava.so
