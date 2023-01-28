@@ -8,6 +8,7 @@ jobs:
     name: Build native libraries
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Build native libraries
         run: make clean-native native-all
         env:
@@ -20,7 +21,7 @@ jobs:
   push:
     name: Push new native libraries to branch
     runs-on: ubuntu-latest
-    needs: [check, build]
+    needs: [build]
     steps:
       - uses: actions/checkout@v3
       - name: Download native libraries
