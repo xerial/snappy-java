@@ -1,3 +1,6 @@
+
+Since snappy-java 1.1.9.0, release notes will be available in the GitHub releases page https://github.com/xerial/snappy-java/releases
+
 Since version 1.1.0.x, Java 6 (1.6) or higher is required.
 
 ## snappy-java-1.1.8.3 (2021-01-20)
