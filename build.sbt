@@ -27,7 +27,14 @@ ThisBuild / dynverSeparator := "-"
 ThisBuild / scalaVersion := "2.12.11"
 
 // For building jars for JDK8
-ThisBuild / javacOptions ++= Seq("-source", "1.8", "-target", "1.8")
+ThisBuild / javacOptions ++= {
+  if (scala.util.Properties.isJavaAtLeast("9")) {
+    // --release 8 option is not available in JDK8
+    Seq("--release", "8")
+  } else {
+    Seq.empty
+  }
+}
 Compile / compile / javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
 
 doc / javacOptions := {
