@@ -47,6 +47,7 @@ public class OSInfo {
     public static final String IBMZ = "s390";
     public static final String IBMZ_64 = "s390x";
     public static final String AARCH_64 = "aarch64";
+    public static final String RISCV_64 = "riscv64";
 
     static {
         // x86 mappings
@@ -93,6 +94,9 @@ public class OSInfo {
 
         // Aarch64 mappings
         archMapping.put(AARCH_64, AARCH_64);
+
+        // RISC-V mappings
+        archMapping.put(RISCV_64, RISCV_64);
     }
 
     public static void main(String[] args) {

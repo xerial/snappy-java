@@ -149,7 +149,7 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: native native-arm mac64 win32 win64 linux32 linux64 linux-ppc64le
+native-all: native native-arm mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -212,6 +212,9 @@ linux-ppc64: jni-header
 
 linux-arm64: jni-header
 	./docker/dockcross-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=aarch64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=aarch64'
+
+linux-riscv64: jni-header
+	./docker/dockcross-riscv64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/riscv64-unknown-linux-gnu/bin/riscv64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=riscv64'
 
 javadoc:
 	$(SBT) doc
