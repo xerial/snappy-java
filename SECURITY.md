@@ -9,3 +9,4 @@
 
 ## Reporting a Vulnerability
 
+https://github.com/xerial/snappy-java/security/advisories
