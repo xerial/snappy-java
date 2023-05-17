@@ -1,9 +1,6 @@
 name: Release Drafter
 
 on:
-  push:
-    branches:
-      - master
   # pull_request event is required only for autolabeler
   pull_request:
     # Only following types are handled by the action, but one can default to all as well
@@ -16,16 +13,15 @@ permissions:
   contents: read
 
 jobs:
-  update_release_draft:
+  update_PR_labels:
     permissions:
-      # write permission is required to create a github release
-      contents: write
+      contents: read
       # write permission is required for autolabeler
       # otherwise, read permission is required at least
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      # Drafts your next Release notes as Pull Requests are merged into "master"
+      # Runs only pull-request labeler
       - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
