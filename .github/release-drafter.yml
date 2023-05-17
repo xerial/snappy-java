@@ -43,7 +43,7 @@ autolabeler:
       - '*.md'
   - label: 'feature'
     title:
-      - '/(support|add)/i'
+      - '/(support|feature)/i'
   - label: 'bug'
     title:
       - '/fix/i'
