@@ -165,12 +165,7 @@ $(TARGET)/$(snappy-jar-version).jar:
 test: $(NATIVE_DLL)
 	$(SBT) test
 
-ifdef CI
-# Do not cache docker images in CI to avoid no space left error
-DOCKER_RUN_OPTS:=--rm --no-cache
-else
 DOCKER_RUN_OPTS:=--rm
-endif
 
 win32: jni-header
 	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
