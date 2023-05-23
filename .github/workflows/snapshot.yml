@@ -8,9 +8,11 @@ on:
       - '**.scala'
       - '**.java'
       - '**.sbt'
+      - 'src/main/resources/org/xerial/snappy/native/**'
       - '.github/workflows/snapshot.yml'
     tag:
       - '!*'
+  workflow_dispatch:
 
 jobs:
   publish_snapshots:
