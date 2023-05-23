@@ -149,7 +149,17 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: native native-arm mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
+native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
+
+ifdef CI
+# Clean docker images within CI to avoid no space left error
+DOCKER_POST_PROCESS:=docker system prune --all --force --volumes
+else
+DOCKER_POST_PROCESS:=
+endif
+
+clean-docker:
+	$(DOCKER_POST_PROCESS)
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -166,6 +176,7 @@ test: $(NATIVE_DLL)
 	$(SBT) test
 
 DOCKER_RUN_OPTS:=--rm
+
 
 win32: jni-header
 	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
