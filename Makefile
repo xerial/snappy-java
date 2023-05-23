@@ -149,7 +149,17 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: native native-arm mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
+native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
+
+ifdef CI
+# Clean docker images within CI to avoid no space left error
+DOCKER_POST_PROCESS:=docker system prune --all --force --volumes
+else
+DOCKER_POST_PROCESS:=
+endif
+
+clean-docker:
+	$(DOCKER_POST_PROCESS)
 
 $(NATIVE_DLL): $(SNAPPY_OUT)/$(LIBNAME)
 	@mkdir -p $(@D)
@@ -166,6 +176,7 @@ test: $(NATIVE_DLL)
 	$(SBT) test
 
 DOCKER_RUN_OPTS:=--rm
+
 
 win32: jni-header
 	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
@@ -190,7 +201,7 @@ freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
 
 # For ARM
-native-arm: linux-arm64 linux-android-arm linux-arm linux-armv6 linux-armv7
+native-arm: linux-arm64 linux-android-arm linux-android-aarch64 linux-arm linux-armv6 linux-armv7
 
 linux-arm: jni-header
 	./docker/dockcross-armv5 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/armv5-unknown-linux-gnueabi/bin//armv5-unknown-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm'
@@ -203,6 +214,9 @@ linux-armv7: jni-header
 
 linux-android-arm: jni-header
 	./docker/dockcross-android-arm -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/arm-linux-androideabi/bin/arm-linux-androideabi- OS_NAME=Linux OS_ARCH=android-arm'
+
+linux-android-aarch64: jni-header
+	./docker/dockcross-android-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=android-aarch64'
 
 linux-ppc64le: jni-header
 	./docker/dockcross-ppc64le -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64le'
