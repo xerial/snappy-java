@@ -187,7 +187,7 @@ win64: jni-header
 	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 win-armv7: jni-header
-	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=armv7-w64-mingw32- OS_NAME=Windows OS_ARCH=armv7'
+	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=armv7-w64-mingw32- OS_NAME=Windows OS_ARCH=armv7 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 win-arm64: jni-header
 	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=arm64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
