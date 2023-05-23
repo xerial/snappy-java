@@ -50,8 +50,13 @@ endif
 
 # os=Default is meant to be generic unix/linux
 
+<<<<<<< HEAD
 # To support new CPU architecture, add a new target name here
-known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-android-aarch64 Linux-aarch64 Linux-ppc Linux-ppc64 Linux-ppc64le Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 Mac-aarch64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64 Linux-riscv Linux-riscv64
+known_os_archs := Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-android-aarch64 Linux-aarch64 \
+Linux-ppc Linux-ppc64 Linux-ppc64le Linux-s390 Linux-s390x \
+Mac-x86 Mac-x86_64 Mac-aarch64 FreeBSD-x86_64 \
+Windows-x86 Windows-x86_64 Windows-aarch64 Windows-armv7 \
+SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64 Linux-riscv Linux-riscv64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -289,6 +294,20 @@ Windows-x86_64_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
 Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_64_LIBNAME      := snappyjava.dll
 Windows-x86_64_SNAPPY_FLAGS :=
+
+Windows-armv7_CXX          := $(CROSS_PREFIX)g++
+Windows-armv7_STRIP        := $(CROSS_PREFIX)strip
+Windows-armv7_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
+Windows-armv7_LINKFLAGS    := -Wl,--kill-at -shared -static
+Windows-armv7_LIBNAME      := snappyjava.dll
+Windows-armv7_SNAPPY_FLAGS :=
+
+Windows-aarch64_CXX          := $(CROSS_PREFIX)g++
+Windows-aarch64_STRIP        := $(CROSS_PREFIX)strip
+Windows-aarch64_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
+Windows-aarch64_LINKFLAGS    := -Wl,--kill-at -shared -static
+Windows-aarch64_LIBNAME      := snappyjava.dll
+Windows-aarch64_SNAPPY_FLAGS :=
 
 Linux-riscv_CXX       := $(CROSS_PREFIX)g++
 Linux-riscv_STRIP     := $(CROSS_PREFIX)strip
