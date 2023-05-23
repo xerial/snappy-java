@@ -213,8 +213,8 @@ Linux-arm_LINKFLAGS := -shared -static-libgcc
 Linux-arm_LIBNAME   := libsnappyjava.so
 Linux-arm_SNAPPY_FLAGS:=
 
-Linux-armv6_CXX       := $(CROSS_PREFIX)g++
-Linux-armv6_STRIP     := $(CROSS_PREFIX)strip
+Linux-armv6_CXX       := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-g++
+Linux-armv6_STRIP     := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-strip
 Linux-armv6_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -mfloat-abi=hard -std=c++11
 Linux-armv6_LINKFLAGS := -shared -static-libgcc -std=c++11
 Linux-armv6_LIBNAME   := libsnappyjava.so
