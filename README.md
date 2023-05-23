@@ -158,6 +158,7 @@ $ ./sbt -Dloglevel=debug
 For the details of sbt usage, see my blog post: [Building Java Projects with sbt](http://xerial.org/blog/2014/03/24/sbt/)
 
 ### Building from the source code
+
 See the [build instruction](https://github.com/xerial/snappy-java/blob/master/BUILD.md). Building from the source code is an option when your OS platform and CPU architecture is not supported. To build snappy-java, you need Git, JDK (1.6 or higher), g++ compiler (mingw in Windows) etc.
 
     $ git clone https://github.com/xerial/snappy-java.git
@@ -169,6 +170,10 @@ When building on Solaris, use `gmake`:
     $ gmake
 
 A file `target/snappy-java-$(version).jar` is the product additionally containing the native library built for your platform.
+
+### Creating a new release
+
+GitHub action [https://github.com/xerial/snappy-java/blob/master/.github/workflows/release.yml] will publish a new relase to Maven Central (Sonatype) when a new tag vX.Y.Z is pushed.
 
 ## Miscellaneous Notes
 
