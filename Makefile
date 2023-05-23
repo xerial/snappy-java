@@ -181,10 +181,10 @@ DOCKER_RUN_OPTS:=--rm
 
 
 win32: jni-header
-	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
+	./docker/dockcross-windows-x86 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=i686-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 win64: jni-header
-	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
+	./docker/dockcross-windows-x64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=x86_64-w64-mingw32.static- OS_NAME=Windows OS_ARCH=x86_64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
 
 # deprecated
 mac32: jni-header
@@ -203,18 +203,13 @@ freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
 
 # For ARM
-<<<<<<< HEAD
-native-arm: linux-arm64 linux-android-arm linux-android-aarch64 linux-arm linux-armv6 linux-armv7
-=======
-native-arm: win-armv7 win-aarch64 linux-arm64 linux-android-arm linux-arm linux-armv6 linux-armv7
+native-arm: win-armv7 win-aarch64 linux-arm64 linux-android-arm linux-android-aarch64 linux-arm linux-armv6 linux-armv7
 
 win-armv7: jni-header
-	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=armv7-w64-mingw32- OS_NAME=Windows OS_ARCH=armv7 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
+	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native OS_NAME=Windows OS_ARCH=armv7'
 
 win-aarch64: jni-header
-	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native snappy-header native CROSS_PREFIX=aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64 SNAPPY_CMAKE_OPTS="-DHAVE_SYS_UIO_H=0"'
->>>>>>> 5426196 (Fix script)
-
+	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native OS_NAME=Windows OS_ARCH=aarch64'
 
 # TODO: CROSS_PREFIX can be replaced with ${CROSS_ROOT}/bin/${CROSS_TRIPLE}- in Makefile.common
 linux-arm: jni-header
