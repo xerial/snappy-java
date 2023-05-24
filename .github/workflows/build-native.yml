@@ -39,7 +39,7 @@ jobs:
           then
             echo "ref=${{ github.ref_name }}" >> $GITHUB_OUTPUT
             echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
-	  else
+          else
             echo "ref=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
             echo "repo=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_OUTPUT
           fi
