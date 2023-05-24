@@ -53,6 +53,10 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@v3
+      - name: Checkout PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_USER_TOKEN }}
+        run: gh pr checkout ${{ github.event.pull_request.number }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
         with:
