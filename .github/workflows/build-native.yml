@@ -55,9 +55,6 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@v3
-        with:
-          repository: ${{ needs.build.outputs.repo }}
-          ref: ${{ needs.build.outputs.ref }}
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,7 +68,8 @@ jobs:
       - name: Commit and push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: 'Update native libraries'
-          default_author: github_actions
+        run: |
+          git config --global user.name "xerial-bot"
+          git config --global user.email "leo+bot@xerial.org"
+          git commit -am 'Update native libraries'
+          git push
