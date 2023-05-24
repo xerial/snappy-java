@@ -7,6 +7,7 @@ on:
       - '**.java'
       - '**.sbt'
       - '.github/workflows/*.yml'
+      - 'src/main/resources/org/xerial/snappy/**'
   push:
     branches:
       - master
@@ -15,6 +16,7 @@ on:
       - '**.java'
       - '**.sbt'
       - '.github/workflows/*.yml'
+      - 'src/main/resources/org/xerial/snappy/**'
 
 jobs:
   code_format:
