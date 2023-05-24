@@ -203,6 +203,8 @@ freebsd64:
 # For ARM
 native-arm: linux-arm64 linux-android-arm linux-android-aarch64 linux-arm linux-armv6 linux-armv7
 
+
+# TODO: CROSS_PREFIX can be replaced with ${CROSS_ROOT}/bin/${CROSS_TRIPLE}- in Makefile.common
 linux-arm: jni-header
 	./docker/dockcross-armv5 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/armv5-unknown-linux-gnueabi/bin//armv5-unknown-linux-gnueabi- OS_NAME=Linux OS_ARCH=arm'
 
