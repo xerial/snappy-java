@@ -2,15 +2,6 @@ name: Build Native
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - 'src/main/resources/org/xerial/snappy/VERSION'
-      - 'Makefile'
-      - 'Makefile.common'
-      - '**/*.h'
-      - '**/*.cpp'
   pull_request:
     paths:
       - 'src/main/resources/org/xerial/snappy/VERSION'
