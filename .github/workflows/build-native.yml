@@ -55,9 +55,9 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@v3
-        #with:
-        #   repository: ${{ needs.build.outputs.repo }}
-        #  ref: ${{ needs.build.outputs.ref }}
+        with:
+          repository: ${{ needs.build.outputs.repo }}
+          ref: ${{ needs.build.outputs.ref }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
         with:
@@ -65,6 +65,8 @@ jobs:
           path: src/main/resources/org/xerial/snappy/native/
       - run: git status
       - name: Commit and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: EndBug/add-and-commit@v9
         with:
           message: 'Update native libraries'
