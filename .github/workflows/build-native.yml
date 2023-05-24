@@ -63,11 +63,12 @@ jobs:
           name: native-libs
           path: src/main/resources/org/xerial/snappy/native/
       - run: git status
-      - name: Commit and push
-        env:
-          GITHUB_TOKEN: ${{ secrets.BOT_USER_TOKEN }}
+      - name: Commit
         run: |
           git config --global user.name "xerial-bot"
           git config --global user.email "leo+bot@xerial.org"
           git commit -am 'Update native libraries'
-          git push
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.BOT_USER_TOKEN }}
