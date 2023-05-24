@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@v3
         with: 
           ref: ${{ github.head_ref }}
-	  fetch-depth: 0
+          fetch-depth: 0
           token: ${{ secrets.BOT_USER_TOKEN }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
