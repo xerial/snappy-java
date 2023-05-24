@@ -31,8 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build native libraries
-        # run: make clean-native native-all
-        run: make clean-native native
+        run: make clean-native native-all
         env:
           OCI_EXE: docker
       - name: Create Pull Request
