@@ -11,6 +11,8 @@ on:
   push:
     branches:
       - master
+      - main
+      - update-native-libs
     paths:
       - '**.scala'
       - '**.java'
