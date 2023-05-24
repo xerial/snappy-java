@@ -54,14 +54,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build]
     steps:
+      - uses: actions/checkout@v3
+      #  with:
+      #    repository: ${{ needs.build.outputs.repo }}
+      #    ref: ${{ needs.build.outputs.ref }}
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
-      #- uses: actions/checkout@v3
-      #  with:
-      #    repository: ${{ needs.build.outputs.repo }}
-      #    ref: ${{ needs.build.outputs.ref }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
         with:
