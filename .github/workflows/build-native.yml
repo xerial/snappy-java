@@ -35,10 +35,6 @@ jobs:
         run: make clean-native native
         env:
           OCI_EXE: docker
-          else
-            echo "ref=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
-            echo "repo=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_OUTPUT
-          fi
       - name: Create Pull Request
         if: ${{ github.event_name != 'pull_request' }}
         uses: peter-evans/create-pull-request@v5
