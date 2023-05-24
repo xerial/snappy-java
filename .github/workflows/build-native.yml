@@ -14,6 +14,9 @@ jobs:
   build:
     name: Build native libraries
     runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.output.outputs.ref }}
+      repo: ${{ steps.output.outputs.repo }}
     steps:
       - uses: actions/checkout@v3
       - name: Build native libraries
@@ -25,12 +28,31 @@ jobs:
         with:
           name: native-libs
           path: src/main/resources/org/xerial/snappy/native/
+      # This will set the branch to use:
+      # - if workflow_dispatch, use the branch that was chosen when running the workflow
+      # - if it is a comment on a PR, and the trigger matches, use the PR branch
+      - name: Set job output
+        id: output
+        run: |
+          echo "::echo::on"
+          if [[ "${{ github.event_name == 'workflow_dispatch' }}" == 'true' ]]
+          then
+            echo "ref=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+            echo "repo=${{ github.repository }}" >> $GITHUB_OUTPUT
+	  else
+            echo "ref=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+            echo "repo=${{ github.event.pull_request.head.repo.full_name }}" >> $GITHUB_OUTPUT
+          fi
+
   push:
     name: Push new native libraries to branch
     runs-on: ubuntu-latest
     needs: [build]
     steps:
       - uses: actions/checkout@v3
+        with:
+          repository: ${{ needs.build.outputs.repo }}
+          ref: ${{ needs.build.outputs.ref }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
         with:
