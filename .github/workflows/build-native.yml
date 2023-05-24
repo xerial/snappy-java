@@ -3,6 +3,8 @@ name: Build Native
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
     paths:
       - 'src/main/resources/org/xerial/snappy/VERSION'
       - 'Makefile'
