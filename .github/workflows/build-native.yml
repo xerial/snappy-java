@@ -53,9 +53,9 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@v3
-        with: 
-          ref: ${{ github.head_ref }}
-          fetch-depth: 0
+        with:
+          repository: ${{ needs.build.outputs.repo }}
+          ref: ${{ needs.build.outputs.ref }}
           token: ${{ secrets.BOT_USER_TOKEN }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
