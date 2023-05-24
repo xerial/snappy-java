@@ -6,6 +6,7 @@ on:
     branches:
       - master
       - main
+      - update-native-libs
     paths:
       - 'src/main/resources/org/xerial/snappy/VERSION'
       - 'Makefile'
