@@ -30,9 +30,6 @@ jobs:
         with:
           name: native-libs
           path: src/main/resources/org/xerial/snappy/native/
-      # This will set the branch to use:
-      # - if workflow_dispatch, use the branch that was chosen when running the workflow
-      # - if it is a comment on a PR, and the trigger matches, use the PR branch
       - name: Set job output
         id: output
         run: |
@@ -69,7 +66,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "xerial-bot"
-          git config --global user.email "leo+bot@xerial.org"
           git commit -am 'Update native libraries'
           git push
