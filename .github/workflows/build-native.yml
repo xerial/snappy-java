@@ -9,6 +9,7 @@ on:
       - 'Makefile.common'
       - '**/*.h'
       - '**/*.cpp'
+      - .github/workflows/build-native.yml
 
 jobs:
   build:
@@ -20,7 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build native libraries
-        run: make clean-native native-all
+        # run: make clean-native native-all
+        run: make clean-native native
         env:
           OCI_EXE: docker
       - name: Upload native libraries
@@ -45,6 +47,9 @@ jobs:
           fi
 
   push:
+    permissions:
+      # write permission is required for pushing commits
+      pull-requests: write
     name: Push new native libraries to branch
     runs-on: ubuntu-latest
     needs: [build]
