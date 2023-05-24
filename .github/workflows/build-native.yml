@@ -55,9 +55,9 @@ jobs:
     needs: [build]
     steps:
       - uses: actions/checkout@v3
-      #  with:
-      #    repository: ${{ needs.build.outputs.repo }}
-      #    ref: ${{ needs.build.outputs.ref }}
+        with:
+          repository: ${{ needs.build.outputs.repo }}
+          ref: ${{ needs.build.outputs.ref }}
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
