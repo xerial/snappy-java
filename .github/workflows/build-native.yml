@@ -39,6 +39,6 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           title: Update native libraries
-          commit-message: Updatge native libraries for ${{ github.sha }}
+          commit-message: Update native libraries for ${{ github.sha }}
           branch: update-native-libs
           labels: library-update
