@@ -55,7 +55,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Checkout PR
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr checkout ${{ github.event.pull_request.number }}
       - name: Download native libraries
         uses: actions/download-artifact@v3
