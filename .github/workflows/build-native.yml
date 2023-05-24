@@ -49,7 +49,7 @@ jobs:
   push:
     permissions:
       # write permission is required for pushing commits
-      pull-requests: write
+      contents: write
     name: Push new native libraries to branch
     runs-on: ubuntu-latest
     needs: [build]
