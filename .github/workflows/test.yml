@@ -10,6 +10,7 @@ on:
       - '**.so'
       - '**.dll'
       - 'src/main/resources/**'
+      - 'project/build.properties'
   push:
     branches:
       - master
@@ -20,6 +21,7 @@ on:
       - '**.sbt'
       - '.github/workflows/*.yml'
       - 'src/main/resources/org/xerial/snappy/**'
+      - 'project/build.properties'
 
 jobs:
   code_format:
