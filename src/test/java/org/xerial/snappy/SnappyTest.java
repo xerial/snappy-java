@@ -19,7 +19,7 @@
 // SnappyTest.java
 // Since: 2011/03/30
 //
-// $URL$ 
+// $URL$
 // $Author$
 //--------------------------------------
 package org.xerial.snappy;
@@ -43,6 +43,7 @@ public class SnappyTest
     {
         String version = Snappy.getNativeLibraryVersion();
         _logger.debug("version: " + version);
+        assertTrue(false);
     }
 
     @Test
