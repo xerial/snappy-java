@@ -143,7 +143,7 @@ snappy-java uses sbt (simple build tool for Scala) as a build tool. Here is a si
 
     $ ./sbt            # enter sbt console
     > ~test            # run tests upon source code change
-    > ~testOnly     # run tests that matches a given name pattern  
+    > ~testOnly        # run tests that matches a given name pattern  
     > publishM2        # publish jar to $HOME/.m2/repository
     > package          # create jar file
     > findbugs         # Produce findbugs report in target/findbugs
