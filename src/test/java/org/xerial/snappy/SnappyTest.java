@@ -43,7 +43,6 @@ public class SnappyTest
     {
         String version = Snappy.getNativeLibraryVersion();
         _logger.debug("version: " + version);
-        assertTrue(false);
     }
 
     @Test
