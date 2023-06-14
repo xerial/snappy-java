@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.junit.Assume;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xerial.util.log.Logger;
@@ -415,31 +416,37 @@ public class SnappyTest
      */
     @Test(expected = SnappyError.class)
     public void isTooLargeDoubleArrayInputLength() throws Exception {
+        assumingCIIsFalse();
         Snappy.compress(new double[Integer.MAX_VALUE / 8 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeCharArrayInputLength() throws Exception {
+        assumingCIIsFalse();
         Snappy.compress(new char[Integer.MAX_VALUE / 2 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeFloatArrayInputLength() throws Exception {
+        assumingCIIsFalse();
         Snappy.compress(new float[Integer.MAX_VALUE / 4 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeIntArrayInputLength() throws Exception {
+        assumingCIIsFalse();
         Snappy.compress(new int[Integer.MAX_VALUE / 4 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeLongArrayInputLength() throws Exception {
+        assumingCIIsFalse();
         Snappy.compress(new long[Integer.MAX_VALUE / 8 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeShortArrayInputLength() throws Exception {
+        assumingCIIsFalse();
         Snappy.compress(new short[Integer.MAX_VALUE / 2 + 1]);
     }
 
@@ -474,28 +481,37 @@ public class SnappyTest
      */
     @Test(expected = SnappyError.class)
     public void isTooLargeDoubleArrayInputLengthForBitShuffleShuffle() throws Exception {
+        assumingCIIsFalse();
         BitShuffle.shuffle(new double[Integer.MAX_VALUE / 8 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeFloatArrayInputLengthForBitShuffleShuffle() throws Exception {
+        assumingCIIsFalse();
         BitShuffle.shuffle(new float[Integer.MAX_VALUE / 4 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeIntArrayInputLengthForBitShuffleShuffle() throws Exception {
+        assumingCIIsFalse();
         BitShuffle.shuffle(new float[Integer.MAX_VALUE / 4 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeLongArrayInputLengthForBitShuffleShuffle() throws Exception {
+        assumingCIIsFalse();
         BitShuffle.shuffle(new long[Integer.MAX_VALUE / 8 + 1]);
     }
 
     @Test(expected = SnappyError.class)
     public void isTooLargeShortArrayInputLengthForBitShuffleShuffle() throws Exception {
+        assumingCIIsFalse();
         BitShuffle.shuffle(new short[Integer.MAX_VALUE / 2 + 1]);
+    }
 
-
+    private void assumingCIIsFalse() {
+        if (System.getenv("CI") == null)
+            return;
+        Assume.assumeFalse("Skipped on CI", System.getenv("CI").equals("true"));
     }
 }
