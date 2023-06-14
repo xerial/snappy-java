@@ -510,6 +510,7 @@ public class SnappyTest
     }
 
     private void assumingCIIsFalse() {
+        if (System.getenv("CI") == null) return;
         Assume.assumeTrue(System.getenv("CI").equals("false"));
     }
 }
