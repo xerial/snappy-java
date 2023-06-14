@@ -19,7 +19,7 @@
 // SnappyTest.java
 // Since: 2011/03/30
 //
-// $URL$ 
+// $URL$
 // $Author$
 //--------------------------------------
 package org.xerial.snappy;
@@ -331,8 +331,8 @@ public class SnappyTest
         }
     }
 
-    /*
 
+    /*
     Tests happy cases for SnappyInputStream.read method
     - {0}
      */
@@ -385,6 +385,67 @@ public class SnappyTest
     - int: 0, 10
     - long: 0, 10
     - short: 0, 10
+     */
+    @Test
+    public void isValidArrayInputLength()
+            throws Exception {
+        byte[] a = Snappy.compress(new char[0]);
+        byte[] b = Snappy.compress(new double[0]);
+        byte[] c = Snappy.compress(new float[0]);
+        byte[] d = Snappy.compress(new int[0]);
+        byte[] e = Snappy.compress(new long[0]);
+        byte[] f = Snappy.compress(new short[0]);
+        byte[] g = Snappy.compress(new char[10]);
+        byte[] h = Snappy.compress(new double[10]);
+        byte[] i = Snappy.compress(new float[10]);
+        byte[] j = Snappy.compress(new int[10]);
+        byte[] k = Snappy.compress(new long[10]);
+        byte[] l = Snappy.compress(new short[10]);
+    }
+
+    /*
+    Tests sad cases for Snappy.compress
+    - Allocate a buffer whose byte size will be a bit larger than Integer.MAX_VALUE
+    - char
+    - double
+    - float
+    - int
+    - long
+    - short
+     */
+    @Test(expected = SnappyError.class)
+    public void isTooLargeDoubleArrayInputLength() throws Exception {
+        Snappy.compress(new double[Integer.MAX_VALUE / 8 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeCharArrayInputLength() throws Exception {
+        Snappy.compress(new char[Integer.MAX_VALUE / 2 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeFloatArrayInputLength() throws Exception {
+        Snappy.compress(new float[Integer.MAX_VALUE / 4 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeIntArrayInputLength() throws Exception {
+        Snappy.compress(new int[Integer.MAX_VALUE / 4 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeLongArrayInputLength() throws Exception {
+        Snappy.compress(new long[Integer.MAX_VALUE / 8 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeShortArrayInputLength() throws Exception {
+        Snappy.compress(new short[Integer.MAX_VALUE / 2 + 1]);
+    }
+
+    /*
+    Tests happy cases for Snappy.compress
+    - char: 0, 10
     */
     @Test
     public void isValidArrayInputLengthForBitShuffleShuffle()
@@ -434,6 +495,7 @@ public class SnappyTest
     @Test(expected = SnappyError.class)
     public void isTooLargeShortArrayInputLengthForBitShuffleShuffle() throws Exception {
         BitShuffle.shuffle(new short[Integer.MAX_VALUE / 2 + 1]);
+
 
     }
 }

@@ -169,7 +169,11 @@ public class Snappy
     public static byte[] compress(char[] input)
             throws IOException
     {
-        return rawCompress(input, input.length * 2); // char uses 2 bytes
+        int byteSize = input.length * 2;
+        if (byteSize < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
+        return rawCompress(input, byteSize); // char uses 2 bytes
     }
 
     /**
@@ -181,7 +185,11 @@ public class Snappy
     public static byte[] compress(double[] input)
             throws IOException
     {
-        return rawCompress(input, input.length * 8); // double uses 8 bytes
+        int byteSize = input.length * 8;
+        if (byteSize < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
+        return rawCompress(input, byteSize); // double uses 8 bytes
     }
 
     /**
@@ -193,7 +201,11 @@ public class Snappy
     public static byte[] compress(float[] input)
             throws IOException
     {
-        return rawCompress(input, input.length * 4); // float uses 4 bytes
+        int byteSize = input.length * 4;
+        if (byteSize < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
+        return rawCompress(input, byteSize); // float uses 4 bytes
     }
 
     /**
@@ -205,7 +217,11 @@ public class Snappy
     public static byte[] compress(int[] input)
             throws IOException
     {
-        return rawCompress(input, input.length * 4); // int uses 4 bytes
+        int byteSize = input.length * 4;
+        if (byteSize < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
+        return rawCompress(input, byteSize); // int uses 4 bytes
     }
 
     /**
@@ -217,7 +233,11 @@ public class Snappy
     public static byte[] compress(long[] input)
             throws IOException
     {
-        return rawCompress(input, input.length * 8); // long uses 8 bytes
+        int byteSize = input.length * 8;
+        if (byteSize < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
+        return rawCompress(input, byteSize); // long uses 8 bytes
     }
 
     /**
@@ -229,7 +249,11 @@ public class Snappy
     public static byte[] compress(short[] input)
             throws IOException
     {
-        return rawCompress(input, input.length * 2); // short uses 2 bytes
+        int byteSize = input.length * 2;
+        if (byteSize < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
+        return rawCompress(input, byteSize); // short uses 2 bytes
     }
 
     /**
