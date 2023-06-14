@@ -417,9 +417,20 @@ public class SnappyInputStream
             }
         }
 
+        // chunkSize is negative
+        if (chunkSize < 0) {
+            throw new SnappyError(SnappyErrorCode.INVALID_CHUNK_SIZE, "chunkSize is too big or negative : " + chunkSize);
+        }
+
         // extend the compressed data buffer size
         if (compressed == null || chunkSize > compressed.length) {
-            compressed = new byte[chunkSize];
+            // chunkSize exceeds limit
+            try {
+                compressed = new byte[chunkSize];
+            }
+            catch (java.lang.OutOfMemoryError e) {
+                throw new SnappyError(SnappyErrorCode.INVALID_CHUNK_SIZE, e.getMessage());
+            }
         }
         readBytes = 0;
         while (readBytes < chunkSize) {

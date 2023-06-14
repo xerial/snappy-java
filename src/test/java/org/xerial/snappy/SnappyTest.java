@@ -26,6 +26,7 @@ package org.xerial.snappy;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -331,13 +332,60 @@ public class SnappyTest
     }
 
     /*
+
+    Tests happy cases for SnappyInputStream.read method
+    - {0}
+     */
+    @Test
+    public void isValidChunkLengthForSnappyInputStreamIn()
+            throws Exception {
+        byte[] data = {0};
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(data));
+        byte[] out = new byte[50];
+        in.read(out);
+    }
+
+    /*
+    Tests sad cases for SnappyInputStream.read method
+    - Expects a java.lang.NegativeArraySizeException catched into a SnappyError
+    - {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0, 0, 0, 0, 0, 0, 0, 0, 0,(byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff}
+     */
+    @Test(expected = SnappyError.class)
+    public void isInvalidChunkLengthForSnappyInputStreamInNegative()
+            throws Exception {
+        byte[] data = {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0, 0, 0, 0, 0, 0, 0, 0, 0,(byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff};
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(data));
+        byte[] out = new byte[50];
+        in.read(out);
+    }
+
+    /*
+    Tests sad cases for SnappyInputStream.read method
+    - Expects a java.lang.OutOfMemoryError
+    - {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0, 0, 0, 0, 0, 0, 0, 0, 0,(byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff}
+     */
+    @Test(expected = SnappyError.class)
+    public void isInvalidChunkLengthForSnappyInputStreamOutOfMemory()
+            throws Exception {
+        byte[] data = {-126, 'S', 'N', 'A', 'P', 'P', 'Y', 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) 0x7f, (byte) 0xff, (byte) 0xff, (byte) 0xff};
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(data));
+        byte[] out = new byte[50];
+        try {
+            in.read(out);
+        } catch (Exception ignored) {
+            // Exception here will be catched
+            // But OutOfMemoryError will not be caught, and will still be thrown
+        }
+    }
+
+    /*
     Tests happy cases for BitShuffle.shuffle method
     - double: 0, 10
     - float: 0, 10
     - int: 0, 10
     - long: 0, 10
     - short: 0, 10
-     */
+    */
     @Test
     public void isValidArrayInputLengthForBitShuffleShuffle()
             throws Exception
@@ -386,5 +434,6 @@ public class SnappyTest
     @Test(expected = SnappyError.class)
     public void isTooLargeShortArrayInputLengthForBitShuffleShuffle() throws Exception {
         BitShuffle.shuffle(new short[Integer.MAX_VALUE / 2 + 1]);
+
     }
 }
