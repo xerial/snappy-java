@@ -42,7 +42,8 @@ public enum SnappyErrorCode
     EMPTY_INPUT(6),
     INCOMPATIBLE_VERSION(7),
     INVALID_CHUNK_SIZE(8),
-    UNSUPPORTED_PLATFORM(9);
+    UNSUPPORTED_PLATFORM(9),
+    TOO_LARGE_INPUT(10);
 
     public final int id;
 

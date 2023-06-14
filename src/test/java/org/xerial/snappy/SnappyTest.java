@@ -329,4 +329,62 @@ public class SnappyTest
             _logger.debug(e);
         }
     }
+
+    /*
+    Tests happy cases for BitShuffle.shuffle method
+    - double: 0, 10
+    - float: 0, 10
+    - int: 0, 10
+    - long: 0, 10
+    - short: 0, 10
+     */
+    @Test
+    public void isValidArrayInputLengthForBitShuffleShuffle()
+            throws Exception
+    {
+        byte[] b = BitShuffle.shuffle(new double[0]);
+        byte[] c = BitShuffle.shuffle(new float[0]);
+        byte[] d = BitShuffle.shuffle(new int[0]);
+        byte[] e = BitShuffle.shuffle(new long[0]);
+        byte[] f = BitShuffle.shuffle(new short[0]);
+        byte[] n = BitShuffle.shuffle(new double[10]);
+        byte[] o = BitShuffle.shuffle(new float[10]);
+        byte[] p = BitShuffle.shuffle(new int[10]);
+        byte[] q = BitShuffle.shuffle(new long[10]);
+        byte[] r = BitShuffle.shuffle(new short[10]);
+    }
+
+    /*
+    Tests sad cases for BitShuffle.shuffle method
+    - Allocate a buffer whose byte size will be a bit larger than Integer.MAX_VALUE
+    - double: 8
+    - float: 4
+    - int: 4
+    - long: 8
+    - short: 2
+     */
+    @Test(expected = SnappyError.class)
+    public void isTooLargeDoubleArrayInputLengthForBitShuffleShuffle() throws Exception {
+        BitShuffle.shuffle(new double[Integer.MAX_VALUE / 8 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeFloatArrayInputLengthForBitShuffleShuffle() throws Exception {
+        BitShuffle.shuffle(new float[Integer.MAX_VALUE / 4 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeIntArrayInputLengthForBitShuffleShuffle() throws Exception {
+        BitShuffle.shuffle(new float[Integer.MAX_VALUE / 4 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeLongArrayInputLengthForBitShuffleShuffle() throws Exception {
+        BitShuffle.shuffle(new long[Integer.MAX_VALUE / 8 + 1]);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void isTooLargeShortArrayInputLengthForBitShuffleShuffle() throws Exception {
+        BitShuffle.shuffle(new short[Integer.MAX_VALUE / 2 + 1]);
+    }
 }

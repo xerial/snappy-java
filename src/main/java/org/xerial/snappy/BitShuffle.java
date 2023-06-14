@@ -91,6 +91,9 @@ public class BitShuffle
      * @throws IOException
      */
     public static byte[] shuffle(short[] input) throws IOException {
+        if (input.length * 2 < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
         byte[] output = new byte[input.length * 2];
         int numProcessed = impl.shuffle(input, 0, 2, input.length * 2, output, 0);
         assert(numProcessed == input.length * 2);
@@ -105,6 +108,9 @@ public class BitShuffle
      * @throws IOException
      */
     public static byte[] shuffle(int[] input) throws IOException {
+        if (input.length * 4 < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
         byte[] output = new byte[input.length * 4];
         int numProcessed = impl.shuffle(input, 0, 4, input.length * 4, output, 0);
         assert(numProcessed == input.length * 4);
@@ -119,6 +125,9 @@ public class BitShuffle
      * @throws IOException
      */
     public static byte[] shuffle(long[] input) throws IOException {
+        if (input.length * 8 < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
         byte[] output = new byte[input.length * 8];
         int numProcessed = impl.shuffle(input, 0, 8, input.length * 8, output, 0);
         assert(numProcessed == input.length * 8);
@@ -133,6 +142,9 @@ public class BitShuffle
      * @throws IOException
      */
     public static byte[] shuffle(float[] input) throws IOException {
+        if (input.length * 4 < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
         byte[] output = new byte[input.length * 4];
         int numProcessed = impl.shuffle(input, 0, 4, input.length * 4, output, 0);
         assert(numProcessed == input.length * 4);
@@ -147,6 +159,9 @@ public class BitShuffle
      * @throws IOException
      */
     public static byte[] shuffle(double[] input) throws IOException {
+        if (input.length * 8 < input.length) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input array size is too large: " + input.length);
+        }
         byte[] output = new byte[input.length * 8];
         int numProcessed = impl.shuffle(input, 0, 8, input.length * 8, output, 0);
         assert(numProcessed == input.length * 8);
