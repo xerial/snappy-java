@@ -14,7 +14,7 @@ SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy-c.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
-SNAPPY_GIT_REV:=537f4ad6240e586970fe554614542e9717df7902 # 1.1.8
+SNAPPY_GIT_REV:=$(SNAPPY_VERSION)
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 SNAPPY_CMAKE_CACHE=$(SNAPPY_OUT)/CMakeCache.txt
@@ -79,6 +79,7 @@ $(SNAPPY_GIT_UNPACKED):
 	@mkdir -p $(SNAPPY_SRC_DIR)
 	git clone $(SNAPPY_GIT_REPO_URL) $(SNAPPY_SRC_DIR)
 	git --git-dir=$(SNAPPY_SRC_DIR)/.git --work-tree=$(SNAPPY_SRC_DIR) checkout -b local/snappy-$(SNAPPY_VERSION) $(SNAPPY_GIT_REV)
+	cd $(SNAPPY_SRC_DIR) && git submodule update --init
 	touch $@
 
 $(SNAPPY_CMAKE_CACHE): $(SNAPPY_GIT_UNPACKED)
