@@ -14,7 +14,9 @@ SNAPPY_CC:=snappy-sinksource.cc snappy-stubs-internal.cc snappy-c.cc snappy.cc
 SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
-SNAPPY_GIT_REV:=$(SNAPPY_VERSION)
+# Use a specific git commit (1.1.10-SNAPSHOT) version to fix compilation error on mac_x64.
+# $(SNAPPY_VERSION) should be used in general
+SNAPPY_GIT_REV:=27f34a580be4a3becf5f8c0cba13433f53c21337
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 SNAPPY_CMAKE_CACHE=$(SNAPPY_OUT)/CMakeCache.txt
