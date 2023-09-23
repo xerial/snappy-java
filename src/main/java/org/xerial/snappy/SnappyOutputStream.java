@@ -59,6 +59,7 @@ import java.io.OutputStream;
 public class SnappyOutputStream
         extends OutputStream
 {
+    public static final int MAX_BLOCK_SIZE = 512 * 1024 * 1024; // 512 MiB
     static final int MIN_BLOCK_SIZE = 1 * 1024;
     static final int DEFAULT_BLOCK_SIZE = 32 * 1024; // Use 32kb for the default block size
 
@@ -84,7 +85,7 @@ public class SnappyOutputStream
     /**
      * @param out
      * @param blockSize byte size of the internal buffer size
-     * @throws IOException
+     * @throws IllegalArgumentException when blockSize is larger than 512 MiB
      */
     public SnappyOutputStream(OutputStream out, int blockSize)
     {
@@ -95,6 +96,9 @@ public class SnappyOutputStream
     {
         this.out = out;
         this.blockSize = Math.max(MIN_BLOCK_SIZE, blockSize);
+        if (this.blockSize > MAX_BLOCK_SIZE){
+            throw new IllegalArgumentException(String.format("Provided chunk size %,d larger than max %,d", this.blockSize, MAX_BLOCK_SIZE));
+        }
         int inputSize = blockSize;
         int outputSize = SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(blockSize);
 

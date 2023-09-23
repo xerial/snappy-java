@@ -1,8 +1,8 @@
 package org.xerial.snappy;
 
-import java.io.OutputStream;
-
 import org.xerial.snappy.buffer.CachedBufferAllocator;
+
+import java.io.OutputStream;
 
 public class SnappyHadoopCompatibleOutputStream extends SnappyOutputStream
 {

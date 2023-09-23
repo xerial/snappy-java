@@ -36,8 +36,11 @@ import java.io.InputStream;
 public class SnappyInputStream
         extends InputStream
 {
+    public static final int MAX_CHUNK_SIZE = 512 * 1024 * 1024; // 512 MiB
+
     private boolean finishedReading = false;
     protected final InputStream in;
+    private final int maxChunkSize;
 
     private byte[] compressed;
     private byte[] uncompressed;
@@ -55,6 +58,21 @@ public class SnappyInputStream
     public SnappyInputStream(InputStream input)
             throws IOException
     {
+        this(input, MAX_CHUNK_SIZE);
+    }
+
+
+    /**
+     * Create a filter for reading compressed data as a uncompressed stream with provided maximum chunk size
+     *
+     * @param input
+     * @param maxChunkSize
+     * @throws IOException
+     */
+    public SnappyInputStream(InputStream input, int maxChunkSize)
+            throws IOException
+    {
+        this.maxChunkSize = maxChunkSize;
         this.in = input;
         readHeader();
     }
@@ -420,6 +438,11 @@ public class SnappyInputStream
         // chunkSize is negative
         if (chunkSize < 0) {
             throw new SnappyError(SnappyErrorCode.INVALID_CHUNK_SIZE, "chunkSize is too big or negative : " + chunkSize);
+        }
+
+        // chunkSize is big
+        if (chunkSize > maxChunkSize) {
+            throw new SnappyError(SnappyErrorCode.FAILED_TO_UNCOMPRESS, String.format("Received chunkSize %,d is greater than max configured chunk size %,d", chunkSize, maxChunkSize));
         }
 
         // extend the compressed data buffer size
