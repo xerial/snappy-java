@@ -151,7 +151,7 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: native native-arm clean-docker mac64 win32 win64 win-armv7 win-aarch64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
+native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
 
 ifdef CI
 # Clean docker images within CI to avoid no space left error
@@ -203,7 +203,7 @@ freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
 
 # For ARM
-native-arm: win-armv7 win-aarch64 linux-arm64 linux-android-arm linux-android-aarch64 linux-arm linux-armv6 linux-armv7
+native-arm: win-aarch64 win-armv7 linux-arm64 linux-android-arm linux-android-aarch64 linux-arm linux-armv6 linux-armv7
 
 win-armv7: jni-header
 	./docker/dockcross-windows-armv7 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native OS_NAME=Windows OS_ARCH=armv7'
