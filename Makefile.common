@@ -295,14 +295,14 @@ Windows-x86_64_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-x86_64_LIBNAME      := snappyjava.dll
 Windows-x86_64_SNAPPY_FLAGS :=
 
-Windows-armv7_CXX          := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-g++
+Windows-armv7_CXX          := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-clang++
 Windows-armv7_STRIP        := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-strip
 Windows-armv7_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
 Windows-armv7_LINKFLAGS    := -Wl,--kill-at -shared -static
 Windows-armv7_LIBNAME      := snappyjava.dll
 Windows-armv7_SNAPPY_FLAGS :=
 
-Windows-aarch64_CXX          := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-g++
+Windows-aarch64_CXX          := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-clang++
 Windows-aarch64_STRIP        := ${CROSS_ROOT}/bin/${CROSS_TRIPLE}-strip
 Windows-aarch64_CXXFLAGS     := -Ilib/inc_win -O2 -std=c++11
 Windows-aarch64_LINKFLAGS    := -Wl,--kill-at -shared -static
