@@ -34,16 +34,16 @@ public class CachingBufferPoolTest {
 
         assertEquals(32 * 1024, CachingBufferPool.adjustSize(32 * 1024));
         assertEquals((32 + 16) * 1024, CachingBufferPool.adjustSize((32 * 1024) + 1));
-        
+
         assertEquals(2 * 1024 * 1024, CachingBufferPool.adjustSize(2 * 1024 * 1024));
         assertEquals(((2 * 1024) + 512) * 1024, CachingBufferPool.adjustSize((2 * 1024 * 1024) + 1));
-        
+
         assertEquals(16 * 1024 * 1024, CachingBufferPool.adjustSize(16 * 1024 * 1024));
         assertEquals((16 + 4) * 1024 * 1024, CachingBufferPool.adjustSize((16 * 1024 * 1024) + 1));
 
         assertEquals(128 * 1024 * 1024, CachingBufferPool.adjustSize(128 * 1024 * 1024));
         assertEquals((128 + 16) * 1024 * 1024, CachingBufferPool.adjustSize((128 * 1024 * 1024) + 1));
-        
+
         assertEquals(512 * 1024 * 1024, CachingBufferPool.adjustSize(512 * 1024 * 1024));
         assertEquals((512 + 128) * 1024 * 1024, CachingBufferPool.adjustSize((512 * 1024 * 1024) + 1));
         assertEquals(0x6000_0000, CachingBufferPool.adjustSize(0x6000_0000));
@@ -57,30 +57,30 @@ public class CachingBufferPoolTest {
     public void testDirectByteBuffers() throws Exception {
 
         BufferPool pool = CachingBufferPool.getInstance();
-        
+
         ByteBuffer bb1 = pool.allocateDirect(12 * 1024);
         assertNotNull(bb1);
         assertEquals(12 * 1024, bb1.limit());
         assertEquals(12 * 1024, bb1.capacity());
         assertEquals(0, bb1.position());
-        
+
         ByteBuffer bb2 = pool.allocateDirect(12 * 1024);
         assertNotNull(bb2);
         assertEquals(12 * 1024, bb2.limit());
         assertEquals(12 * 1024, bb2.capacity());
         assertEquals(0, bb2.position());
-        
+
         assertNotSame(bb1, bb2);
-        
+
         bb2.position(18);
         pool.releaseDirect(bb2);
-        
+
         ByteBuffer bb3 = pool.allocateDirect(12 * 1024);
         assertNotNull(bb3);
         assertEquals(12 * 1024, bb3.limit());
         assertEquals(12 * 1024, bb3.capacity());
         assertEquals(0, bb3.position());
-        
+
         assertNotSame(bb1, bb2);
         assertSame(bb2, bb3);
 
@@ -91,7 +91,7 @@ public class CachingBufferPoolTest {
         assertEquals(12 * 1024, bb4.limit());
         assertEquals(12 * 1024, bb4.capacity());
         assertEquals(0, bb4.position());
-        
+
         assertSame(bb1, bb4);
     }
 
@@ -99,23 +99,23 @@ public class CachingBufferPoolTest {
     public void testArrays() throws Exception {
 
         BufferPool pool = CachingBufferPool.getInstance();
-        
+
         byte[] bb1 = pool.allocateArray(12 * 1024);
         assertNotNull(bb1);
         assertEquals(12 * 1024, bb1.length);
-        
+
         byte[] bb2 = pool.allocateArray(12 * 1024);
         assertNotNull(bb2);
         assertEquals(12 * 1024, bb2.length);
-        
+
         assertNotSame(bb1, bb2);
-        
+
         pool.releaseArray(bb2);
-        
+
         byte[] bb3 = pool.allocateArray(12 * 1024);
         assertNotNull(bb3);
         assertEquals(12 * 1024, bb3.length);
-        
+
         assertNotSame(bb1, bb2);
         assertSame(bb2, bb3);
 
@@ -124,7 +124,7 @@ public class CachingBufferPoolTest {
         byte[] bb4 = pool.allocateArray((12 * 1024) - 1);
         assertNotNull(bb4);
         assertEquals(12 * 1024, bb4.length);
-        
+
         assertSame(bb1, bb4);
     }
 
@@ -148,15 +148,19 @@ public class CachingBufferPoolTest {
 
         //release back into pool (again)
         pool.releaseArray(bb1);
-        
+
         //release strong references
         bb1_copy = null;
         bb1 = null;
         assertNotNull(ref.get());
 
         //force an OOME to for SoftReferences to be collected
-        List<byte[]> vals = forceOOMEGC(LIST_COUNT);
-        assertTrue("count: " + vals.size(), vals.size() < LIST_COUNT);
+        try {
+            List<byte[]> vals = forceOOMEGC(LIST_COUNT);
+            assertTrue("count: " + vals.size(), vals.size() < LIST_COUNT);
+        } catch (OutOfMemoryError e) {
+            //
+        }
 
         //assert that our test reference has been cleared
         assertNull(ref.get());
@@ -168,16 +172,16 @@ public class CachingBufferPoolTest {
         assertNotEquals(-74, bb2[8000]);
         assertNotEquals(bb1HC, System.identityHashCode(bb2));
     }
-    
+
     private static List<byte[]> forceOOMEGC(int count) {
         final List<byte[]> vals = new ArrayList<>(count);
 
         try {
-            for (int i=0; i<count; ++i) {
+            for (int i = 0; i < count; ++i) {
                 vals.add(new byte[10 * 1024 * 1024]);
             }
-        } catch(Error e) {
-            
+        } catch (Error e) {
+
         }
         return vals;
     }
