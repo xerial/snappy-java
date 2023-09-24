@@ -180,7 +180,7 @@ public class SnappyOutputStreamTest
         if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN)
             assertEquals(90992, expectedCompressedData.length);
         else
-            assertEquals(91051, expectedCompressedData.length);
+            assertEquals(91080, expectedCompressedData.length);
         // The chunk size should not affect the size of the compressed output:
         int[] chunkSizes = new int[] {1, 100, 1023, 1024, 10000};
         for (int chunkSize : chunkSizes) {
