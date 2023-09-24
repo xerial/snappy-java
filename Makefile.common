@@ -304,6 +304,12 @@ Linux-riscv64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-riscv64_LIBNAME   := libsnappyjava.so
 Linux-riscv64_SNAPPY_FLAGS:=
 
+Windows-arm64_CXX       := armv7-w64-mingw32-g++
+Windows-arm64_STRIP     := strip -x
+Windows-arm64_CXXFLAGS  := -Ilib/inc_mac -I$(JAVA_HOME)/include -O2 -fPIC -march=armv8-a -fvisibility=hidden -D_WIN32 -DNOMINMAX -std=c++11
+Windows-arm64_LINKFLAGS := -shared -Wl,--out-implib,libsnappyjava.dll.a -Wl,--export-all-symbols
+Windows-arm64_LIBNAME   := libsnappyjava.dll
+
 
 CXX        := $($(os_arch)_CXX)
 STRIP     := $($(os_arch)_STRIP)
