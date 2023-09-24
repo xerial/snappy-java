@@ -15,7 +15,7 @@ SNAPPY_SRC_DIR:=$(TARGET)/snappy-$(SNAPPY_VERSION)
 SNAPPY_SRC:=$(addprefix $(SNAPPY_SRC_DIR)/,$(SNAPPY_CC))
 SNAPPY_GIT_REPO_URL:=https://github.com/google/snappy
 # Change this variable to use a specific git commit
-SNAPPY_GIT_REV:=$(SNAPPY_VERSION)
+SNAPPY_GIT_REV:=00aa9ac61d37194cffb0913d9b7d71611eb05a4b # $(SNAPPY_VERSION)
 SNAPPY_UNPACKED:=$(TARGET)/snappy-extracted.log
 SNAPPY_GIT_UNPACKED:=$(TARGET)/snappy-git-extracted.log
 SNAPPY_CMAKE_CACHE=$(SNAPPY_OUT)/CMakeCache.txt
