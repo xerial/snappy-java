@@ -305,7 +305,7 @@ Linux-riscv64_LIBNAME   := libsnappyjava.so
 Linux-riscv64_SNAPPY_FLAGS:=
 
 Windows-aarch64_CXX       := $(CROSS_PREFIX)g++
-Windows-aarch64_STRIP     := strip -x
+Windows-aarch64_STRIP     := $(CROSS_PREFIX)strip
 Windows-aarch64_CXXFLAGS  := -Ilib/inc_mac -I$(JAVA_HOME)/include -O2 -fPIC -march=armv8-a -fvisibility=hidden -D_WIN32 -DNOMINMAX -std=c++11
 Windows-aarch64_LINKFLAGS := -shared -Wl,--out-implib,libsnappyjava.dll.a -Wl,--export-all-symbols
 Windows-aarch64_LIBNAME   := libsnappyjava.dll
