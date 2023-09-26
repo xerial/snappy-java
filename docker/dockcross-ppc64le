@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-ppc64le
+DEFAULT_DOCKCROSS_IMAGE=dockcross/linux-ppc64le:20210624-de7b1b0
 
 #------------------------------------------------------------------------------
 # Helpers
