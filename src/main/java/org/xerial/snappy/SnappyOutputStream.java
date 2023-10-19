@@ -119,6 +119,13 @@ public class SnappyOutputStream
         if (closed) {
             throw new IOException("Stream is closed");
         }
+
+        //Check length
+        assert byteLength <= b.length : "length parameter exceeds array size";
+
+        //check 31 bit integer limit
+        assert byteLength <= Integer.MAX_VALUE : "length parameter exceeds 31-bit integer limit";
+        
         int cursor = 0;
         while (cursor < byteLength) {
             int readLen = Math.min(byteLength - cursor, blockSize - inputCursor);
