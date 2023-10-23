@@ -240,9 +240,6 @@ linux-s390x: jni-header
 windows-aarch64: jni-header
 	./docker/dockcross-windows-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/aarch64-w64-mingw32-cross/bin/aarch64-w64-mingw32- OS_NAME=Windows OS_ARCH=aarch64'
 
-linux-loongarch64: jni-header
-	./docker/dockcross-loongarch64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=/usr/xcc/loongarch64-unknown-linux-gnu/bin/loongarch64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=loongarch64'
-
 javadoc:
 	$(SBT) doc
 
