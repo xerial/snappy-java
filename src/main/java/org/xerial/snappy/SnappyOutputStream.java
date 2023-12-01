@@ -121,10 +121,10 @@ public class SnappyOutputStream
         }
 
         //Check length
-        assert byteLength <= b.length : "length parameter exceeds array size";
+        assert (byteLength <= b.length) : "length parameter exceeds array size";
 
         //check 31 bit integer limit
-        assert byteLength <= Integer.MAX_VALUE : "length parameter exceeds 31-bit integer limit";
+        assert (byteLength <= Integer.MAX_VALUE) : "length parameter exceeds 31-bit integer limit";
         
         int cursor = 0;
         while (cursor < byteLength) {
