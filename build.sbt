@@ -73,7 +73,7 @@ crossPaths       := false
 
 libraryDependencies ++= Seq(
   "junit"               % "junit"              % "4.13.2"  % "test",
-  "org.codehaus.plexus" % "plexus-classworlds" % "2.7.0"   % "test",
+  "org.codehaus.plexus" % "plexus-classworlds" % "2.8.0"   % "test",
   "org.xerial.java"     % "xerial-core"        % "2.1"     % "test",
   "org.wvlet.airframe" %% "airframe-log"       % "23.12.1" % "test",
   "org.osgi"            % "org.osgi.core"      % "6.0.0"   % "provided",
