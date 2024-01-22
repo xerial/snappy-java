@@ -27,7 +27,7 @@ jobs:
       - uses: olafurpg/setup-scala@v14
         with:
           java-version: adopt@1.11
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.cache
           key: ${{ runner.os }}-snapshot-${{ hashFiles('**/*.sbt') }}
