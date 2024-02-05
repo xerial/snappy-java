@@ -40,7 +40,7 @@ jobs:
           OCI_EXE: docker
       - name: Create Pull Request
         if: ${{ github.event_name != 'pull_request' }}
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           title: Update native libraries
           commit-message: Update native libraries for ${{ github.sha }}
