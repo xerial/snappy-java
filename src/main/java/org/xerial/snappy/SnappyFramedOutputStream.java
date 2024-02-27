@@ -24,7 +24,7 @@ import org.xerial.snappy.pool.DefaultPoolFactory;
 
 /**
  * Implements the <a
- * href="http://snappy.googlecode.com/svn/trunk/framing_format.txt"
+ * href="https://github.com/google/snappy/blob/main/framing_format.txt"
  * >x-snappy-framed</a> as an {@link OutputStream} and
  * {@link WritableByteChannel}.
  *
