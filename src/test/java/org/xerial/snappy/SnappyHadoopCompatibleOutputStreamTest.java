@@ -2,7 +2,6 @@ package org.xerial.snappy;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.compress.SnappyCodec;
 import org.junit.AfterClass;
@@ -25,13 +24,13 @@ public class SnappyHadoopCompatibleOutputStreamTest
     {
         final String libResourceFolder;
         Map<String, String> libraryNames = new LinkedHashMap<>();
-        if (SystemUtils.IS_OS_LINUX) {
+        if (OSInfo.getOSName() == "Linux") {
             libResourceFolder = "/lib/Linux";
             libraryNames.put("libhadoop.so", "libhadoop.so");
             // certain Linux systems need these shared library be copied before the JVM started, see build.sbt
             libraryNames.put("libsnappy.so", "libsnappy.so");
             libraryNames.put("libsnappy.so.1", "libsnappy.so");
-        } else if (SystemUtils.IS_OS_MAC_OSX) {
+        } else if (OSInfo.getOSName() == "Mac") {
             libResourceFolder = "/lib/MacOSX";
             libraryNames.put("libhadoop.dylib", "libhadoop.dylib");
             libraryNames.put("libsnappy.dylib", "libsnappy.dylib");
