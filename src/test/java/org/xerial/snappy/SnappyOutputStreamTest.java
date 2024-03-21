@@ -179,6 +179,9 @@ public class SnappyOutputStreamTest
         // compression quality:
         if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN)
             assertEquals(90992, expectedCompressedData.length);
+        else if(OSInfo.getArchName() == "aarch64")
+            // Arm has a better compression ratio
+            assertEquals(91051, expectedCompressedData.length);
         else
             assertEquals(91080, expectedCompressedData.length);
         // The chunk size should not affect the size of the compressed output:
