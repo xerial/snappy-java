@@ -1,0 +1,11 @@
+{
+  "resources": {
+    "includes": [
+      {"pattern":".*libsnappyjava.dylib"},
+      {"pattern":".*libsnappyjava.so"},
+      {"pattern":".*libsnappyjava.dll"},
+      {"pattern":".*libsnappyjava.a"}
+    ]
+  },
+  "bundles": []
+}
