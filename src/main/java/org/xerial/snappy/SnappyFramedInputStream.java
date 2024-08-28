@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
@@ -669,17 +670,9 @@ public final class SnappyFramedInputStream
     private FrameData getFrameData(ByteBuffer content)
             throws IOException
     {
-        return new FrameData(getCrc32c(content), 4);
-    }
-
-    private int getCrc32c(ByteBuffer content)
-    {
-
-        final int position = content.position();
-
-        return ((content.get(position + 3) & 0xFF) << 24)
-                | ((content.get(position + 2) & 0xFF) << 16)
-                | ((content.get(position + 1) & 0xFF) << 8)
-                | (content.get(position) & 0xFF);
+        // the first 4 bytes are the crc32c value in little endian order
+        content.order(ByteOrder.LITTLE_ENDIAN);
+        final int crc32c = content.getInt(content.position());
+        return new FrameData(crc32c, 4);
     }
 }
