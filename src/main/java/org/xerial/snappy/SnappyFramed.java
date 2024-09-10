@@ -4,6 +4,7 @@
 package org.xerial.snappy;
 
 import java.io.IOException;
+import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -37,21 +38,27 @@ final class SnappyFramed
         Supplier<Checksum> supplier = null;
         try
         {
-            final Class crc32cClazz = Class.forName("java.util.zip.CRC32C");
-            final MethodHandles.Lookup lookup = MethodHandles.publicLookup();
-            
-            final MethodHandle conHandle = lookup.findConstructor(crc32cClazz, MethodType.methodType(void.class))
-                                                 .asType(MethodType.methodType(Checksum.class));
-            supplier = () -> {
-                try
-                {
-                    return (Checksum) conHandle.invokeExact();
-                }
-                catch (Throwable e)
-                {
-                    throw new IllegalStateException(e);
-                }
-            };
+            final Class<?> crc32cClazz = Class.forName("java.util.zip.CRC32C");
+            // using LambdaMetafactory requires a caller sensitive lookup
+            final MethodHandles.Lookup lookup = MethodHandles.lookup();
+            final MethodHandle conHandle = lookup.findConstructor(crc32cClazz, MethodType.methodType(void.class));
+
+            // use LambdaMetafactory to generate an implementation of Supplier<Checksum> which invokes
+            // the java.util.zip.CRC32C default constructor
+            supplier = (Supplier<Checksum>) LambdaMetafactory.metafactory(lookup, 
+                                                                          // method name on Supplier
+                                                                          "get",
+                                                                          // functional interface to be created by factory
+                                                                          MethodType.methodType(Supplier.class),
+                                                                          // type of the functional interface
+                                                                          // uses a generic, so erasure to Object
+                                                                          MethodType.methodType(Object.class), 
+                                                                          // the method handle to call
+                                                                          conHandle,
+                                                                          // type as used at call site
+                                                                          MethodType.methodType(Checksum.class))
+                                                             .getTarget()
+                                                             .invoke();
         }
         catch(Throwable t)
         {
