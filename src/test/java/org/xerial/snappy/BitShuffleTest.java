@@ -276,6 +276,22 @@ public class BitShuffleTest {
         byte[] shuffledData = BitShuffle.shuffle(data);
         long[] result = BitShuffle.unshuffleLongArray(shuffledData);
         assertArrayEquals(data, result);
+        long[] output = new long[data.length];
+        BitShuffle.unshuffleLongArray(shuffledData, output);
+        assertArrayEquals(data, output);
+    }
+
+    @Test
+    public void shuffleByteArray()
+            throws Exception
+    {
+        byte[] data = new byte[] {43, -32, 1, 3, 34, 43, 34, Byte.MAX_VALUE, -1};
+        byte[] shuffledData = BitShuffle.shuffle(data);
+        byte[] result = BitShuffle.unshuffleByteArray(shuffledData);
+        assertArrayEquals(data, result);
+        byte[] output = new byte[data.length];
+        BitShuffle.unshuffleByteArray(shuffledData, output);
+        assertArrayEquals(data, output);
     }
 
     @Test
@@ -286,6 +302,9 @@ public class BitShuffleTest {
         byte[] shuffledData = BitShuffle.shuffle(data);
         short[] result = BitShuffle.unshuffleShortArray(shuffledData);
         assertArrayEquals(data, result);
+        short[] output = new short[data.length];
+        BitShuffle.unshuffleShortArray(shuffledData, output);
+        assertArrayEquals(data, output);
     }
 
     @Test
@@ -296,6 +315,9 @@ public class BitShuffleTest {
         byte[] shuffledData = BitShuffle.shuffle(data);
         int[] result = BitShuffle.unshuffleIntArray(shuffledData);
         assertArrayEquals(data, result);
+        int[] output = new int[data.length];
+        BitShuffle.unshuffleIntArray(shuffledData, output);
+        assertArrayEquals(data, output);
     }
 
     @Test
@@ -306,6 +328,9 @@ public class BitShuffleTest {
         byte[] shuffledData = BitShuffle.shuffle(data);
         float[] result = BitShuffle.unshuffleFloatArray(shuffledData);
         assertArrayEquals(data, result, 0.0000001f);
+        float[] output = new float[data.length];
+        BitShuffle.unshuffleFloatArray(shuffledData, output);
+        assertArrayEquals(data, output);
     }
 
     @Test
@@ -316,5 +341,8 @@ public class BitShuffleTest {
         byte[] shuffledData = BitShuffle.shuffle(data);
         double[] result = BitShuffle.unshuffleDoubleArray(shuffledData);
         assertArrayEquals(data, result, 0.0000001f);
+        double[] output = new double[data.length];
+        BitShuffle.unshuffleDoubleArray(shuffledData, output);
+        assertArrayEquals(data, output);
     }
 }
