@@ -209,6 +209,35 @@ public class BitShuffle
     }
 
     /**
+     * Convert the input bit-shuffled byte array into an original byte array.
+     *
+     * @param input
+     * @return a byte array
+     * @throws IOException
+     */
+    public static byte[] unshuffleByteArray(byte[] input) throws IOException {
+        byte[] output = new byte[input.length];
+        int numProcessed = impl.unshuffle(input, 0, 1, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return output;
+    }
+
+    /**
+     * Convert the input bit-shuffled byte array into an original byte array.
+     *
+     * @param input
+     * @param output
+     * @return byte size of the unshuffled data.
+     * @throws IOException
+     */
+    public static int unshuffleByteArray(byte[] input, byte[] output) throws IOException {
+        assert(input.length == output.length);
+        int numProcessed = impl.unshuffle(input, 0, 1, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return numProcessed;
+    }
+
+    /**
      * Convert the input bit-shuffled byte array into an original short array.
      *
      * @param input
@@ -220,6 +249,21 @@ public class BitShuffle
         int numProcessed = impl.unshuffle(input, 0, 2, input.length, output, 0);
         assert(numProcessed == input.length);
         return output;
+    }
+
+    /**
+     * Convert the input bit-shuffled byte array into an original short array.
+     *
+     * @param input
+     * @param output
+     * @return byte size of the unshuffled data.
+     * @throws IOException
+     */
+    public static int unshuffleShortArray(byte[] input, short[] output) throws IOException {
+        assert(input.length == output.length * 2);
+        int numProcessed = impl.unshuffle(input, 0, 2, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return numProcessed;
     }
 
     /**
@@ -237,6 +281,21 @@ public class BitShuffle
     }
 
     /**
+     * Convert the input bit-shuffled byte array into an original int array.
+     *
+     * @param input
+     * @param output
+     * @return byte size of the unshuffled data.
+     * @throws IOException
+     */
+    public static int unshuffleIntArray(byte[] input, int[] output) throws IOException {
+        assert(input.length == output.length * 4);
+        int numProcessed = impl.unshuffle(input, 0, 4, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return numProcessed;
+    }
+
+    /**
      * Convert the input bit-shuffled byte array into an original long array.
      *
      * @param input
@@ -248,6 +307,21 @@ public class BitShuffle
         int numProcessed = impl.unshuffle(input, 0, 8, input.length, output, 0);
         assert(numProcessed == input.length);
         return output;
+    }
+
+    /**
+     * Convert the input bit-shuffled byte array into an original long array.
+     *
+     * @param input
+     * @param output
+     * @return byte size of the unshuffled data.
+     * @throws IOException
+     */
+    public static int unshuffleLongArray(byte[] input, long[] output) throws IOException {
+        assert(input.length == output.length * 8);
+        int numProcessed = impl.unshuffle(input, 0, 8, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return numProcessed;
     }
 
     /**
@@ -265,6 +339,21 @@ public class BitShuffle
     }
 
     /**
+     * Convert the input bit-shuffled byte array into an original float array.
+     *
+     * @param input
+     * @param output
+     * @return byte size of the unshuffled data.
+     * @throws IOException
+     */
+    public static int unshuffleFloatArray(byte[] input, float[] output) throws IOException {
+        assert(input.length == output.length * 4);
+        int numProcessed = impl.unshuffle(input, 0, 4, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return numProcessed;
+    }
+
+    /**
      * Convert the input bit-shuffled byte array into an original double array.
      *
      * @param input
@@ -276,5 +365,20 @@ public class BitShuffle
         int numProcessed = impl.unshuffle(input, 0, 8, input.length, output, 0);
         assert(numProcessed == input.length);
         return output;
+    }
+
+    /**
+     * Convert the input bit-shuffled byte array into an original double array.
+     *
+     * @param input
+     * @param output
+     * @return byte size of the unshuffled data.
+     * @throws IOException
+     */
+    public static int unshuffleDoubleArray(byte[] input, double[] output) throws IOException {
+        assert(input.length == output.length * 8);
+        int numProcessed = impl.unshuffle(input, 0, 8, input.length, output, 0);
+        assert(numProcessed == input.length);
+        return numProcessed;
     }
 }
