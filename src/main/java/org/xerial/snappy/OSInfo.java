@@ -44,6 +44,7 @@ public class OSInfo {
     public static final String IA64 = "ia64";
     public static final String PPC = "ppc";
     public static final String PPC64 = "ppc64";
+    public static final String PPC64LE = "ppc64le";
     public static final String IBMZ = "s390";
     public static final String IBMZ_64 = "s390x";
     public static final String AARCH_64 = "aarch64";
@@ -79,6 +80,9 @@ public class OSInfo {
         archMapping.put("powerpc", PPC);
         archMapping.put("power_pc", PPC);
         archMapping.put("power_rs", PPC);
+
+        // PowerPC 64bit Little Endian mappings
+        archMapping.put(PPC64LE, PPC64LE);
 
         // TODO: PowerPC 64bit mappings
         archMapping.put(PPC64, PPC64);
