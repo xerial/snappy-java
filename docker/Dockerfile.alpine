@@ -1,0 +1,48 @@
+FROM alpine:3.18
+
+# Install build dependencies
+RUN apk add --no-cache \
+    openjdk11 \
+    cmake \
+    make \
+    gcc \
+    g++ \
+    musl-dev \
+    linux-headers
+
+# Set workspace directory
+WORKDIR /workspace
+
+# Copy the source code
+COPY . .
+
+# Build the project
+ENV CC=gcc CXX=g++ TARGET_OS=Linux-musl
+
+# Install Maven
+RUN apk add --no-cache maven
+
+# Build with Maven
+RUN mvn package -Dlibrary.name=libsnappyjava.so -DskipTests -DskipJavadoc=true
+
+# Install snappy dependencies
+RUN apk add --no-cache snappy-dev
+
+# Compile and link statically
+RUN cd target/native/Linux-musl/x86_64 && \
+    ${CXX} -std=c++11 -O2 -fPIC -DPIC -D_GNU_SOURCE \
+    -I../../../../src/main/java/org/xerial/snappy/ \
+    -I/usr/include \
+    -shared -static-libstdc++ -static-libgcc \
+    ../../../../src/main/java/org/xerial/snappy/SnappyNative.cpp \
+    -L/usr/lib -lsnappy \
+    -o libsnappyjava.so
+
+# Create necessary directories
+RUN mkdir -p src/main/resources/org/xerial/snappy/native/Linux-musl/x86_64/
+
+# Copy the built library
+RUN cp target/native/Linux-musl/x86_64/libsnappyjava.so src/main/resources/org/xerial/snappy/native/Linux-musl/x86_64/
+
+# Set the entry point
+ENTRYPOINT ["java"]
