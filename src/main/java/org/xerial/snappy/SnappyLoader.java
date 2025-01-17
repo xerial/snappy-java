@@ -327,20 +327,7 @@ public class SnappyLoader
         }
 
         // Load an OS-dependent native library inside a jar file
-        String osName = OSInfo.getOSName();
-        // Check for musl by looking at the output of ldd --version
-        try {
-            Process p = Runtime.getRuntime().exec(new String[]{"ldd", "--version"});
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
-                String line = br.readLine();
-                if (line != null && line.toLowerCase().contains("musl")) {
-                    osName = "Linux-musl";
-                }
-            }
-        } catch (Exception e) {
-            // Ignore errors - default to normal Linux detection
-        }
-        snappyNativeLibraryPath = "/org/xerial/snappy/native/" + osName + "/" + OSInfo.getArchName();
+        snappyNativeLibraryPath = "/org/xerial/snappy/native/" + OSInfo.getNativeLibFolderPathForCurrentOS();
         boolean hasNativeLib = hasResource(snappyNativeLibraryPath + "/" + snappyNativeLibraryName);
         if (!hasNativeLib) {
             if (OSInfo.getOSName().equals("Mac")) {

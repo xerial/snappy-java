@@ -1,1 +1,0 @@
-This directory contains native libraries for Linux-musl x86_64 platform
