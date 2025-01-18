@@ -108,16 +108,16 @@ Linux-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_64_LIBNAME   := libsnappyjava.so
 Linux-x86_64_SNAPPY_FLAGS  :=
 
-Linux-x86_64_musl_CXX       := $(CROSS_PREFIX)g++
-Linux-x86_64_musl_STRIP     := $(CROSS_PREFIX)strip
+Alpine-x86_64_CXX       := $(CROSS_PREFIX)g++
+Alpine-x86_64_STRIP     := $(CROSS_PREFIX)strip
 ifeq ($(IBM_JDK_7),)
-  Linux-x86_64_musl_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
+  Alpine-x86_64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
 else
-  Linux-x86_64_musl_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
+  Alpine-x86_64_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
 endif
-Linux-x86_64_musl_LINKFLAGS := -shared -static-libgcc -static-libstdc++
-Linux-x86_64_musl_LIBNAME   := libsnappyjava.so
-Linux-x86_64_musl_SNAPPY_FLAGS  :=
+Alpine-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Alpine-x86_64_LIBNAME   := libsnappyjava.so
+Alpine-x86_64_SNAPPY_FLAGS  :=
 
 Linux-ppc_CXX         := g++
 Linux-ppc_STRIP       := strip

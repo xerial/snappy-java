@@ -31,6 +31,6 @@ RUN python3 -m ensurepip
 RUN pip3 install --no-cache --upgrade pip setuptools
 
 # Set Env Vars
-ENV CC=gcc CXX=g++ TARGET_OS=LinuxMUSL
+ENV CC=gcc CXX=g++
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
