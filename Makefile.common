@@ -6,12 +6,6 @@ ifndef JAVA_HOME
 $(warning Set JAVA_HOME environment variable)
 endif
 
-ifeq ($(shell ldd --version | grep -o 'musl'), musl)
-    MUSL_ENABLED := true
-else
-    MUSL_ENABLED := false
-endif
-
 JAVA  := "$$JAVA_HOME/bin/java"
 JAVAC := "$$JAVA_HOME/bin/javac"
 JAVAH := "$$JAVA_HOME/bin/javah"
