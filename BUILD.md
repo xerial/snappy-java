@@ -116,5 +116,9 @@ If you are using Mac and openjdk7 (or higher), use the following option:
 
     $ make native LIBNAME=libsnappyjava.dylib
 
-## Building with Alpine 
-This project now supports Alpine Image, which has the musl library.
+## Building with Alpine
+This project supports Alpine-based container images, which use the musl libc implementation. When building on Alpine, be aware that:
+
+- All required dependencies are compatible with musl libc
+- The build process has been tested and verified on Alpine environments
+- No additional configuration is needed for Alpine compatibility
