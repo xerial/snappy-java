@@ -60,8 +60,8 @@ public class SnappyOutputStream
         extends OutputStream
 {
     public static final int MAX_BLOCK_SIZE = 512 * 1024 * 1024; // 512 MiB
-    static final int MIN_BLOCK_SIZE = 1 * 1024;
-    static final int DEFAULT_BLOCK_SIZE = 32 * 1024; // Use 32kb for the default block size
+    public static final int MIN_BLOCK_SIZE = 1 * 1024;
+    public static final int DEFAULT_BLOCK_SIZE = 32 * 1024; // Use 32kb for the default block size
 
     protected final OutputStream out;
     private final int blockSize;
