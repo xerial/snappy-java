@@ -3,7 +3,7 @@
     "includes": [
       {"pattern":".*libsnappyjava.dylib"},
       {"pattern":".*libsnappyjava.so"},
-      {"pattern":".*libsnappyjava.dll"},
+      {"pattern":".*snappyjava.dll"},
       {"pattern":".*libsnappyjava.a"}
     ]
   },
