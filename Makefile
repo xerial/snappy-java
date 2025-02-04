@@ -200,7 +200,7 @@ linux64: jni-header
 	docker run $(DOCKER_RUN_OPTS) -i -v $$PWD:/work xerial/centos5-linux-x86_64-pic bash -c 'make clean-native native-nocmake OS_NAME=Linux OS_ARCH=x86_64'
 
 alpine-image:
-	docker build -f docker/Dockerfile.alpine -t snappy-java-alpine .
+	docker build -f docker/Dockerfile.alpine-linux-x86_64 -t snappy-java-alpine .
 
 alpine: jni-header
 	docker run $(DOCKER_RUN_OPTS) -i -v $$PWD:/work snappy-java-alpine bash -c 'make clean-native native-nocmake OS_NAME=Alpine OS_ARCH=x86_64'
