@@ -232,7 +232,13 @@ public class OSInfo {
     }
 
     private static boolean isMusl() {
-        return new File("/lib/ld-musl-x86_64.so.1").exists();
+        try {
+            return new File("/lib/ld-musl-x86_64.so.1").exists();
+        } 
+        catch (Exception e) {
+            System.err.println("Error while checking if ld-musl-x86_64.so.1 exists");
+            return false;
+        }
     }
 
     static String translateOSNameToFolderName(String osName) {
