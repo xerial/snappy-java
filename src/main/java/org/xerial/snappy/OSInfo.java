@@ -25,6 +25,7 @@
 package org.xerial.snappy;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -215,6 +216,10 @@ public class OSInfo {
             return "android-arm";
         }
 
+        if (isMusl()) {
+            return "x86_64-musl";
+        }
+
         if(osArch.startsWith("arm")) {
             osArch = resolveArmArchType();
         }
@@ -224,6 +229,10 @@ public class OSInfo {
                 return archMapping.get(lc);
         }
         return translateArchNameToFolderName(osArch);
+    }
+
+    private static boolean isMusl() {
+        return new File("/lib/ld-musl-x86_64.so.1").exists();
     }
 
     static String translateOSNameToFolderName(String osName) {
