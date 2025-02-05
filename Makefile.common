@@ -50,7 +50,7 @@ endif
 # os=Default is meant to be generic unix/linux
 
 # To support new CPU architecture, add a new target name here
-known_os_archs := Alpine-x86_64 Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-android-aarch64 Linux-aarch64 Linux-ppc Linux-ppc64 Linux-ppc64le Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 Mac-aarch64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 Windows-aarch64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64 Linux-riscv Linux-riscv64 Linux-loongarch Linux-loongarch64
+known_os_archs := Linux-x86_64-alpine Linux-x86 Linux-x86_64 Linux-arm Linux-armv6 Linux-armv7 Linux-android-arm Linux-android-aarch64 Linux-aarch64 Linux-ppc Linux-ppc64 Linux-ppc64le Linux-s390 Linux-s390x Mac-x86 Mac-x86_64 Mac-aarch64 FreeBSD-x86_64 Windows-x86 Windows-x86_64 Windows-aarch64 SunOS-x86 SunOS-sparc SunOS-x86_64 AIX-ppc AIX-ppc64 Linux-riscv Linux-riscv64 Linux-loongarch Linux-loongarch64
 os_arch := $(OS_NAME)-$(OS_ARCH)
 IBM_JDK_7 := $(findstring IBM, $(shell $(JAVA) -version 2>&1 | grep IBM | grep "JRE 1.7"))
 
@@ -102,16 +102,16 @@ Linux-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
 Linux-x86_64_LIBNAME   := libsnappyjava.so
 Linux-x86_64_SNAPPY_FLAGS  :=
 
-Alpine-x86_64_CXX       := $(CROSS_PREFIX)g++
-Alpine-x86_64_STRIP     := $(CROSS_PREFIX)strip
+Linux-x86_64-alpine_CXX       := $(CROSS_PREFIX)g++
+Linux-x86_64-alpine_STRIP     := $(CROSS_PREFIX)strip
 ifeq ($(IBM_JDK_7),)
-  Alpine-x86_64_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
+  Linux-x86_64-alpine_CXXFLAGS  := -Ilib/inc_linux -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
 else
-  Alpine-x86_64_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
+  Linux-x86_64-alpine_CXXFLAGS  := -include $(IBM_JDK_LIB)/jni_md.h -include $(IBM_JDK_LIB)/jniport.h -I$(JAVA_HOME)/include -O2 -fPIC -fvisibility=hidden -m64 -std=c++11
 endif
-Alpine-x86_64_LINKFLAGS := -shared -static-libgcc -static-libstdc++
-Alpine-x86_64_LIBNAME   := libsnappyjava.so
-Alpine-x86_64_SNAPPY_FLAGS  :=
+Linux-x86_64-alpine_LINKFLAGS := -shared -static-libgcc -static-libstdc++
+Linux-x86_64-alpine_LIBNAME   := libsnappyjava.so
+Linux-x86_64-alpine_SNAPPY_FLAGS  :=
 
 Linux-ppc_CXX         := g++
 Linux-ppc_STRIP       := strip
