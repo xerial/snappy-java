@@ -216,7 +216,7 @@ public class OSInfo {
             return "android-arm";
         }
 
-        if (isMusl()) {
+        if (isX64Musl()) {
             return "x86_64-musl";
         }
 
@@ -231,12 +231,11 @@ public class OSInfo {
         return translateArchNameToFolderName(osArch);
     }
 
-    private static boolean isMusl() {
+    private static boolean isX64Musl() {
         try {
             return new File("/lib/ld-musl-x86_64.so.1").exists();
         } 
         catch (Exception e) {
-            System.err.println("Error while checking if ld-musl-x86_64.so.1 exists: " + e.getMessage());
             return false;
         }
     }
