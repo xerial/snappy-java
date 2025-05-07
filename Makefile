@@ -94,13 +94,13 @@ snappy-header: $(SNAPPY_CMAKE_CACHE)
 
 $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class: $(SRC)/org/xerial/snappy/SnappyNative.java
 	@mkdir -p $(TARGET)/jni-classes
-	$(JAVAC) -source 1.7 -target 1.7 -h $(SRC)/org/xerial/snappy/ -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+	$(JAVAC) -source 8 -target 8 -h $(SRC)/org/xerial/snappy/ -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/SnappyNative.h: $(TARGET)/jni-classes/org/xerial/snappy/SnappyNative.class
 
 $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class: $(SRC)/org/xerial/snappy/BitShuffleNative.java
 	@mkdir -p $(TARGET)/jni-classes
-	$(JAVAC) -source 1.7 -target 1.7 -h $(SRC)/org/xerial/snappy/ -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
+	$(JAVAC) -source 8 -target 8 -h $(SRC)/org/xerial/snappy/ -d $(TARGET)/jni-classes -sourcepath $(SRC) $<
 
 $(SRC)/org/xerial/snappy/BitShuffleNative.h: $(TARGET)/jni-classes/org/xerial/snappy/BitShuffleNative.class
 
