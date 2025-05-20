@@ -6,4 +6,4 @@ centos5-image:
 	# docker push xerial/centos5-linux-x86_64:latest
 
 multiarch-crossbuild-image:
-	docker build https://github.com/kmturley/crossbuild.git#master -t xerial/crossbuild:latest
+	docker build https://github.com/kmturley/crossbuild.git -t xerial/crossbuild:latest
