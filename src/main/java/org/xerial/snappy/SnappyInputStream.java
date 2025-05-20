@@ -448,12 +448,7 @@ public class SnappyInputStream
         // extend the compressed data buffer size
         if (compressed == null || chunkSize > compressed.length) {
             // chunkSize exceeds limit
-            try {
-                compressed = new byte[chunkSize];
-            }
-            catch (java.lang.OutOfMemoryError e) {
-                throw new SnappyError(SnappyErrorCode.INVALID_CHUNK_SIZE, e.getMessage());
-            }
+            compressed = new byte[chunkSize];
         }
         readBytes = 0;
         while (readBytes < chunkSize) {
