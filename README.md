@@ -51,6 +51,12 @@ Snappy-java is available from Maven's central repository. Add the following depe
       <scope>compile</scope>
     </dependency>
 
+### Using with Gradle
+
+```
+implementation("org.xerial.snappy:snappy-java:(version)")
+```
+
 ### Using with sbt
 
 ```
