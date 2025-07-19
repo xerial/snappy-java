@@ -23,12 +23,6 @@ snappy-java is a Java port of Google's Snappy compression library, providing fas
 # Create jar file
 ./sbt package
 
-# Run FindBugs static analysis
-./sbt findbugs
-
-# Generate code coverage report
-./sbt jacoco:cover
-
 # Publish to local Maven repository
 ./sbt publishM2
 
