@@ -82,8 +82,8 @@ The project uses Docker-based cross-compilation toolchains (see `docker/` direct
 ## Testing
 
 ```bash
-# Run all tests with verbose output
-./sbt "testOnly * -- -v"
+# Run all tests with debug logging
+./sbt "testOnly * -- -l debug"
 
 # Run specific test class
 ./sbt "testOnly org.xerial.snappy.SnappyTest"
