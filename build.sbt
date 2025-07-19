@@ -5,8 +5,11 @@ organization     := "org.xerial.snappy"
 organizationName := "xerial.org"
 description      := "snappy-java: A fast compression/decompression library"
 
-sonatypeProfileName   := "org.xerial"
-ThisBuild / publishTo := sonatypePublishToBundle.value
+ThisBuild / publishTo := {
+  val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+  if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
+  else localStaging.value
+}
 licenses              := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
 homepage              := Some(url("https://github.com/xerial/snappy-java"))
 scmInfo := Some(

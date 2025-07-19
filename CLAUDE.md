@@ -107,7 +107,31 @@ The project uses Docker-based cross-compilation toolchains (see `docker/` direct
 - Run tests before creating PR: `./sbt test`
 - Format code: `./sbt scalafmtAll`
 
+### Release Process
+The project uses sbt's built-in Sonatype integration for publishing:
+
+```bash
+# 1. Stage artifacts to Sonatype
+./sbt publishSigned
+
+# 2. Release to Maven Central
+./sbt sonaRelease
+```
+
+**Prerequisites:**
+- Set up Sonatype credentials in `~/.sbt/1.0/sonatype.sbt`:
+  ```scala
+  credentials += Credentials("Sonatype Nexus Repository Manager",
+                            "s01.oss.sonatype.org",
+                            "<username>",
+                            "<password>")
+  ```
+- Configure PGP signing for artifact signing
+
 ### Common Development Tasks
 - When making changes to native code, rebuild with `make clean-native native`
 - For Java/Scala changes, use `./sbt ~test` for continuous testing
 - Always test on multiple JDK versions if possible (8, 11, 17, 21)
+
+### Native Code Testing
+- Use make clean-native native for testing native code
