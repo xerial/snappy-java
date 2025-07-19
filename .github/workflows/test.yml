@@ -2,30 +2,35 @@ name: CI
 
 on:
   pull_request:
-    paths:
-      - '**.scala'
-      - '**.java'
-      - '**.sbt'
-      - '.github/workflows/*.yml'
-      - '**.so'
-      - '**.dll'
-      - 'src/main/resources/**'
-      - 'project/build.properties'
   push:
     branches:
       - master
       - main
-    paths:
-      - '**.scala'
-      - '**.java'
-      - '**.sbt'
-      - '.github/workflows/*.yml'
-      - 'src/main/resources/org/xerial/snappy/**'
-      - 'project/build.properties'
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - '**.scala'
+              - '**.java'
+              - '**.sbt'
+              - '.github/workflows/*.yml'
+              - '**.so'
+              - '**.dll'
+              - 'src/main/resources/**'
+              - 'project/build.properties'
   code_format:
     name: code format
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,6 +41,8 @@ jobs:
       matrix:
         version: [ '8', '11', '17', '21' ]
     name: test jdk${{ matrix.version }}
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,3 +57,25 @@ jobs:
           restore-keys: ${{ runner.os }}-jdk${{ matrix.version }}-
       - name: Test
         run: ./sbt test
+
+  # Skip jobs to satisfy required status checks when no code changes
+  code_format_skip:
+    name: code format
+    needs: changes
+    if: ${{ needs.changes.outputs.code != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip code format check
+        run: echo "Skipping code format check - no code changes detected"
+
+  test-jdk_skip:
+    strategy:
+      matrix:
+        version: [ '8', '11', '17', '21' ]
+    name: test jdk${{ matrix.version }}
+    needs: changes
+    if: ${{ needs.changes.outputs.code != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip test
+        run: echo "Skipping JDK ${{ matrix.version }} tests - no code changes detected"
