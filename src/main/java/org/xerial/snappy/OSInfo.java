@@ -235,7 +235,7 @@ public class OSInfo {
         try {
             return new File("/lib/ld-musl-x86_64.so.1").exists();
         } 
-        catch (Exception e) {
+catch (SecurityException e) {
             return false;
         }
     }
