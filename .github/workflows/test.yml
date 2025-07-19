@@ -70,15 +70,3 @@ jobs:
     steps:
       - name: Skip code format check
         run: echo "Skipping code format check - no code changes detected"
-
-  test-jdk_skip:
-    strategy:
-      matrix:
-        version: [ '8', '11', '17', '21' ]
-    name: test jdk${{ matrix.version }}
-    needs: changes
-    if: ${{ needs.changes.outputs.code != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Skip test
-        run: echo "Skipping JDK ${{ matrix.version }} tests - no code changes detected"
