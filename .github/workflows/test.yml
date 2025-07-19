@@ -27,6 +27,7 @@ jobs:
               - '**.dll'
               - 'src/main/resources/**'
               - 'project/build.properties'
+              - '.scalafmt.conf'
   code_format:
     name: code format
     needs: changes
