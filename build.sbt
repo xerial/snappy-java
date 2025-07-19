@@ -27,7 +27,7 @@ ThisBuild / dynverSonatypeSnapshots := true
 // Use coursier friendly version separator
 ThisBuild / dynverSeparator := "-"
 
-ThisBuild / scalaVersion := "2.12.11"
+ThisBuild / scalaVersion := "3.7.1"
 
 // For building jars for JDK8
 ThisBuild / javacOptions ++= {
