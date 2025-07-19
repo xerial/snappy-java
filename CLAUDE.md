@@ -88,7 +88,7 @@ The project uses Docker-based cross-compilation toolchains (see `docker/` direct
 # Run specific test class
 ./sbt "testOnly org.xerial.snappy.SnappyTest"
 
-# The project uses JUnit for testing
+# The project uses AirSpec (for Scala tests) and JUnit (for Java tests)
 # Tests are located in src/test/java/org/xerial/snappy/
 ```
 
