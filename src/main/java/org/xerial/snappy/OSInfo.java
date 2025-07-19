@@ -234,8 +234,7 @@ public class OSInfo {
     private static boolean isX64Musl() {
         try {
             return new File("/lib/ld-musl-x86_64.so.1").exists();
-        } 
-catch (SecurityException e) {
+        } catch (SecurityException e) {
             return false;
         }
     }
