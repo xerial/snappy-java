@@ -30,6 +30,8 @@ jobs:
               - '.scalafmt.conf'
               - 'sbt'
               - 'sbt.bat'
+              - 'Makefile*'
+              - '**/VERSION'
   code_format:
     name: code format
     needs: changes
