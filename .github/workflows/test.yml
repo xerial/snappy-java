@@ -28,6 +28,8 @@ jobs:
               - 'src/main/resources/**'
               - 'project/build.properties'
               - '.scalafmt.conf'
+              - 'sbt'
+              - 'sbt.bat'
   code_format:
     name: code format
     needs: changes
