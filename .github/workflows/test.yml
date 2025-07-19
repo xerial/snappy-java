@@ -60,13 +60,3 @@ jobs:
           restore-keys: ${{ runner.os }}-jdk${{ matrix.version }}-
       - name: Test
         run: ./sbt test
-
-  # Skip jobs to satisfy required status checks when no code changes
-  code_format_skip:
-    name: code format
-    needs: changes
-    if: ${{ needs.changes.outputs.code != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Skip code format check
-        run: echo "Skipping code format check - no code changes detected"
