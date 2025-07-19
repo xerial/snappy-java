@@ -151,7 +151,7 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x
+native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x musl-image musl
 
 ifdef CI
 # Clean docker images within CI to avoid no space left error
@@ -198,6 +198,12 @@ linux32: jni-header
 
 linux64: jni-header
 	docker run $(DOCKER_RUN_OPTS) -i -v $$PWD:/work xerial/centos5-linux-x86_64-pic bash -c 'make clean-native native-nocmake OS_NAME=Linux OS_ARCH=x86_64'
+
+musl-image:
+	docker build -f docker/Dockerfile.linux-x86_64-musl -t snappy-java-musl .
+
+musl: jni-header
+	docker run $(DOCKER_RUN_OPTS) -i -v $$PWD:/work snappy-java-musl bash -c 'make clean-native native-nocmake OS_NAME=Linux OS_ARCH=x86_64-musl'
 
 freebsd64:
 	$(MAKE) native OS_NAME=FreeBSD OS_ARCH=x86_64
