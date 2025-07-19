@@ -105,7 +105,7 @@ The project uses Docker-based cross-compilation toolchains (see `docker/` direct
 ### Pull Request Guidelines
 - Use squashed commits when merging PRs to maintain clean commit history
 - Run tests before creating PR: `./sbt test`
-- Check code formatting: `./sbt scalafmtCheckAll`
+- Format code: `./sbt scalafmtAll`
 
 ### Common Development Tasks
 - When making changes to native code, rebuild with `make clean-native native`
