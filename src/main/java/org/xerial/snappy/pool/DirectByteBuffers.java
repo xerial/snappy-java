@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 /**
  * Utility to facilitate disposing of direct byte buffer instances.
  */
+@SuppressWarnings("removal")  // AccessController is deprecated for removal in Java 17+
 final class DirectByteBuffers {
 
     /**
