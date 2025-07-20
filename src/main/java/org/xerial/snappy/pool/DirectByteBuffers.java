@@ -35,6 +35,7 @@ final class DirectByteBuffers {
         // and https://github.com/apache/lucene-solr/blob/7e03427fa14a024ce257babcb8362d2451941e21/lucene/core/src/java/org/apache/lucene/store/MMapDirectory.java
         MethodHandle cleanHandle = null;
         try {
+            @SuppressWarnings("removal")  // AccessController is deprecated for removal in Java 17+
             final PrivilegedExceptionAction<MethodHandle> action = new PrivilegedExceptionAction<MethodHandle>() {
 
                 @Override
@@ -90,7 +91,9 @@ final class DirectByteBuffers {
                 }
             };
 
-            cleanHandle = AccessController.doPrivileged(action);
+            @SuppressWarnings("removal")  // AccessController is deprecated for removal in Java 17+
+            MethodHandle temp = AccessController.doPrivileged(action);
+            cleanHandle = temp;
 
         } catch (Throwable t) {
             Logger.getLogger(DirectByteBuffers.class.getName()).log(Level.FINE, "Exception occurred attempting to lookup Sun specific DirectByteBuffer cleaner classes.", t);
@@ -121,6 +124,7 @@ final class DirectByteBuffers {
      *
      * @param buffer The {@code ByteBuffer} to release. Must not be {@code null}. Must be  {@link ByteBuffer#isDirect() direct}.
      */
+    @SuppressWarnings("removal")  // AccessController is deprecated for removal in Java 17+
     public static void releaseDirectByteBuffer(final ByteBuffer buffer)
     {
         assert buffer != null && buffer.isDirect();
