@@ -7,20 +7,31 @@ description      := "snappy-java: A fast compression/decompression library"
 
 ThisBuild / publishTo := {
   val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
-  if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
-  else localStaging.value
+  if (isSnapshot.value)
+    Some("central-snapshots" at centralSnapshots)
+  else
+    localStaging.value
 }
-licenses              := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
-homepage              := Some(url("https://github.com/xerial/snappy-java"))
-scmInfo := Some(
-  ScmInfo(
-    browseUrl = url("https://github.com/xerial/snappy-java"),
-    connection = "scm:git@github.com:xerial/snappy-java.git"
+
+licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+homepage := Some(url("https://github.com/xerial/snappy-java"))
+scmInfo :=
+  Some(
+    ScmInfo(
+      browseUrl = url("https://github.com/xerial/snappy-java"),
+      connection = "scm:git@github.com:xerial/snappy-java.git"
+    )
   )
-)
-developers := List(
-  Developer(id = "leo", name = "Taro L. Saito", email = "leo@xerial.org", url = url("http://xerial.org/leo"))
-)
+
+developers :=
+  List(
+    Developer(
+      id = "leo",
+      name = "Taro L. Saito",
+      email = "leo@xerial.org",
+      url = url("http://xerial.org/leo")
+    )
+  )
 
 // Use dynamic snapshot version strings for non tagged versions
 ThisBuild / dynverSonatypeSnapshots := true
@@ -38,7 +49,9 @@ ThisBuild / javacOptions ++= {
     Seq.empty
   }
 }
-Compile / compile / javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
+
+Compile / compile / javacOptions ++=
+  Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation")
 
 doc / javacOptions := {
   val opts = Seq("-source", "1.8")
@@ -66,7 +79,12 @@ val linuxLibPath  = s"$libTemp:${System.getenv("LD_LIBRARY_PATH")}"
 
 // have to add to system dynamic library path since hadoop native library indirectly load libsnappy.1
 // can't use javaOptions in Test because it causes the expression to eval twice yielding different temp path values
-Test / envVars := Map("XERIAL_SNAPPY_LIB" -> libTemp, "DYLD_LIBRARY_PATH" -> macOSXLibPath, "LD_LIBRARY_PATH" -> linuxLibPath)
+Test / envVars :=
+  Map(
+    "XERIAL_SNAPPY_LIB" -> libTemp,
+    "DYLD_LIBRARY_PATH" -> macOSXLibPath,
+    "LD_LIBRARY_PATH"   -> linuxLibPath
+  )
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v")
 Test / parallelExecution := false
@@ -74,55 +92,61 @@ Test / parallelExecution := false
 autoScalaLibrary := false
 crossPaths       := false
 
-libraryDependencies ++= Seq(
-  "junit"               % "junit"              % "4.13.2"    % "test",
-  "org.codehaus.plexus" % "plexus-classworlds" % "2.9.0"     % "test",
-  "org.xerial.java"     % "xerial-core"        % "2.1"       % "test",
-  "org.wvlet.airframe" %% "airframe-log"       % "2025.1.14" % "test",
-  "org.osgi"            % "org.osgi.core"      % "6.0.0"     % "provided",
-  "com.github.sbt"      % "junit-interface"    % "0.13.3"    % "test",
-  "org.apache.hadoop"   % "hadoop-common"      % "3.4.1"     % "test" exclude ("org.xerial.snappy", "snappy-java")
-)
+libraryDependencies ++=
+  Seq(
+    "junit"               % "junit"              % "4.13.2"    % "test",
+    "org.codehaus.plexus" % "plexus-classworlds" % "2.9.0"     % "test",
+    "org.xerial.java"     % "xerial-core"        % "2.1"       % "test",
+    "org.wvlet.airframe" %% "airframe-log"       % "2025.1.16" % "test",
+    "org.osgi"            % "org.osgi.core"      % "6.0.0"     % "provided",
+    "com.github.sbt"      % "junit-interface"    % "0.13.3"    % "test",
+    "org.apache.hadoop"   % "hadoop-common"      % "3.4.1"     % "test" exclude
+      ("org.xerial.snappy", "snappy-java")
+  )
 
 enablePlugins(SbtOsgi)
 
 osgiSettings
 
-OsgiKeys.exportPackage      := Seq("org.xerial.snappy", "org.xerial.snappy.buffer", "org.xerial.snappy.pool")
+OsgiKeys.exportPackage :=
+  Seq("org.xerial.snappy", "org.xerial.snappy.buffer", "org.xerial.snappy.pool")
+
 OsgiKeys.bundleSymbolicName := "org.xerial.snappy.snappy-java"
 OsgiKeys.bundleActivator    := Option("org.xerial.snappy.SnappyBundleActivator")
 OsgiKeys.importPackage      := Seq("""org.osgi.framework;version="[1.5,2)"""")
 OsgiKeys.requireCapability  := """osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))""""
 
-OsgiKeys.additionalHeaders := Map(
-  "Bundle-NativeCode" -> Seq(
-    "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x86-64",
-    "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x64",
-    "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=amd64",
-    "org/xerial/snappy/native/Windows/x86/snappyjava.dll;osname=win32;processor=x86",
-    "org/xerial/snappy/native/Mac/x86/libsnappyjava.jnilib;osname=macosx;processor=x86",
-    "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.dylib;osname=macosx;processor=x86-64",
-    "org/xerial/snappy/native/Mac/aarch64/libsnappyjava.dylib;osname=macosx;processor=aarch64",
-    "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
-    "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x64",
-    "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=amd64",
-    "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
-    "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
-    "org/xerial/snappy/native/Linux/riscv64/libsnappyjava.so;osname=linux;processor=riscv64",
-    "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
-    "org/xerial/snappy/native/Linux/armv7/libsnappyjava.so;osname=linux;processor=arm_le",
-    "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64le",
-    "org/xerial/snappy/native/Linux/s390x/libsnappyjava.so;osname=linux;processor=s390x",
-    "org/xerial/snappy/native/Linux/loongarch64/libsnappyjava.so;osname=linux;processor=loongarch64",
-    "org/xerial/snappy/native/Linux/x86_64-musl/libsnappyjava.so;osname=linux;processor=x86-64",
-    "org/xerial/snappy/native/AIX/ppc/libsnappyjava.a;osname=aix;processor=ppc",
-    "org/xerial/snappy/native/AIX/ppc64/libsnappyjava.a;osname=aix;processor=ppc64",
-    "org/xerial/snappy/native/SunOS/x86/libsnappyjava.so;osname=sunos;processor=x86",
-    "org/xerial/snappy/native/SunOS/x86_64/libsnappyjava.so;osname=sunos;processor=x86-64",
-    "org/xerial/snappy/native/SunOS/sparc/libsnappyjava.so;osname=sunos;processor=sparc"
-  ).mkString(","),
-  "Bundle-DocURL"           -> "http://www.xerial.org/",
-  "Bundle-License"          -> "http://www.apache.org/licenses/LICENSE-2.0.txt",
-  "Bundle-ActivationPolicy" -> "lazy",
-  "Bundle-Name"             -> "snappy-java: A fast compression/decompression library"
-)
+OsgiKeys.additionalHeaders :=
+  Map(
+    "Bundle-NativeCode" ->
+      Seq(
+        "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x86-64",
+        "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=x64",
+        "org/xerial/snappy/native/Windows/x86_64/snappyjava.dll;osname=win32;processor=amd64",
+        "org/xerial/snappy/native/Windows/x86/snappyjava.dll;osname=win32;processor=x86",
+        "org/xerial/snappy/native/Mac/x86/libsnappyjava.jnilib;osname=macosx;processor=x86",
+        "org/xerial/snappy/native/Mac/x86_64/libsnappyjava.dylib;osname=macosx;processor=x86-64",
+        "org/xerial/snappy/native/Mac/aarch64/libsnappyjava.dylib;osname=macosx;processor=aarch64",
+        "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x86-64",
+        "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=x64",
+        "org/xerial/snappy/native/Linux/x86_64/libsnappyjava.so;osname=linux;processor=amd64",
+        "org/xerial/snappy/native/Linux/x86/libsnappyjava.so;osname=linux;processor=x86",
+        "org/xerial/snappy/native/Linux/aarch64/libsnappyjava.so;osname=linux;processor=aarch64",
+        "org/xerial/snappy/native/Linux/riscv64/libsnappyjava.so;osname=linux;processor=riscv64",
+        "org/xerial/snappy/native/Linux/arm/libsnappyjava.so;osname=linux;processor=arm",
+        "org/xerial/snappy/native/Linux/armv7/libsnappyjava.so;osname=linux;processor=arm_le",
+        "org/xerial/snappy/native/Linux/ppc64/libsnappyjava.so;osname=linux;processor=ppc64le",
+        "org/xerial/snappy/native/Linux/s390x/libsnappyjava.so;osname=linux;processor=s390x",
+        "org/xerial/snappy/native/Linux/loongarch64/libsnappyjava.so;osname=linux;processor=loongarch64",
+        "org/xerial/snappy/native/Linux/x86_64-musl/libsnappyjava.so;osname=linux;processor=x86-64",
+        "org/xerial/snappy/native/AIX/ppc/libsnappyjava.a;osname=aix;processor=ppc",
+        "org/xerial/snappy/native/AIX/ppc64/libsnappyjava.a;osname=aix;processor=ppc64",
+        "org/xerial/snappy/native/SunOS/x86/libsnappyjava.so;osname=sunos;processor=x86",
+        "org/xerial/snappy/native/SunOS/x86_64/libsnappyjava.so;osname=sunos;processor=x86-64",
+        "org/xerial/snappy/native/SunOS/sparc/libsnappyjava.so;osname=sunos;processor=sparc"
+      ).mkString(","),
+    "Bundle-DocURL"           -> "http://www.xerial.org/",
+    "Bundle-License"          -> "http://www.apache.org/licenses/LICENSE-2.0.txt",
+    "Bundle-ActivationPolicy" -> "lazy",
+    "Bundle-Name"             -> "snappy-java: A fast compression/decompression library"
+  )
