@@ -28,7 +28,7 @@ jobs:
     name: Build native libraries
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2.0
         with:
