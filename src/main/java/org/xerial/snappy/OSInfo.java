@@ -25,7 +25,6 @@
 package org.xerial.snappy;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -237,8 +236,9 @@ public class OSInfo {
 
     private static boolean isX64Musl() {
         try {
-            return new File("/lib/ld-musl-x86_64.so.1").exists();
+            return "true".equalsIgnoreCase(System.getenv("IS_MUSL"));
         } catch (SecurityException e) {
+            System.err.println("WARNING! Access to environment variables is restricted, not able to read IS_MUSL property.");
             return false;
         }
     }
