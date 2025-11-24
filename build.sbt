@@ -106,6 +106,11 @@ libraryDependencies ++=
 
 enablePlugins(SbtOsgi)
 
+// Add Enable-Native-Access manifest attribute for JDK 24+ (JEP 472)
+packageOptions := Seq(
+  Package.ManifestAttributes("Enable-Native-Access" -> "ALL-UNNAMED")
+)
+
 osgiSettings
 
 OsgiKeys.exportPackage :=
