@@ -63,6 +63,63 @@ implementation("org.xerial.snappy:snappy-java:(version)")
 libraryDependencies += "org.xerial.snappy" % "snappy-java" % "(version)"
 ```
 
+## JDK 24+ Native Access Requirements
+
+Starting with JDK 24, Java has introduced restrictions on native method access through [JEP 472: Prepare to Restrict the Use of JNI](https://openjdk.org/jeps/472). Since snappy-java uses JNI to load native libraries for high-performance compression, applications running on **JDK 24 or later** must enable native access.
+
+### Required JVM Flag
+
+When running on JDK 24+, add the following JVM flag to your application:
+
+```bash
+--enable-native-access=ALL-UNNAMED
+```
+
+### Examples
+
+**Running a JAR:**
+```bash
+java --enable-native-access=ALL-UNNAMED -jar your-application.jar
+```
+
+**Maven:**
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <configuration>
+    <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+  </configuration>
+</plugin>
+```
+
+**Gradle:**
+```gradle
+tasks.withType(Test) {
+    jvmArgs '--enable-native-access=ALL-UNNAMED'
+}
+```
+
+**sbt:**
+```scala
+javaOptions += "--enable-native-access=ALL-UNNAMED"
+```
+
+### Why is this needed?
+
+Per JEP 472's policy of "integrity by default," it is the application developer's responsibility (not the library's) to explicitly enable native access. This change improves security by making native operations visible and controlled at the application level.
+
+Without this flag on JDK 24+, you will see warnings like:
+```
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.xerial.snappy.SnappyLoader
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+```
+
+These warnings will become errors in future JDK releases.
+
+**Note:** This requirement only applies to JDK 24 and later. Earlier JDK versions (8-23) do not require this flag.
+
 
 ## Usage
 First, import `org.xerial.snapy.Snappy` in your Java code:
