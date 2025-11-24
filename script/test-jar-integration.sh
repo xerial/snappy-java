@@ -22,17 +22,6 @@ if [ -z "$JAR_FILE" ]; then
 fi
 echo "Using JAR: $JAR_FILE"
 
-# Check manifest
-echo ""
-echo "Checking JAR manifest..."
-jar xf "$JAR_FILE" META-INF/MANIFEST.MF
-if grep -q "Enable-Native-Access: ALL-UNNAMED" META-INF/MANIFEST.MF; then
-    echo "✓ Manifest contains Enable-Native-Access: ALL-UNNAMED"
-else
-    echo "✗ WARNING: Manifest does NOT contain Enable-Native-Access attribute"
-fi
-rm -rf META-INF
-
 # Create temp directory
 TEMP_DIR=$(mktemp -d)
 echo ""
