@@ -41,7 +41,7 @@ jobs:
   test-jdk:
     strategy:
       matrix:
-        version: [ '8', '11', '17', '21', '24' ]
+        version: [ '8', '11', '17', '21', '25' ]
     name: test jdk${{ matrix.version }}
     needs: changes
     if: ${{ needs.changes.outputs.code == 'true' }}
@@ -58,4 +58,8 @@ jobs:
           key: ${{ runner.os }}-jdk${{ matrix.version }}-${{ hashFiles('**/*.sbt') }}
           restore-keys: ${{ runner.os }}-jdk${{ matrix.version }}-
       - name: Test
-        run: ./sbt test
+        run: |
+          if [ "${{ matrix.version }}" -ge "24" ]; then
+            export _JAVA_OPTIONS="--enable-native-access=ALL-UNNAMED"
+          fi
+          ./sbt test
