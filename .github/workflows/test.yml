@@ -63,3 +63,5 @@ jobs:
             export _JAVA_OPTIONS="--enable-native-access=ALL-UNNAMED"
           fi
           ./sbt test
+      - name: JAR Integration Test
+        run: ./script/test-jar-integration.sh
