@@ -23,6 +23,7 @@ RUN apk add --no-cache \
 # Install SBT
 RUN curl -L "https://github.com/sbt/sbt/releases/download/v1.9.7/sbt-1.9.7.tgz" | tar xz -C /usr/local
 ENV PATH="/usr/local/sbt/bin:${PATH}"
+ENV IS_MUSL=true
 
 # Install python/pip
 ENV PYTHONUNBUFFERED=1
