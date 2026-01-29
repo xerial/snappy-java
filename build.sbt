@@ -104,6 +104,8 @@ libraryDependencies ++=
       ("org.xerial.snappy", "snappy-java")
   )
 
+packageOptions += Package.ManifestAttributes("Automatic-Module-Name" -> "org.xerial.snappy")
+
 enablePlugins(SbtOsgi)
 
 osgiSettings
