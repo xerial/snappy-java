@@ -527,6 +527,32 @@ public class SnappyTest
         BitShuffle.shuffle(new short[Integer.MAX_VALUE / 2 + 1]);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void uncompressDirectBufferWithInsufficientSpace()
+            throws Exception
+    {
+        byte[] orig = "Hello snappy dest bounds".getBytes();
+        ByteBuffer src = ByteBuffer.allocateDirect(orig.length);
+        src.put(orig);
+        src.flip();
+
+        ByteBuffer compressed = ByteBuffer.allocateDirect(Snappy.maxCompressedLength(orig.length));
+        Snappy.compress(src, compressed);
+
+        ByteBuffer dest = ByteBuffer.allocateDirect(8);
+        Snappy.uncompress(compressed, dest);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void uncompressByteArrayWithInsufficientSpace()
+            throws Exception
+    {
+        byte[] orig = "Hello snappy dest bounds".getBytes();
+        byte[] compressed = Snappy.compress(orig);
+        byte[] dest = new byte[8];
+        Snappy.uncompress(compressed, 0, compressed.length, dest, 0);
+    }
+
     private void assumingCIIsFalse() {
         if (System.getenv("CI") == null)
             return;

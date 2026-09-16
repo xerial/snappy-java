@@ -536,10 +536,16 @@ public class Snappy
      * @param outputOffset
      * @return the byte size of the uncompressed data
      * @throws IOException
+     * @throws IllegalArgumentException if the output array does not have enough space
      */
     public static int uncompress(byte[] input, int inputOffset, int inputLength, byte[] output, int outputOffset)
             throws IOException
     {
+        int requiredSize = uncompressedLength(input, inputOffset, inputLength);
+        if (output.length - outputOffset < requiredSize) {
+            throw new IllegalArgumentException("not enough space for output: need " + requiredSize
+                    + " bytes, but only " + (output.length - outputOffset) + " remaining");
+        }
         return rawUncompress(input, inputOffset, inputLength, output, outputOffset);
     }
 
@@ -553,10 +559,12 @@ public class Snappy
      * crash, use {@link #isValidCompressedBuffer(ByteBuffer)} first.
      *
      * @param compressed buffer[pos() ... limit()) containing the input data
-     * @param uncompressed output of the the uncompressed data. It uses buffer[pos()..]
+     * @param uncompressed output of the the uncompressed data. It uses buffer[pos()..].
+     *                     remaining() must be at least {@link #uncompressedLength(ByteBuffer)}.
      * @return uncompressed data size
      * @throws IOException when failed to uncompress the given input
      * @throws SnappyError when the input is not a direct buffer
+     * @throws IllegalArgumentException if the destination buffer does not have enough remaining space
      */
     public static int uncompress(ByteBuffer compressed, ByteBuffer uncompressed)
             throws IOException
@@ -572,6 +580,12 @@ public class Snappy
         int cPos = compressed.position();
         int cLen = compressed.remaining();
         int uPos = uncompressed.position();
+
+        int requiredSize = uncompressedLength(compressed);
+        if (uncompressed.remaining() < requiredSize) {
+            throw new IllegalArgumentException("not enough space for output: need " + requiredSize
+                    + " bytes, but only " + uncompressed.remaining() + " remaining");
+        }
 
         //         pos  limit
         // [ ......UUUUUU.........]
