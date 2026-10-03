@@ -177,9 +177,7 @@ public class SnappyOutputStreamTest
         byte[] expectedCompressedData = compressAsChunks(orig, Integer.MAX_VALUE);
         // Hardcoding an expected compressed size here will catch regressions that lower the
         // compression quality:
-        if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN)
-            assertEquals(90992, expectedCompressedData.length);
-        else if(OSInfo.getArchName() == "aarch64")
+        if(OSInfo.getArchName() == "aarch64")
             // Arm has a better compression ratio
             assertEquals(91051, expectedCompressedData.length);
         else
