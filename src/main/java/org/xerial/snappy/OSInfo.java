@@ -24,8 +24,9 @@
 //--------------------------------------
 package org.xerial.snappy;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -220,7 +221,7 @@ public class OSInfo {
             return "android-arm";
         }
 
-        if (isX64Musl()) {
+        if (isX64Musl(osArch)) {
             return "x86_64-musl";
         }
 
@@ -235,10 +236,38 @@ public class OSInfo {
         return translateArchNameToFolderName(osArch);
     }
 
-    private static boolean isX64Musl() {
+    private static boolean isX64Musl(String osArch) {
+        String lc = osArch == null ? "" : osArch.toLowerCase(Locale.US);
+        if (!System.getProperty("os.name", "").contains("Linux") || !"x86_64".equals(archMapping.get(lc))) {
+            return false;
+        }
+        // Check the C library actually loaded into this JVM process. Testing for the presence of
+        // /lib/ld-musl-x86_64.so.1 is not enough, since musl can be installed on glibc-based systems
+        // (e.g., as a dependency of other software), where the musl build of the native library fails to load.
+        return isMuslLoaded("/proc/self/maps");
+    }
+
+    static boolean isMuslLoaded(String mapsFile) {
         try {
-            return new File("/lib/ld-musl-x86_64.so.1").exists();
-        } catch (SecurityException e) {
+            BufferedReader reader = new BufferedReader(new FileReader(mapsFile));
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.contains("/ld-musl-") || line.contains("/libc.musl-")) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            finally {
+                reader.close();
+            }
+        }
+        catch (IOException e) {
+            // /proc is unavailable: fall back to the glibc build
+            return false;
+        }
+        catch (SecurityException e) {
             return false;
         }
     }
