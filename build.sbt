@@ -98,7 +98,7 @@ libraryDependencies ++=
     "org.codehaus.plexus" % "plexus-classworlds" % "2.9.0"  % "test",
     "org.osgi"            % "org.osgi.core"      % "6.0.0"  % "provided",
     "com.github.sbt"      % "junit-interface"    % "0.13.3" % "test",
-    "org.apache.hadoop"   % "hadoop-common"      % "3.4.2"  % "test" exclude
+    "org.apache.hadoop"   % "hadoop-common"      % "3.4.3"  % "test" exclude
       ("org.xerial.snappy", "snappy-java")
   )
 
