@@ -38,12 +38,11 @@ import org.junit.Assert;
 import org.xerial.snappy.buffer.BufferAllocatorFactory;
 import org.xerial.snappy.buffer.CachedBufferAllocator;
 import org.xerial.snappy.buffer.DefaultBufferAllocator;
-import org.xerial.util.FileResource;
-import org.xerial.util.log.Logger;
+import java.util.logging.Logger;
 
 public class SnappyOutputStreamTest
 {
-    private static Logger _logger = Logger.getLogger(SnappyOutputStreamTest.class);
+    private static Logger _logger = Logger.getLogger(SnappyOutputStreamTest.class.getName());
 
     @Test
     public void test()
@@ -52,7 +51,7 @@ public class SnappyOutputStreamTest
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         SnappyOutputStream sout = new SnappyOutputStream(buf);
 
-        BufferedInputStream input = new BufferedInputStream(FileResource.find(SnappyOutputStreamTest.class,
+        BufferedInputStream input = new BufferedInputStream(SnappyOutputStreamTest.class.getResource(
                 "alice29.txt").openStream());
         assertNotNull(input);
 
@@ -67,7 +66,7 @@ public class SnappyOutputStreamTest
         orig.flush();
 
         int compressedSize = buf.size();
-        _logger.debug("compressed size: " + compressedSize);
+        _logger.fine("compressed size: " + compressedSize);
 
         ByteArrayOutputStream decompressed = new ByteArrayOutputStream();
         byte[] compressed = buf.toByteArray();

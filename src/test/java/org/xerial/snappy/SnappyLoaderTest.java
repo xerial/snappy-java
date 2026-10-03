@@ -27,8 +27,7 @@ package org.xerial.snappy;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.junit.Test;
-import org.xerial.util.FileResource;
-import org.xerial.util.log.Logger;
+import java.util.logging.Logger;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -40,12 +39,12 @@ import static org.junit.Assert.fail;
 
 public class SnappyLoaderTest
 {
-    private static Logger _logger = Logger.getLogger(SnappyLoaderTest.class);
+    private static Logger _logger = Logger.getLogger(SnappyLoaderTest.class.getName());
 
     public static BufferedInputStream openByteStream(Class<?> referenceClass, String resourceFileName)
             throws IOException
     {
-        URL url = FileResource.find(referenceClass, resourceFileName);
+        URL url = referenceClass.getResource(resourceFileName);
         if (url != null) {
             return new BufferedInputStream(url.openStream());
         }
@@ -118,20 +117,20 @@ public class SnappyLoaderTest
             throws Exception
     {
         SnappyLoader.loadSnappyApi();
-        _logger.debug(Snappy.maxCompressedLength(1024));
+        _logger.fine(String.valueOf(Snappy.maxCompressedLength(1024)));
     }
 
     @Test
     public void autoLoad()
             throws Exception
     {
-        _logger.debug(Snappy.maxCompressedLength(1024));
+        _logger.fine(String.valueOf(Snappy.maxCompressedLength(1024)));
     }
 
     public static void main(String[] args)
     {
         // Test for loading native library specified in -Djava.library.path
         System.setProperty(SnappyLoader.KEY_SNAPPY_USE_SYSTEMLIB, "true");
-        _logger.debug(Snappy.maxCompressedLength(1024));
+        _logger.fine(String.valueOf(Snappy.maxCompressedLength(1024)));
     }
 }
