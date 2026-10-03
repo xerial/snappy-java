@@ -22,6 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Runs only pull-request labeler
-      - uses: release-drafter/release-drafter@v6
+      - uses: release-drafter/release-drafter@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
