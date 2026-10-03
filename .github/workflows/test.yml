@@ -65,3 +65,46 @@ jobs:
           ./sbt test
       - name: JAR Integration Test
         run: ./script/test-jar-integration.sh
+  test-musl:
+    strategy:
+      matrix:
+        include:
+          # musl-based JVM: the x86_64-musl native library must be used
+          - name: alpine
+            container: eclipse-temurin:17-jdk-alpine
+            expected_arch: x86_64-musl
+          # glibc-based JVM with musl also installed (#692): the glibc native library must be used
+          - name: glibc with musl installed
+            container: ''
+            expected_arch: x86_64
+    name: test ${{ matrix.name }}
+    needs: changes
+    if: ${{ needs.changes.outputs.code == 'true' }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    steps:
+      - name: Install packages (alpine)
+        if: ${{ matrix.container != '' }}
+        run: apk add --no-cache bash curl git
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        if: ${{ matrix.container == '' }}
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Install musl
+        if: ${{ matrix.container == '' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl
+          ls -l /lib/ld-musl-x86_64.so.1
+      - name: Check native library architecture
+        shell: bash
+        run: |
+          ./sbt compile
+          arch=$(java -cp target/classes org.xerial.snappy.OSInfo --arch)
+          echo "detected arch: $arch"
+          test "$arch" = "${{ matrix.expected_arch }}"
+      - name: Test
+        shell: bash
+        run: ./sbt test

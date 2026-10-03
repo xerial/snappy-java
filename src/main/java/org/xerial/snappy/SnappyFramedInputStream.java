@@ -517,18 +517,22 @@ public final class SnappyFramedInputStream
             return false;
         }
 
-        if (!readBlockHeader()) {
-            eof = true;
-            return false;
-        }
+        // Skip chunks in a loop rather than recursively: a zero-length skippable chunk is only 4 bytes, so
+        // recursing per chunk lets a small input exhaust the stack
+        FrameMetaData frameMetaData;
+        while (true) {
+            if (!readBlockHeader()) {
+                eof = true;
+                return false;
+            }
 
-        // get action based on header
-        final FrameMetaData frameMetaData = getFrameMetaData(frameHeader);
-
-        if (FrameAction.SKIP == frameMetaData.frameAction) {
+            // get action based on header
+            frameMetaData = getFrameMetaData(frameHeader);
+            if (FrameAction.SKIP != frameMetaData.frameAction) {
+                break;
+            }
             SnappyFramed.skip(rbc, frameMetaData.length,
                     ByteBuffer.wrap(buffer));
-            return ensureBuffer();
         }
 
         if (frameMetaData.length > input.capacity()) {
@@ -550,6 +554,8 @@ public final class SnappyFramedInputStream
 
             input.position(frameData.offset);
 
+            // uncompressedLength rejects lengths that cannot be produced from the frame size, so the buffers
+            // allocated below stay proportional to the frame actually read
             final int uncompressedLength = Snappy.uncompressedLength(input);
 
             if (uncompressedLength > uncompressedDirect.capacity()) {

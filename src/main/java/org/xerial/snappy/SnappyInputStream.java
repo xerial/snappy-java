@@ -178,6 +178,7 @@ public class SnappyInputStream
     public int read(byte[] b, int byteOffset, int byteLength)
             throws IOException
     {
+        Snappy.checkElementRange(b.length, byteOffset, byteLength, 1);
         int writtenBytes = 0;
         for (; writtenBytes < byteLength; ) {
 
@@ -243,6 +244,7 @@ public class SnappyInputStream
     public int read(long[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 8);
         return rawRead(d, off * 8, len * 8);
     }
 
@@ -273,6 +275,7 @@ public class SnappyInputStream
     public int read(double[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 8);
         return rawRead(d, off * 8, len * 8);
     }
 
@@ -317,6 +320,7 @@ public class SnappyInputStream
     public int read(int[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 4);
         return rawRead(d, off * 4, len * 4);
     }
 
@@ -333,6 +337,7 @@ public class SnappyInputStream
     public int read(float[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 4);
         return rawRead(d, off * 4, len * 4);
     }
 
@@ -363,6 +368,7 @@ public class SnappyInputStream
     public int read(short[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 2);
         return rawRead(d, off * 2, len * 2);
     }
 
