@@ -66,7 +66,12 @@ Test / fork := true
 
 // sbt 2 itself requires JDK 17+. To test on older JDKs (e.g., 8), run sbt on JDK 17+
 // and set TEST_JAVA_HOME to the JDK the forked test JVM should use.
-Test / javaHome := sys.env.get("TEST_JAVA_HOME").map(file)
+// Set it on forkOptions only, since Test / javaHome would also switch javac to that JDK.
+Test / forkOptions :=
+  Def.uncached {
+    val opts = (Test / forkOptions).value
+    sys.env.get("TEST_JAVA_HOME").fold(opts)(home => opts.withJavaHome(file(home)))
+  }
 
 val libTemp = {
   val path = s"${System.getProperty("java.io.tmpdir")}/snappy_test_${System.currentTimeMillis()}"
