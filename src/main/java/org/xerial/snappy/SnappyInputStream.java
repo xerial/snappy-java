@@ -37,6 +37,8 @@ public class SnappyInputStream
         extends InputStream
 {
     public static final int MAX_CHUNK_SIZE = 512 * 1024 * 1024; // 512 MiB
+    // Maximum size of input without a SnappyOutputStream header, which is read entirely into a single byte array
+    private static final int MAX_RAW_INPUT_SIZE = Integer.MAX_VALUE - 8;
 
     private boolean finishedReading = false;
     protected final InputStream in;
@@ -151,7 +153,14 @@ public class SnappyInputStream
         for (int readBytes = 0; (readBytes = in.read(compressed, cursor, compressed.length - cursor)) != -1; ) {
             cursor += readBytes;
             if (cursor >= compressed.length) {
-                byte[] newBuf = new byte[(compressed.length * 2)];
+                if (compressed.length >= MAX_RAW_INPUT_SIZE) {
+                    throw new SnappyIOException(SnappyErrorCode.TOO_LARGE_INPUT, String.format(
+                            "The input has no SnappyOutputStream header and is larger than %,d bytes, so it cannot be "
+                                    + "read as a single Snappy block. If it was written in the x-snappy-framed or "
+                                    + "Hadoop format, use SnappyFramedInputStream or a Hadoop codec instead",
+                            MAX_RAW_INPUT_SIZE));
+                }
+                byte[] newBuf = new byte[(int) Math.min(compressed.length * 2L, MAX_RAW_INPUT_SIZE)];
                 System.arraycopy(compressed, 0, newBuf, 0, compressed.length);
                 compressed = newBuf;
             }
@@ -178,6 +187,7 @@ public class SnappyInputStream
     public int read(byte[] b, int byteOffset, int byteLength)
             throws IOException
     {
+        Snappy.checkElementRange(b.length, byteOffset, byteLength, 1);
         int writtenBytes = 0;
         for (; writtenBytes < byteLength; ) {
 
@@ -243,6 +253,7 @@ public class SnappyInputStream
     public int read(long[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 8);
         return rawRead(d, off * 8, len * 8);
     }
 
@@ -273,6 +284,7 @@ public class SnappyInputStream
     public int read(double[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 8);
         return rawRead(d, off * 8, len * 8);
     }
 
@@ -317,6 +329,7 @@ public class SnappyInputStream
     public int read(int[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 4);
         return rawRead(d, off * 4, len * 4);
     }
 
@@ -333,6 +346,7 @@ public class SnappyInputStream
     public int read(float[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 4);
         return rawRead(d, off * 4, len * 4);
     }
 
@@ -363,6 +377,7 @@ public class SnappyInputStream
     public int read(short[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 2);
         return rawRead(d, off * 2, len * 2);
     }
 
