@@ -27,6 +27,7 @@ package org.xerial.snappy;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * A stream filter for reading data compressed by {@link SnappyOutputStream}.
@@ -37,6 +38,7 @@ public class SnappyInputStream
         extends InputStream
 {
     public static final int MAX_CHUNK_SIZE = 512 * 1024 * 1024; // 512 MiB
+    private static final int INITIAL_CHUNK_BUFFER_SIZE = 64 * 1024;
     // Maximum size of input without a SnappyOutputStream header, which is read entirely into a single byte array
     private static final int MAX_RAW_INPUT_SIZE = Integer.MAX_VALUE - 8;
 
@@ -428,13 +430,20 @@ public class SnappyInputStream
         uncompressedCursor = 0;
         uncompressedLimit = 0;
 
-        int readBytes = readNext(header, 0, 4);
-        if (readBytes < 4) {
-            return false;
-        }
+        int readBytes;
+        int chunkSize;
+        // Skip the headers of concatenated streams in a loop rather than recursively, since a long run of 16-byte
+        // headers would otherwise exhaust the stack
+        while (true) {
+            readBytes = readNext(header, 0, 4);
+            if (readBytes < 4) {
+                return false;
+            }
 
-        int chunkSize = SnappyOutputStream.readInt(header, 0);
-        if (chunkSize == SnappyCodec.MAGIC_HEADER_HEAD) {
+            chunkSize = SnappyOutputStream.readInt(header, 0);
+            if (chunkSize != SnappyCodec.MAGIC_HEADER_HEAD) {
+                break;
+            }
             // Concatenated data
             int remainingHeaderSize = SnappyCodec.headerSize() - 4;
             readBytes = readNext(header, 4, remainingHeaderSize);
@@ -442,10 +451,7 @@ public class SnappyInputStream
                 throw new SnappyIOException(SnappyErrorCode.FAILED_TO_UNCOMPRESS, String.format("Insufficient header size in a concatenated block"));
             }
 
-            if (isValidHeader(header)) {
-                return hasNextChunk();
-            }
-            else {
+            if (!isValidHeader(header)) {
                 return false;
             }
         }
@@ -460,14 +466,18 @@ public class SnappyInputStream
             throw new SnappyError(SnappyErrorCode.FAILED_TO_UNCOMPRESS, String.format("Received chunkSize %,d is greater than max configured chunk size %,d", chunkSize, maxChunkSize));
         }
 
-        // extend the compressed data buffer size
-        if (compressed == null || chunkSize > compressed.length) {
-            // chunkSize exceeds limit
-            compressed = new byte[chunkSize];
+        if (compressed == null) {
+            compressed = new byte[Math.min(chunkSize, INITIAL_CHUNK_BUFFER_SIZE)];
         }
         readBytes = 0;
         while (readBytes < chunkSize) {
-            int ret = in.read(compressed, readBytes, chunkSize - readBytes);
+            if (readBytes == compressed.length) {
+                // Extend the compressed data buffer as the chunk data arrives, so that a chunk header alone cannot
+                // force a large allocation
+                compressed = Arrays.copyOf(compressed,
+                        (int) Math.min(chunkSize, Math.max(compressed.length * 2L, INITIAL_CHUNK_BUFFER_SIZE)));
+            }
+            int ret = in.read(compressed, readBytes, Math.min(chunkSize, compressed.length) - readBytes);
             if (ret == -1) {
                 break;
             }

@@ -242,16 +242,21 @@ public final class SnappyFramedInputStream
      */
     private void allocateBuffersBasedOnSize(int size)
     {
+        // Clear each released buffer so that close() does not release it to the pool again if an allocation below
+        // fails, which would let two streams share the same buffer
         if (input != null) {
             bufferPool.releaseDirect(input);
+            input = null;
         }
 
         if (uncompressedDirect != null) {
             bufferPool.releaseDirect(uncompressedDirect);
+            uncompressedDirect = null;
         }
 
         if (buffer != null) {
             bufferPool.releaseArray(buffer);
+            buffer = null;
         }
 
         input = bufferPool.allocateDirect(size);
@@ -561,6 +566,10 @@ public final class SnappyFramedInputStream
             if (uncompressedLength > uncompressedDirect.capacity()) {
                 bufferPool.releaseDirect(uncompressedDirect);
                 bufferPool.releaseArray(buffer);
+                // Clear the released buffers first so that close() does not release them to the pool again if the
+                // allocation below fails, which would let two streams share the same buffer
+                uncompressedDirect = null;
+                buffer = null;
                 uncompressedDirect = bufferPool.allocateDirect(uncompressedLength);
                 buffer = bufferPool.allocateArray(uncompressedLength);
             }

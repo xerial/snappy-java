@@ -428,6 +428,10 @@ public class Snappy
 
     /**
      * Zero-copy compress using memory addresses.
+     * <p/>
+     * <b>Unsafe:</b> this method cannot check memory bounds. The caller must ensure that destAddr points to at
+     * least {@link #maxCompressedLength(int)} bytes of writable memory; otherwise memory after it is overwritten.
+     * Use {@link #compress(ByteBuffer, ByteBuffer)} for bounds-checked compression of off-heap data.
      *
      * @param inputAddr input memory address
      * @param inputSize input byte size
@@ -443,6 +447,11 @@ public class Snappy
 
     /**
      * Zero-copy decompress using memory addresses.
+     * <p/>
+     * <b>Unsafe:</b> this method cannot check memory bounds, and the output size is read from the compressed
+     * data. The caller must check {@link #uncompressedLength(long, long)} against the capacity at destAddr before
+     * calling this method; otherwise untrusted input can overwrite memory after it. Use
+     * {@link #uncompress(ByteBuffer, ByteBuffer)} for bounds-checked decompression of off-heap data.
      *
      * @param inputAddr input memory address
      * @param inputSize input byte size
