@@ -29,6 +29,7 @@ jobs:
               - '.scalafmt.conf'
               - 'sbt'
               - 'sbt.bat'
+              - 'script/**'
   code_format:
     name: code format
     needs: changes
