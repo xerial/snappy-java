@@ -27,6 +27,8 @@ package org.xerial.snappy;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintStream;
 
 import org.junit.Test;
@@ -111,5 +113,36 @@ public class OSInfoTest
             // reset STDOUT
             System.setOut(out);
         }
+    }
+
+    private static File writeMaps(String content)
+            throws Exception
+    {
+        File f = File.createTempFile("snappy-maps", ".txt");
+        f.deleteOnExit();
+        FileWriter w = new FileWriter(f);
+        try {
+            w.write(content);
+        }
+        finally {
+            w.close();
+        }
+        return f;
+    }
+
+    // https://github.com/xerial/snappy-java/issues/692
+    @Test
+    public void detectMuslFromProcessMaps()
+            throws Exception
+    {
+        File musl = writeMaps("7f0000000000-7f0000001000 r-xp 00000000 08:01 123 /lib/ld-musl-x86_64.so.1\n");
+        assertTrue(OSInfo.isMuslLoaded(musl.getPath()));
+
+        // glibc process on a system that also has musl installed
+        File glibc = writeMaps("7f0000000000-7f0000001000 r-xp 00000000 08:01 123 /usr/lib/x86_64-linux-gnu/libc.so.6\n"
+                + "7f0000002000-7f0000003000 r-xp 00000000 08:01 456 /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2\n");
+        assertFalse(OSInfo.isMuslLoaded(glibc.getPath()));
+
+        assertFalse(OSInfo.isMuslLoaded("/non-existent/maps"));
     }
 }
