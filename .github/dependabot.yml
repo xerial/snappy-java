@@ -7,3 +7,9 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every week
       interval: "weekly"
+    # Bundle all updates into one PR. Merging a PR that is behind main and
+    # touches workflow files is rejected for the GITHUB_TOKEN.
+    groups:
+      github-actions:
+        patterns:
+          - "*"

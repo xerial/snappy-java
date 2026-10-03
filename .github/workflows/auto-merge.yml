@@ -1,0 +1,44 @@
+name: auto-merge
+on:
+  pull_request:
+    # Scala Steward adds labels after opening a PR, so re-evaluate on label changes
+    types: [opened, reopened, synchronize, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge-dependabot:
+    name: Auto-Merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3.1.0
+      - name: Enable auto-merge PR for minor updates
+        if: ${{ steps.metadata.outputs.update-type != 'version-update:semver-major' }}
+        # --auto is rejected once checks have already passed, so merge directly in that case
+        run: gh pr merge --squash --auto "$PR_URL" || gh pr merge --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}
+  auto-merge-scala-steward:
+    name: Auto-Merge Scala Steward PRs
+    runs-on: ubuntu-latest
+    # Scala Steward opens PRs as xerial (the token owner) from update/* branches
+    if: ${{ github.event.pull_request.user.login == 'xerial' && startsWith(github.head_ref, 'update/') }}
+    steps:
+      - name: Enable auto-merge PR for minor updates
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'semver-spec-major') && !contains(github.event.pull_request.labels.*.name, 'early-semver-major') }}
+        run: gh pr merge --squash --auto "$PR_URL" || gh pr merge --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}
+      - name: Disable auto-merge PR for major updates
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'semver-spec-major') || contains(github.event.pull_request.labels.*.name, 'early-semver-major') }}
+        run: gh pr merge --disable-auto "$PR_URL" || true
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}
