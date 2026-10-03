@@ -18,7 +18,7 @@ echo "Building JAR..."
 ./sbt package
 
 # Find the JAR
-JAR_FILE=$(ls -t $(find target -name 'snappy-java-*.jar') | grep -v -e sources -e javadoc -e tests | head -1)
+JAR_FILE=$(ls -t $(find target -path '*/snappy-java/snappy-java-*.jar') | grep -v -e sources -e javadoc -e tests | head -1)
 if [ -z "$JAR_FILE" ]; then
     echo "ERROR: Could not find snappy-java JAR"
     exit 1
