@@ -119,6 +119,7 @@ public class SnappyOutputStream
         if (closed) {
             throw new IOException("Stream is closed");
         }
+        Snappy.checkElementRange(b.length, byteOffset, byteLength, 1);
         int cursor = 0;
         while (cursor < byteLength) {
             int readLen = Math.min(byteLength - cursor, blockSize - inputCursor);
@@ -147,6 +148,7 @@ public class SnappyOutputStream
     public void write(long[] d, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(d.length, off, len, 8);
         rawWrite(d, off * 8, len * 8);
     }
 
@@ -161,6 +163,7 @@ public class SnappyOutputStream
     public void write(double[] f, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(f.length, off, len, 8);
         rawWrite(f, off * 8, len * 8);
     }
 
@@ -175,6 +178,7 @@ public class SnappyOutputStream
     public void write(float[] f, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(f.length, off, len, 4);
         rawWrite(f, off * 4, len * 4);
     }
 
@@ -189,6 +193,7 @@ public class SnappyOutputStream
     public void write(int[] f, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(f.length, off, len, 4);
         rawWrite(f, off * 4, len * 4);
     }
 
@@ -203,6 +208,7 @@ public class SnappyOutputStream
     public void write(short[] f, int off, int len)
             throws IOException
     {
+        Snappy.checkElementRange(f.length, off, len, 2);
         rawWrite(f, off * 2, len * 2);
     }
 
