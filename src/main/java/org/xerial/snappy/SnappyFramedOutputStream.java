@@ -460,8 +460,13 @@ public final class SnappyFramedOutputStream
             return;
         }
         try {
-            flush();
-            out.close();
+            try {
+                flush();
+            }
+            finally {
+                // Close the underlying stream even if flush fails (e.g., no disk space) to avoid leaking it
+                out.close();
+            }
         }
         finally {
             closed = true;

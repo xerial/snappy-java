@@ -419,4 +419,83 @@ public class SnappyBoundsCheckTest
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed.toByteArray()));
         in.rawRead(new int[10], 0, 400);
     }
+
+    /**
+     * An output stream that fails on write, as when the disk is full, and records whether it was closed
+     */
+    private static class FailingOutputStream
+            extends java.io.OutputStream
+    {
+        boolean closed = false;
+
+        @Override
+        public void write(int b)
+                throws IOException
+        {
+            throw new IOException("No space left on device");
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len)
+                throws IOException
+        {
+            throw new IOException("No space left on device");
+        }
+
+        @Override
+        public void close()
+        {
+            closed = true;
+        }
+    }
+
+    // https://github.com/xerial/snappy-java/issues/216
+    @Test
+    public void outputStreamClosesUnderlyingStreamWhenFlushFails()
+            throws Exception
+    {
+        FailingOutputStream underlying = new FailingOutputStream();
+        SnappyOutputStream out = new SnappyOutputStream(underlying);
+        out.write(new byte[100]);
+        try {
+            out.close();
+            fail("expected IOException");
+        }
+        catch (IOException e) {
+            // expected: the flush failure must still be reported
+        }
+        assertTrue(underlying.closed);
+    }
+
+    // https://github.com/xerial/snappy-java/issues/216
+    @Test
+    public void framedOutputStreamClosesUnderlyingStreamWhenFlushFails()
+            throws Exception
+    {
+        // the constructor writes the stream header, so fail only on the writes after it
+        final FailingOutputStream failAfterHeader = new FailingOutputStream()
+        {
+            int written = 0;
+
+            @Override
+            public void write(byte[] b, int off, int len)
+                    throws IOException
+            {
+                if (written > 0) {
+                    super.write(b, off, len);
+                }
+                written += len;
+            }
+        };
+        SnappyFramedOutputStream out = new SnappyFramedOutputStream(failAfterHeader);
+        out.write(new byte[100]);
+        try {
+            out.close();
+            fail("expected IOException");
+        }
+        catch (IOException e) {
+            // expected
+        }
+        assertTrue(failAfterHeader.closed);
+    }
 }
