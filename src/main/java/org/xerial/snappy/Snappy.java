@@ -87,6 +87,11 @@ public class Snappy
     public static void arrayCopy(Object src, int offset, int byteLength, Object dest, int dest_offset)
             throws IOException
     {
+        if (src == null || dest == null) {
+            throw new NullPointerException("src or dest is null");
+        }
+        checkArrayRange(src, offset, byteLength, "src");
+        checkArrayRange(dest, dest_offset, byteLength, "dest");
         impl.arrayCopy(src, offset, byteLength, dest, dest_offset);
     }
 
@@ -152,7 +157,7 @@ public class Snappy
         int uPos = uncompressed.position();
         int uLen = uncompressed.remaining();
         int cPos = compressed.position();
-        checkOutputSpace(compressed.remaining(), 0, requiredCompressedLength(uLen));
+        checkOutputSpace(compressed.remaining(), 0, maxCompressedLength(uLen));
         int compressedSize = impl.rawCompress(uncompressed, uPos, uLen, compressed,
                 cPos);
 
@@ -404,10 +409,21 @@ public class Snappy
      *
      * @param byteSize byte size of the data to compress
      * @return maximum byte size of the compressed data
+     * @throws IllegalArgumentException if byteSize is negative
+     * @throws SnappyError ({@link SnappyErrorCode#TOO_LARGE_INPUT}) if the maximum compressed size exceeds
+     * Integer.MAX_VALUE
      */
     public static int maxCompressedLength(int byteSize)
     {
-        return impl.maxCompressedLength(byteSize);
+        if (byteSize < 0) {
+            throw new IllegalArgumentException("byteSize must not be negative: " + byteSize);
+        }
+        int maxCompressedLength = impl.maxCompressedLength(byteSize);
+        // The native result overflows int for inputs close to 2GB
+        if (maxCompressedLength < 0) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input is too large to compress: " + byteSize);
+        }
+        return maxCompressedLength;
     }
 
     /**
@@ -454,7 +470,7 @@ public class Snappy
             throw new NullPointerException("input is null");
         }
         checkArrayRange(data, 0, byteSize, "input");
-        byte[] buf = new byte[requiredCompressedLength(byteSize)];
+        byte[] buf = new byte[maxCompressedLength(byteSize)];
         int compressedByteSize = impl.rawCompress(data, 0, byteSize, buf, 0);
         byte[] result = new byte[compressedByteSize];
         System.arraycopy(buf, 0, result, 0, compressedByteSize);
@@ -482,7 +498,7 @@ public class Snappy
             throw new NullPointerException("input or output is null");
         }
         checkArrayRange(input, inputOffset, inputLength, "input");
-        checkOutputSpace(output.length, outputOffset, requiredCompressedLength(inputLength));
+        checkOutputSpace(output.length, outputOffset, maxCompressedLength(inputLength));
 
         int compressedSize = impl
                 .rawCompress(input, inputOffset, inputLength, output, outputOffset);
@@ -568,6 +584,22 @@ public class Snappy
     }
 
     /**
+     * Ensures the element range [off, off+len) lies within a typed array of arrayLength elements, and that its byte
+     * offset and length fit in int, before converting them to a byte range.
+     */
+    static void checkElementRange(int arrayLength, int off, int len, int elementSize)
+    {
+        if (off < 0 || len < 0 || off > arrayLength - len) {
+            throw new IndexOutOfBoundsException(String.format(
+                    "range [off:%,d, len:%,d] is out of bounds for array of length %,d", off, len, arrayLength));
+        }
+        if ((long) (off + len) * elementSize > Integer.MAX_VALUE) {
+            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, String.format(
+                    "byte size of range [off:%,d, len:%,d] exceeds Integer.MAX_VALUE", off, len));
+        }
+    }
+
+    /**
      * Ensures the output has at least requiredSize bytes available after outputOffset, since the native code writes
      * the output through a raw pointer without any bounds check.
      */
@@ -582,19 +614,6 @@ public class Snappy
                     "not enough space for output: need %,d bytes, but only %,d remaining",
                     requiredSize, outputSize - outputOffset));
         }
-    }
-
-    /**
-     * Returns the output buffer size required by the native compressor for the given input size.
-     */
-    private static int requiredCompressedLength(int inputLength)
-    {
-        int maxCompressedLength = maxCompressedLength(inputLength);
-        // maxCompressedLength overflows int for inputs close to 2GB
-        if (maxCompressedLength < 0) {
-            throw new SnappyError(SnappyErrorCode.TOO_LARGE_INPUT, "input is too large to compress: " + inputLength);
-        }
-        return maxCompressedLength;
     }
 
     /**

@@ -332,4 +332,91 @@ public class SnappyBoundsCheckTest
             assertEquals(SnappyErrorCode.PARSING_ERROR, e.getErrorCode());
         }
     }
+
+    // https://github.com/xerial/snappy-java/issues/671
+    @Test
+    public void maxCompressedLengthOverflow()
+            throws Exception
+    {
+        // 32 + n + n / 6 is Integer.MAX_VALUE for n = 1840700242
+        assertEquals(Integer.MAX_VALUE, Snappy.maxCompressedLength(1840700242));
+        try {
+            Snappy.maxCompressedLength(1840700243);
+            fail("expected SnappyError");
+        }
+        catch (SnappyError e) {
+            assertEquals(SnappyErrorCode.TOO_LARGE_INPUT, e.errorCode);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void maxCompressedLengthOfNegativeSize()
+            throws Exception
+    {
+        Snappy.maxCompressedLength(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void arrayCopyOutOfRange()
+            throws Exception
+    {
+        Snappy.arrayCopy(new int[4], 0, 17, new byte[100], 0);
+    }
+
+    // https://github.com/xerial/snappy-java/issues/513
+    @Test(expected = IllegalArgumentException.class)
+    public void outputStreamRawWriteOutOfRange()
+            throws Exception
+    {
+        SnappyOutputStream out = new SnappyOutputStream(new ByteArrayOutputStream());
+        out.rawWrite(new int[4], 0, 1024);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void outputStreamWriteTypedArrayOutOfRange()
+            throws Exception
+    {
+        SnappyOutputStream out = new SnappyOutputStream(new ByteArrayOutputStream());
+        out.write(new long[4], 2, 3);
+    }
+
+    @Test(expected = SnappyError.class)
+    public void elementRangeWithOverflowingByteSize()
+    {
+        // a long[] range whose byte offset overflows int; called directly to avoid allocating a 2GB array
+        int length = Integer.MAX_VALUE / 8 + 2;
+        Snappy.checkElementRange(length, length - 1, 1, 8);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void outputStreamWriteBytesOutOfRange()
+            throws Exception
+    {
+        SnappyOutputStream out = new SnappyOutputStream(new ByteArrayOutputStream());
+        out.write(new byte[10], 5, 10);
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void inputStreamReadTypedArrayOutOfRange()
+            throws Exception
+    {
+        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+        SnappyOutputStream out = new SnappyOutputStream(compressed);
+        out.write(new int[100]);
+        out.close();
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed.toByteArray()));
+        in.read(new int[10], 5, 10);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void inputStreamRawReadOutOfRange()
+            throws Exception
+    {
+        ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+        SnappyOutputStream out = new SnappyOutputStream(compressed);
+        out.write(new int[100]);
+        out.close();
+        SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed.toByteArray()));
+        in.rawRead(new int[10], 0, 400);
+    }
 }
