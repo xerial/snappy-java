@@ -14,8 +14,14 @@ snappy-java is a Java port of Google's Snappy compression library, providing fas
 # Enter sbt console
 ./sbt
 
-# Run tests
+# Run tests (sbt 2 skips tests that passed in a cached previous run)
 ./sbt test
+
+# Run all tests regardless of the cache
+./sbt testFull
+
+# sbt 2 requires JDK 17+. To run tests on an older JDK, fork them on another JDK
+TEST_JAVA_HOME=/path/to/jdk8 ./sbt testFull
 
 # Run tests matching a pattern
 ./sbt "testOnly *BitShuffleTest"
@@ -131,7 +137,7 @@ The project uses sbt's built-in Sonatype integration for publishing:
 ### Common Development Tasks
 - When making changes to native code, rebuild with `make clean-native native`
 - For Java/Scala changes, use `./sbt ~test` for continuous testing
-- Always test on multiple JDK versions if possible (8, 11, 17, 21)
+- Always test on multiple JDK versions if possible (8, 11, 17, 21, 25), using `TEST_JAVA_HOME` for JDKs older than 17
 
 ### Native Code Testing
 - Use make clean-native native for testing native code
