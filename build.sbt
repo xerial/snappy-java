@@ -13,12 +13,12 @@ ThisBuild / publishTo := {
     localStaging.value
 }
 
-licenses := Seq("Apache-2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.html"))
-homepage := Some(url("https://github.com/xerial/snappy-java"))
+licenses := Seq("Apache-2.0" -> uri("https://www.apache.org/licenses/LICENSE-2.0.html"))
+homepage := Some(uri("https://github.com/xerial/snappy-java"))
 scmInfo  :=
   Some(
     ScmInfo(
-      browseUrl = url("https://github.com/xerial/snappy-java"),
+      browseUrl = uri("https://github.com/xerial/snappy-java"),
       connection = "scm:git@github.com:xerial/snappy-java.git"
     )
   )
@@ -29,7 +29,7 @@ developers :=
       id = "leo",
       name = "Taro L. Saito",
       email = "leo@xerial.org",
-      url = url("http://xerial.org/leo")
+      url = uri("http://xerial.org/leo")
     )
   )
 
@@ -38,7 +38,7 @@ ThisBuild / dynverSonatypeSnapshots := true
 // Use coursier friendly version separator
 ThisBuild / dynverSeparator := "-"
 
-ThisBuild / scalaVersion := "3.7.1"
+ThisBuild / scalaVersion := "3.9.0"
 
 // For building jars for JDK8
 ThisBuild / javacOptions ++= {
@@ -63,6 +63,15 @@ doc / javacOptions := {
 
 // Configuration for SnappyHadoopCompatibleOutputStream testing
 Test / fork := true
+
+// sbt 2 itself requires JDK 17+. To test on older JDKs (e.g., 8), run sbt on JDK 17+
+// and set TEST_JAVA_HOME to the JDK the forked test JVM should use.
+// Set it on forkOptions only, since Test / javaHome would also switch javac to that JDK.
+Test / forkOptions :=
+  Def.uncached {
+    val opts = (Test / forkOptions).value
+    sys.env.get("TEST_JAVA_HOME").fold(opts)(home => opts.withJavaHome(file(home)))
+  }
 
 val libTemp = {
   val path = s"${System.getProperty("java.io.tmpdir")}/snappy_test_${System.currentTimeMillis()}"
@@ -98,8 +107,10 @@ libraryDependencies ++=
     "org.codehaus.plexus" % "plexus-classworlds" % "2.12.1" % "test",
     "org.osgi"            % "org.osgi.core"      % "6.0.0"  % "provided",
     "com.github.sbt"      % "junit-interface"    % "0.13.3" % "test",
-    "org.apache.hadoop"   % "hadoop-common"      % "3.4.3"  % "test" exclude
-      ("org.xerial.snappy", "snappy-java")
+    ("org.apache.hadoop"  % "hadoop-common"      % "3.4.3"  % "test").exclude(
+      "org.xerial.snappy",
+      "snappy-java"
+    )
   )
 
 packageOptions += Package.ManifestAttributes("Automatic-Module-Name" -> "org.xerial.snappy")

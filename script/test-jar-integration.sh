@@ -5,8 +5,11 @@ echo "=========================================="
 echo "Snappy-Java Integration Test"
 echo "=========================================="
 
+# sbt 2 requires JDK 17+, so CI may run sbt on a newer JDK and test on TEST_JAVA_HOME
+JAVA_BIN=${TEST_JAVA_HOME:+$TEST_JAVA_HOME/bin/}
+
 # Detect Java version
-JAVA_VERSION=$(java -version 2>&1 | head -1 | cut -d'"' -f2 | sed 's/^1\.//' | cut -d'.' -f1)
+JAVA_VERSION=$(${JAVA_BIN}java -version 2>&1 | head -1 | cut -d'"' -f2 | sed 's/^1\.//' | cut -d'.' -f1)
 echo "Java version: $JAVA_VERSION"
 
 # Build the JAR
@@ -15,7 +18,7 @@ echo "Building JAR..."
 ./sbt package
 
 # Find the JAR
-JAR_FILE=$(ls -t target/snappy-java-*.jar | grep -v sources | grep -v javadoc | head -1)
+JAR_FILE=$(ls -t $(find target -name 'snappy-java-*.jar') | grep -v -e sources -e javadoc -e tests | head -1)
 if [ -z "$JAR_FILE" ]; then
     echo "ERROR: Could not find snappy-java JAR"
     exit 1
@@ -33,7 +36,7 @@ cp src/test/resources/integration/SnappyIntegrationTest.java "$TEMP_DIR/"
 # Compile test
 echo ""
 echo "Compiling test program..."
-javac -cp "$JAR_FILE" -d "$TEMP_DIR" "$TEMP_DIR/SnappyIntegrationTest.java"
+${JAVA_BIN}javac -cp "$JAR_FILE" -d "$TEMP_DIR" "$TEMP_DIR/SnappyIntegrationTest.java"
 
 # Run test WITHOUT --enable-native-access flag
 echo ""
@@ -42,7 +45,7 @@ echo "Running test (WITHOUT --enable-native-access flag)..."
 echo "=========================================="
 
 cd "$TEMP_DIR"
-java -cp ".:$OLDPWD/$JAR_FILE" SnappyIntegrationTest 2>&1
+${JAVA_BIN}java -cp ".:$OLDPWD/$JAR_FILE" SnappyIntegrationTest 2>&1
 EXIT_CODE=$?
 cd - > /dev/null
 

@@ -94,7 +94,7 @@ public class SnappyLoaderTest
         }
 
         // Prepare the child class loaders which can load Snappy.class
-        URL classPath = new File("target/classes").toURI().toURL();
+        URL classPath = Snappy.class.getProtectionDomain().getCodeSource().getLocation();
         ClassRealm L1 = cw.newRealm("l1", URLClassLoader.newInstance(new URL[] {classPath}, parent));
         ClassRealm L2 = cw.newRealm("l2", URLClassLoader.newInstance(new URL[] {classPath}, parent));
 
