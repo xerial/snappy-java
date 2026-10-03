@@ -37,6 +37,19 @@ jobs:
         run: make clean-native native-all
         env:
           OCI_EXE: docker
+      - name: Check Windows DLL security flags
+        run: |
+          # ASLR (DYNAMIC_BASE), DEP (NX_COMPAT), and 64-bit ASLR (HIGH_ENTROPY_VA) must be enabled (#288, #661)
+          check() {
+            flags=$(objdump -p "$1" | sed -n '/^DllCharacteristics/,/^[A-Z]/p')
+            echo "$1:"; echo "$flags"
+            for f in $2; do
+              echo "$flags" | grep -q "$f" || { echo "::error::$1 lacks $f"; exit 1; }
+            done
+          }
+          dir=src/main/resources/org/xerial/snappy/native/Windows
+          check $dir/x86/snappyjava.dll "DYNAMIC_BASE NX_COMPAT"
+          check $dir/x86_64/snappyjava.dll "DYNAMIC_BASE NX_COMPAT HIGH_ENTROPY_VA"
       - name: Create Pull Request
         if: ${{ github.event_name != 'pull_request' }}
         uses: peter-evans/create-pull-request@v8
