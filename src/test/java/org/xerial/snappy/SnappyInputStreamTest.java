@@ -33,17 +33,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.xerial.util.FileResource;
-import org.xerial.util.log.Logger;
+import java.util.logging.Logger;
 
 public class SnappyInputStreamTest
 {
-    private static Logger _logger = Logger.getLogger(SnappyInputStreamTest.class);
+    private static Logger _logger = Logger.getLogger(SnappyInputStreamTest.class.getName());
 
     public static byte[] readResourceFile(String fileName)
             throws IOException
     {
-        BufferedInputStream input = new BufferedInputStream(FileResource.find(SnappyOutputStreamTest.class, fileName)
+        BufferedInputStream input = new BufferedInputStream(SnappyOutputStreamTest.class.getResource(fileName)
                 .openStream());
         assertNotNull(input);
         return readFully(input);
@@ -88,7 +87,7 @@ public class SnappyInputStreamTest
         snappyOut.write(orig);
         snappyOut.close();
         byte[] compressed = compressedBuf.toByteArray();
-        _logger.debug("compressed size: " + compressed.length);
+        _logger.fine("compressed size: " + compressed.length);
 
         SnappyInputStream in = new SnappyInputStream(new ByteArrayInputStream(compressed));
         byte[] uncompressed = readFully(in);

@@ -38,8 +38,7 @@ import java.io.InputStream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.xerial.util.FileResource;
-import org.xerial.util.log.Logger;
+import java.util.logging.Logger;
 
 /**
  * Benchmark using Calgary data set
@@ -48,7 +47,7 @@ import org.xerial.util.log.Logger;
  */
 public class CalgaryTest
 {
-    private static Logger _logger = Logger.getLogger(CalgaryTest.class);
+    private static Logger _logger = Logger.getLogger(CalgaryTest.class.getName());
 
     @Rule
     public final TemporaryFolder tempFolder = new TemporaryFolder();
@@ -56,7 +55,7 @@ public class CalgaryTest
     static byte[] readFile(String file)
             throws IOException
     {
-        InputStream in = FileResource.find(CalgaryTest.class, file).openStream();
+        InputStream in = CalgaryTest.class.getResource(file).openStream();
         if (in == null) {
             throw new IOException("file " + file + " is not found");
         }

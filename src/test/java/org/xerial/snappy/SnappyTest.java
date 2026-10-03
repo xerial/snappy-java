@@ -33,18 +33,18 @@ import java.nio.ByteBuffer;
 import org.junit.Assume;
 import org.junit.Assert;
 import org.junit.Test;
-import org.xerial.util.log.Logger;
+import java.util.logging.Logger;
 
 public class SnappyTest
 {
-    private static Logger _logger = Logger.getLogger(SnappyTest.class);
+    private static Logger _logger = Logger.getLogger(SnappyTest.class.getName());
 
     @Test
     public void getVersion()
             throws Exception
     {
         String version = Snappy.getNativeLibraryVersion();
-        _logger.debug("version: " + version);
+        _logger.fine("version: " + version);
     }
 
     @Test
@@ -82,13 +82,13 @@ public class SnappyTest
         ByteBuffer src = ByteBuffer.allocateDirect(orig.length);
         src.put(orig);
         src.flip();
-        _logger.debug("input size: " + src.remaining());
+        _logger.fine("input size: " + src.remaining());
         int maxCompressedLen = Snappy.maxCompressedLength(src.remaining());
-        _logger.debug("max compressed length:" + maxCompressedLen);
+        _logger.fine("max compressed length:" + maxCompressedLen);
 
         ByteBuffer compressed = ByteBuffer.allocateDirect(maxCompressedLen);
         int compressedSize = Snappy.compress(src, compressed);
-        _logger.debug("compressed length: " + compressedSize);
+        _logger.fine("compressed length: " + compressedSize);
 
         assertTrue(Snappy.isValidCompressedBuffer(compressed));
 
@@ -101,7 +101,7 @@ public class SnappyTest
         assertEquals(compressedSize, compressed.remaining());
 
         int uncompressedLen = Snappy.uncompressedLength(compressed);
-        _logger.debug("uncompressed length: " + uncompressedLen);
+        _logger.fine("uncompressed length: " + uncompressedLen);
         ByteBuffer extract = ByteBuffer.allocateDirect(uncompressedLen);
         int uncompressedLen2 = Snappy.uncompress(compressed, extract);
         assertEquals(uncompressedLen, uncompressedLen2);
@@ -110,7 +110,7 @@ public class SnappyTest
         byte[] b = new byte[uncompressedLen];
         extract.get(b);
         String decompressed = new String(b);
-        _logger.debug(decompressed);
+        _logger.fine(decompressed);
 
         assertEquals(origStr, decompressed);
     }
@@ -241,7 +241,7 @@ public class SnappyTest
         byte[] compressed = Snappy.compress(input.getBytes("UTF-8"));
         byte[] uncompressed = Snappy.uncompress(compressed);
         String result = new String(uncompressed, "UTF-8");
-        _logger.debug(result);
+        _logger.fine(String.valueOf(result));
     }
 
     @Test
@@ -328,7 +328,7 @@ public class SnappyTest
             fail("cannot reach here since the input is invalid data");
         }
         catch (IOException e) {
-            _logger.debug(e);
+            _logger.fine(String.valueOf(e));
         }
     }
 
