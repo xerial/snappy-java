@@ -132,14 +132,15 @@ public class Snappy
     /**
      * Compress the content in the given input buffer. After the compression,
      * you can retrieve the compressed data from the output buffer [pos() ...
-     * limit()) (compressed data size = limit() - pos() = remaining())
+     * limit()) (compressed data size = limit() - pos() = remaining()). The output buffer's current limit does
+     * not restrict compression; its position is preserved and its limit is set to the end of the compressed data.
      *
      * @param uncompressed buffer[pos() ... limit()) containing the input data
-     * @param compressed output of the compressed data. Uses range [pos()..].
+     * @param compressed output of the compressed data. Uses range [pos()..capacity()).
      * @return byte size of the compressed data.
      * @throws SnappyError when the input is not a direct buffer
      * @throws IllegalArgumentException when the output buffer has less than {@link #maxCompressedLength(int)} bytes
-     * remaining
+     * available between its position and capacity
      */
     public static int compress(ByteBuffer uncompressed, ByteBuffer compressed)
             throws IOException
@@ -157,7 +158,7 @@ public class Snappy
         int uPos = uncompressed.position();
         int uLen = uncompressed.remaining();
         int cPos = compressed.position();
-        checkOutputSpace(compressed.remaining(), 0, maxCompressedLength(uLen));
+        checkOutputSpace(compressed.capacity(), cPos, maxCompressedLength(uLen));
         int compressedSize = impl.rawCompress(uncompressed, uPos, uLen, compressed,
                 cPos);
 

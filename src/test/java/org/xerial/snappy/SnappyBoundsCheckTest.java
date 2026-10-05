@@ -67,6 +67,71 @@ public class SnappyBoundsCheckTest
         assertArrayEquals(data, result);
     }
 
+    private static void assertCompressionWithEmptyOutputLimit(ByteBuffer compressed, byte[] data)
+            throws Exception
+    {
+        int outputPosition = compressed.position();
+        compressed.limit(outputPosition);
+        int compressedSize = Snappy.compress(directBufferOf(data), compressed);
+        assertEquals(outputPosition, compressed.position());
+        assertEquals(outputPosition + compressedSize, compressed.limit());
+        ByteBuffer uncompressed = ByteBuffer.allocateDirect(data.length);
+        assertEquals(data.length, Snappy.uncompress(compressed, uncompressed));
+        byte[] result = new byte[data.length];
+        uncompressed.get(result);
+        assertArrayEquals(data, result);
+    }
+
+    @Test
+    public void compressByteBufferWithEmptyOutputLimit()
+            throws Exception
+    {
+        // Hadoop's SnappyCompressor sets the output limit to zero before compression.
+        byte[] data = randomBytes(100);
+        assertCompressionWithEmptyOutputLimit(ByteBuffer.allocateDirect(Snappy.maxCompressedLength(data.length)), data);
+    }
+
+    @Test
+    public void compressByteBufferWithEmptyOutputLimitAtOffset()
+            throws Exception
+    {
+        byte[] data = randomBytes(100);
+        ByteBuffer compressed = ByteBuffer.allocateDirect(40 + Snappy.maxCompressedLength(data.length));
+        compressed.position(40);
+        assertCompressionWithEmptyOutputLimit(compressed, data);
+    }
+
+    @Test
+    public void compressByteBufferWithEmptyOutputSliceLimit()
+            throws Exception
+    {
+        byte[] data = randomBytes(100);
+        ByteBuffer parent = ByteBuffer.allocateDirect(4096);
+        parent.position(40);
+        parent.limit(40 + Snappy.maxCompressedLength(data.length));
+        assertCompressionWithEmptyOutputLimit(parent.slice(), data);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void compressByteBufferWithInsufficientCapacityAfterPosition()
+            throws Exception
+    {
+        byte[] data = randomBytes(100);
+        ByteBuffer compressed = ByteBuffer.allocateDirect(Snappy.maxCompressedLength(data.length));
+        compressed.position(1);
+        Snappy.compress(directBufferOf(data), compressed);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void compressByteBufferToUndersizedOutputSlice()
+            throws Exception
+    {
+        ByteBuffer parent = ByteBuffer.allocateDirect(4096);
+        parent.position(40);
+        parent.limit(104);
+        Snappy.compress(directBufferOf(randomBytes(100)), parent.slice());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void compressByteArrayToUndersizedOutput()
             throws Exception
