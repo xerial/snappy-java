@@ -411,7 +411,7 @@ public class SnappyOutputStream
         writeInt(outputBuffer, outputCursor, inputCursor);
         outputCursor += 4;
     }
-    
+
     protected int blockHeaderSize(){
         return 4;
     }
