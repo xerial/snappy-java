@@ -27,4 +27,9 @@ public class SnappyHadoopCompatibleOutputStream extends SnappyOutputStream
     {
         writeCurrentDataSize();
     }
+
+    @Override
+    protected int blockHeaderSize() {
+        return 8;
+    }
 }
