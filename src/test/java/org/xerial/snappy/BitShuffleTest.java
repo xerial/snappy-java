@@ -269,6 +269,31 @@ public class BitShuffleTest {
     }
 
     @Test
+    public void unshuffleWritesAtOutputPosition()
+            throws Exception
+    {
+        ByteBuffer testData = ByteBuffer.allocateDirect(32);
+        for (int i = 0; i < 8; i++) {
+            testData.putInt(i * 1000 + 7);
+        }
+        testData.flip();
+        ByteBuffer shuffled = ByteBuffer.allocateDirect(64);
+        shuffled.position(32);
+        BitShuffle.shuffle(testData, BitShuffleType.INT, shuffled);
+        assertEquals(32, shuffled.position());
+
+        ByteBuffer result = ByteBuffer.allocateDirect(64);
+        BitShuffle.unshuffle(shuffled, BitShuffleType.INT, result);
+        assertEquals(0, result.position());
+        for (int i = 0; i < 8; i++) {
+            assertEquals(i * 1000 + 7, result.getInt());
+        }
+        for (int i = 32; i < 64; i++) {
+            assertEquals(0, result.get(i));
+        }
+    }
+
+    @Test
     public void shuffleLongArray()
             throws Exception
     {
