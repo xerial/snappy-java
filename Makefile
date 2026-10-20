@@ -151,7 +151,7 @@ native: jni-header snappy-header $(NATIVE_DLL)
 native-nocmake: jni-header $(NATIVE_DLL)
 snappy: native $(TARGET)/$(snappy-jar-version).jar
 
-native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-ppc64le linux-riscv64 linux-s390x musl-image musl
+native-all: native native-arm clean-docker mac64 win32 win64 linux32 linux64 linux-loongarch64 linux-ppc64le linux-riscv64 linux-s390x musl-image musl
 
 ifdef CI
 # Clean docker images within CI to avoid no space left error
@@ -227,6 +227,9 @@ linux-android-arm: jni-header
 
 linux-android-aarch64: jni-header
 	./docker/dockcross-android-arm64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native OS_NAME=Linux OS_ARCH=android-aarch64'
+
+linux-loongarch64: jni-header
+	./docker/dockcross-loongarch64 -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=loongarch64-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=loongarch64'
 
 linux-ppc64le: jni-header
 	./docker/dockcross-ppc64le -a $(DOCKER_RUN_OPTS) bash -c 'make clean-native native CROSS_PREFIX=powerpc64le-unknown-linux-gnu- OS_NAME=Linux OS_ARCH=ppc64le'
