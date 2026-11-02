@@ -266,6 +266,44 @@ public class SnappyFramedStreamTest
     }
 
     @Test
+    public void testTransferTo_WritableByteChannel_largerFrame()
+            throws IOException
+    {
+        // A frame larger than the initial buffers makes the stream replace its byte[] buffer while
+        // transferTo is running, so the data must still come from the current buffer
+        final byte[] random = getRandom(0.5, 100000);
+
+        final byte[] stream = new byte[HEADER_BYTES.length + 8 + random.length];
+        System.arraycopy(HEADER_BYTES, 0, stream, 0, HEADER_BYTES.length);
+
+        stream[10] = UNCOMPRESSED_DATA_FLAG;
+
+        int length = random.length + 4;
+        stream[11] = (byte) length;
+        stream[12] = (byte) (length >>> 8);
+        stream[13] = (byte) (length >>> 16);
+
+        int crc32c = maskedCrc32c(random);
+        stream[14] = (byte) crc32c;
+        stream[15] = (byte) (crc32c >>> 8);
+        stream[16] = (byte) (crc32c >>> 16);
+        stream[17] = (byte) (crc32c >>> 24);
+
+        System.arraycopy(random, 0, stream, 18, random.length);
+
+        final SnappyFramedInputStream sfis = new SnappyFramedInputStream(
+                new ByteArrayInputStream(stream));
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream(
+                random.length);
+        final WritableByteChannel wbc = Channels.newChannel(baos);
+        sfis.transferTo(wbc);
+        wbc.close();
+
+        assertArrayEquals(random, baos.toByteArray());
+    }
+
+    @Test
     public void testLargerFrames_raw_()
             throws IOException
     {
