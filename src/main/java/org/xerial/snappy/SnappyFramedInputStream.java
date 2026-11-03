@@ -424,14 +424,13 @@ public final class SnappyFramedInputStream
             throw new ClosedChannelException();
         }
 
-        final ByteBuffer bb = ByteBuffer.wrap(buffer);
-
         long totTransfered = 0;
 
         while (ensureBuffer()) {
-            bb.clear();
-            bb.position(position);
-            bb.limit(position + available());
+            // ensureBuffer() replaces buffer with a larger one for frames that do not fit the current buffers,
+            // so wrap it per frame rather than once up front, otherwise the old array, already released to the
+            // pool, would be written out
+            final ByteBuffer bb = ByteBuffer.wrap(buffer, position, available());
 
             wbc.write(bb);
 
