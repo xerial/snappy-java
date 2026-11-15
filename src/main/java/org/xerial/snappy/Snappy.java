@@ -30,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.ReadOnlyBufferException;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
@@ -151,6 +152,9 @@ public class Snappy
         }
         if (!compressed.isDirect()) {
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
+        }
+        if (compressed.isReadOnly()) {
+            throw new ReadOnlyBufferException();
         }
 
         // input: uncompressed[pos(), limit())
@@ -721,6 +725,9 @@ public class Snappy
         }
         if (!uncompressed.isDirect()) {
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
+        }
+        if (uncompressed.isReadOnly()) {
+            throw new ReadOnlyBufferException();
         }
 
         int cPos = compressed.position();
