@@ -99,8 +99,8 @@ public class SnappyOutputStream
         if (this.blockSize > MAX_BLOCK_SIZE){
             throw new IllegalArgumentException(String.format("Provided chunk size %,d larger than max %,d", this.blockSize, MAX_BLOCK_SIZE));
         }
-        int inputSize = blockSize;
-        int outputSize = SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(blockSize);
+        int inputSize = this.blockSize;
+        int outputSize = SnappyCodec.HEADER_SIZE + 4 + Snappy.maxCompressedLength(this.blockSize);
 
         this.inputBufferAllocator = bufferAllocatorFactory.getBufferAllocator(inputSize);
         this.outputBufferAllocator = bufferAllocatorFactory.getBufferAllocator(outputSize);
