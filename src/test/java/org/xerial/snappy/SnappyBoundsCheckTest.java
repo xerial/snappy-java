@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.ReadOnlyBufferException;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -172,6 +173,68 @@ public class SnappyBoundsCheckTest
         ByteBuffer compressed = ByteBuffer.allocateDirect(Snappy.maxCompressedLength(data.length));
         Snappy.compress(directBufferOf(data), compressed);
         Snappy.uncompress(compressed, ByteBuffer.allocateDirect(64));
+    }
+
+    @Test
+    public void compressByteBufferToReadOnlyOutput()
+            throws Exception
+    {
+        byte[] data = randomBytes(1024);
+        ByteBuffer compressed = ByteBuffer.allocateDirect(Snappy.maxCompressedLength(data.length));
+        try {
+            Snappy.compress(directBufferOf(data), compressed.asReadOnlyBuffer());
+            fail("expected ReadOnlyBufferException");
+        }
+        catch (ReadOnlyBufferException e) {
+            // expected
+        }
+        // the memory behind the read-only view must not have been written
+        assertEquals(0, compressed.get(0));
+    }
+
+    @Test
+    public void uncompressByteBufferToReadOnlyOutput()
+            throws Exception
+    {
+        byte[] data = randomBytes(1024);
+        ByteBuffer compressed = ByteBuffer.allocateDirect(Snappy.maxCompressedLength(data.length));
+        Snappy.compress(directBufferOf(data), compressed);
+        ByteBuffer uncompressed = ByteBuffer.allocateDirect(data.length);
+        try {
+            Snappy.uncompress(compressed, uncompressed.asReadOnlyBuffer());
+            fail("expected ReadOnlyBufferException");
+        }
+        catch (ReadOnlyBufferException e) {
+            // expected
+        }
+        byte[] result = new byte[data.length];
+        uncompressed.get(result);
+        assertArrayEquals(new byte[data.length], result);
+    }
+
+    @Test
+    public void bitShuffleByteBufferToReadOnlyOutput()
+            throws Exception
+    {
+        ByteBuffer input = directBufferOf(randomBytes(1024));
+        ByteBuffer output = ByteBuffer.allocateDirect(1024);
+        try {
+            BitShuffle.shuffle(input, BitShuffleType.INT, output.asReadOnlyBuffer());
+            fail("expected ReadOnlyBufferException");
+        }
+        catch (ReadOnlyBufferException e) {
+            // expected
+        }
+        try {
+            BitShuffle.unshuffle(input, BitShuffleType.INT, output.asReadOnlyBuffer());
+            fail("expected ReadOnlyBufferException");
+        }
+        catch (ReadOnlyBufferException e) {
+            // expected
+        }
+        byte[] result = new byte[output.capacity()];
+        output.get(result);
+        assertArrayEquals(new byte[result.length], result);
     }
 
     @Test(expected = IllegalArgumentException.class)

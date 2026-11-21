@@ -26,6 +26,7 @@ package org.xerial.snappy;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ReadOnlyBufferException;
 
 public class BitShuffle
 {
@@ -61,6 +62,9 @@ public class BitShuffle
         }
         if (!shuffled.isDirect()) {
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
+        }
+        if (shuffled.isReadOnly()) {
+            throw new ReadOnlyBufferException();
         }
 
         // input: input[pos(), limit())
@@ -186,6 +190,9 @@ public class BitShuffle
         }
         if (!output.isDirect()) {
             throw new SnappyError(SnappyErrorCode.NOT_A_DIRECT_BUFFER, "destination is not a direct buffer");
+        }
+        if (output.isReadOnly()) {
+            throw new ReadOnlyBufferException();
         }
 
         // input: input[pos(), limit())
