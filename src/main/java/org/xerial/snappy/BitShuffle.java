@@ -199,7 +199,7 @@ public class BitShuffle
         if (output.remaining() < uLen) {
             throw new IllegalArgumentException("not enough space for output");
         }
-        int numProcessed = impl.unshuffleDirectBuffer(shuffled, uPos, typeSize, uLen, output, shuffled.position());
+        int numProcessed = impl.unshuffleDirectBuffer(shuffled, uPos, typeSize, uLen, output, output.position());
         assert(numProcessed == uLen);
 
         //         pos   limit
