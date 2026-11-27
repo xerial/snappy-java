@@ -28,6 +28,9 @@ import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.UUID;
@@ -239,6 +242,13 @@ public class SnappyLoader
             try {
                 reader = getResourceAsInputStream(nativeLibraryFilePath);
                 try {
+                    // Create the file accessible only by the owner, since the temp folder is usually shared with
+                    // other users and the default umask may leave the library writable by them
+                    Path extractedLibPath = extractedLibFile.toPath();
+                    if (extractedLibPath.getFileSystem().supportedFileAttributeViews().contains("posix")) {
+                        Files.createFile(extractedLibPath,
+                                PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")));
+                    }
                     writer = new FileOutputStream(extractedLibFile);
 
                     byte[] buffer = new byte[8192];

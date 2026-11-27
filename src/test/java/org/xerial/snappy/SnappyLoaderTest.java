@@ -26,6 +26,7 @@ package org.xerial.snappy;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
+import org.junit.Assume;
 import org.junit.Test;
 import java.util.logging.Logger;
 
@@ -33,8 +34,12 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class SnappyLoaderTest
@@ -118,6 +123,21 @@ public class SnappyLoaderTest
     {
         SnappyLoader.loadSnappyApi();
         _logger.fine(String.valueOf(Snappy.maxCompressedLength(1024)));
+    }
+
+    @Test
+    public void extractedLibraryIsOnlyAccessibleByOwner()
+            throws Exception
+    {
+        File lib = SnappyLoader.findNativeLibrary();
+        try {
+            Path libPath = lib.toPath();
+            Assume.assumeTrue(libPath.getFileSystem().supportedFileAttributeViews().contains("posix"));
+            assertEquals("rwx------", PosixFilePermissions.toString(Files.getPosixFilePermissions(libPath)));
+        }
+        finally {
+            lib.delete();
+        }
     }
 
     @Test
